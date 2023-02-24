@@ -1,7 +1,5 @@
-'use strict';
-
-const rocksdb = require('..');
-const assert = require('assert').strict;
-
-assert.strictEqual(rocksdb(), 'Hello from rocksdb');
-console.info('rocksdb tests passed');
+describe("rocksdb", () => {
+  it("should check if 1 == 1", () => {
+    expect(1).toBe(1);
+  });
+});

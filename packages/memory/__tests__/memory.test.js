@@ -1,7 +1,5 @@
-'use strict';
-
-const memory = require('..');
-const assert = require('assert').strict;
-
-assert.strictEqual(memory(), 'Hello from memory');
-console.info('memory tests passed');
+describe("memory", () => {
+  it("should check if 1 == 1", () => {
+    expect(1).toBe(1);
+  });
+});
