@@ -1,0 +1,21 @@
+{
+  "name": "@merkle-mountain-range/memory",
+  "version": "0.0.0",
+  "description": "> TODO: description",
+  "author": "Marcello Bardus <marcellobardus8@gmail.com>",
+  "homepage": "",
+  "license": "ISC",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "test": "node ./__tests__/memory.test.js",
+    "tsc": "tsc"
+  }
+}
