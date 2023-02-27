@@ -1,0 +1,11 @@
+{
+  "name": "pedersen-wasm",
+  "version": "0.1.0",
+  "files": [
+    "pedersen_wasm_bg.wasm",
+    "pedersen_wasm.js",
+    "pedersen_wasm.d.ts"
+  ],
+  "main": "pedersen_wasm.js",
+  "types": "pedersen_wasm.d.ts"
+}

@@ -1,76 +1,84 @@
 import { AppendResult, IHasher, IStore } from "./types";
 import { v4 as uuid } from "uuid";
-import { getHeight, parentOffset, siblingOffset } from "./helpers";
+import { findPeaks, getHeight, parentOffset, siblingOffset } from "./helpers";
+import { TreesDatabase } from "./trees-database";
 
-export class CoreMMR {
-  static TREE_METADATA_KEYS = {
-    LEAF_COUNT: "leaf_count",
-    ROOT_HASH: "root_hash",
-  };
+export class CoreMMR extends TreesDatabase {
+  private mmrUuid: string;
 
-  private treeUuid: string;
-
-  constructor(private readonly store: IStore, private readonly hasher: IHasher, treeUuid?: string) {
-    treeUuid ? (this.treeUuid = treeUuid) : (this.treeUuid = uuid());
+  constructor(store: IStore, private readonly hasher: IHasher, mmrUuid?: string) {
+    super(store);
+    mmrUuid ? (this.mmrUuid = mmrUuid) : (this.mmrUuid = uuid());
   }
 
-  async incrementLeafCount(): Promise<number> {
-    const leafCount = await this.getLeafCount();
-    const newLeafCount = leafCount + 1;
-    await this.store.set(CoreMMR.TREE_METADATA_KEYS.LEAF_COUNT, newLeafCount.toString());
-    return newLeafCount;
+  async append(value: string): Promise<AppendResult> {
+    if (!this.hasher.isElementSizeValid(value)) throw new Error("Element size is invalid");
+
+    let lastElementId = await this.incrementElementsCount();
+    const leafIdx = lastElementId;
+
+    //? hash that will be stored in the database
+    const hash = this.hasher.hash([lastElementId.toString(), value]);
+
+    //? Store the hash in the database
+    await this.store.set(`${this.mmrUuid}:hashes:${lastElementId}`, hash);
+
+    let height = 0;
+    while (getHeight(lastElementId + 1) > height) {
+      lastElementId++;
+      const right = await this.store.get(`${this.mmrUuid}:hashes:${lastElementId}`);
+      const left = await this.store.get(`${this.mmrUuid}:hashes:${lastElementId - 1}`);
+      const parentHash = this.hasher.hash([lastElementId.toString(), this.hasher.hash([left, right])]);
+      await this.store.set(`${this.mmrUuid}:hashes:${lastElementId}`, parentHash);
+      height++;
+    }
+
+    // Update latest value.
+    await this.setElementsCount(lastElementId);
+
+    // Compute the new root hash
+    const rootHash = await this.bagThePeaks();
+    await this.setRootHash(rootHash);
+
+    const leaves = await this.incrementLeavesCount();
+    // Returns the new total number of leaves.
+    return {
+      leavesCount: leaves,
+      leafIdx: leafIdx.toString(),
+      rootHash,
+      lastPos: lastElementId, // Tree size
+    };
   }
 
-  async getLeafCount(): Promise<number> {
-    const leafCount = await this.store.get(CoreMMR.TREE_METADATA_KEYS.LEAF_COUNT);
-    return leafCount ? parseInt(leafCount) : 0;
+  async bagThePeaks(): Promise<string> {
+    const lastElementId = await this.getElementsCount();
+    const peaks = findPeaks(lastElementId);
+    const peaksHashes = await this.retrievePeaksHashes(lastElementId);
+
+    if (peaks.length === 1) {
+      return this.hasher.hash([lastElementId.toString(), peaksHashes[0]]);
+    }
+
+    const root0 = this.hasher.hash([peaksHashes[peaksHashes.length - 2], peaksHashes[peaksHashes.length - 1]]);
+
+    const root = peaksHashes
+      .slice(0, peaksHashes.length - 2)
+      .reverse()
+      .reduce((prev, cur) => this.hasher.hash([cur, prev]), root0);
+    return this.hasher.hash([lastElementId.toString(), root]);
   }
 
-  // async append(value: string): Promise<AppendResult> {
-  //   if (!this.hasher.isElementSizeValid(value)) {
-  //     throw new Error("Element size is invalid");
-  //   }
-  //   let leafCount = await this.getLeafCount();
-  //   const leafIdx = leafCount.toString();
-  //   const hash = this.hasher.hash([leafIdx, value]);
+  async retrievePeaksHashes(givenLastPos?: number): Promise<string[]> {
+    // Check if given position is valid
+    if (givenLastPos) {
+      const currentLastPos = await this.getElementsCount();
+      if (givenLastPos > currentLastPos) throw new Error("Given position cannot exceed last position");
+      givenLastPos = currentLastPos;
+    }
 
-  //   await this.store.set(`${this.treeUuid}:hashes:${leafIdx}`, hash);
-  //   await this.store.set(`${this.treeUuid}:values:${leafIdx}`, value);
-
-  //   let height = 0;
-
-  //   while (getHeight(leafCount + 1) > height) {
-  //     ++leafCount;
-
-  //     const left = leafCount - parentOffset(height);
-  //     const right = left + siblingOffset(height);
-
-  //     const leftHash = await this.store.get(`${this.treeUuid}:hashes:${left.toString()}`);
-  //     const rightHash = await this.store.get(`${this.treeUuid}:hashes:${right.toString()}`);
-
-  //     const parentHash = this.hasher.hash([leafCount.toString(), this.hasher.hash([leftHash, rightHash])]);
-  //     await this.store.set(`hashes:${leafCount}`, parentHash);
-
-  //     height++;
-  //   }
-
-  //   // Update latest value.
-  //   await this.store.set(CoreMMR.TREE_METADATA_KEYS.LEAF_COUNT, leafCount.toString());
-
-  //   // Compute the new root hash
-  //   let rootHash;
-  //   if (this.withRootHash) {
-  //       rootHash = await this.bagThePeaks();
-  //       await this.dbSet('rootHash', rootHash);
-  //   }
-
-  //   const leaves = await this.dbIncr('leaves');
-  //   // Returns the new total number of leaves.
-  //   return {
-  //       leavesCount: leaves,
-  //       leafIdx,
-  //       rootHash,
-  //       lastPos, // Tree size
-  //   };
-  // }
+    const peaksIndexes = findPeaks(givenLastPos);
+    const peaksHashesPromises = peaksIndexes.map((p): Promise<string> => this.store.get(`${this.mmrUuid}:hashes:${p}`));
+    const peaksHashes = await Promise.all(peaksHashesPromises);
+    return peaksHashes;
+  }
 }
