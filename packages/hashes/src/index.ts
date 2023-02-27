@@ -1,1 +1,1 @@
-export { pedersen } from "./pedersen";
+export * from "./stark-pedersen-hasher";

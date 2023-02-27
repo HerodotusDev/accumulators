@@ -624,6 +624,8 @@
 "@merkle-mountain-range/core@^0.0.0", "@merkle-mountain-range/core@file:/Users/marcellobardus/Projects/Herotodus/merkle-mountain-range/packages/core":
   version "0.0.0"
   resolved "file:packages/core"
+  dependencies:
+    uuid "^9.0.0"
 
 "@merkle-mountain-range/hashes@^0.0.0", "@merkle-mountain-range/hashes@file:/Users/marcellobardus/Projects/Herotodus/merkle-mountain-range/packages/hashes":
   version "0.0.0"
@@ -634,6 +636,8 @@
 "@merkle-mountain-range/memory@^0.0.0", "@merkle-mountain-range/memory@file:/Users/marcellobardus/Projects/Herotodus/merkle-mountain-range/packages/memory":
   version "0.0.0"
   resolved "file:packages/memory"
+  dependencies:
+    "@merkle-mountain-range/core" "^0.0.0"
 
 "@merkle-mountain-range/rocksdb@file:/Users/marcellobardus/Projects/Herotodus/merkle-mountain-range/packages/rocksdb":
   version "0.0.0"
@@ -2720,6 +2724,7 @@ inquirer@^8.2.4:
   resolved "file:packages/integration"
   dependencies:
     "@merkle-mountain-range/core" "^0.0.0"
+    "@merkle-mountain-range/hashes" "^0.0.0"
     "@merkle-mountain-range/memory" "^0.0.0"
 
 ip@^2.0.0:

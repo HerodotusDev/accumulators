@@ -82,3 +82,5 @@ export class CoreMMR extends TreesDatabase {
     return peaksHashes;
   }
 }
+
+export { IHasher, IStore } from "./types";

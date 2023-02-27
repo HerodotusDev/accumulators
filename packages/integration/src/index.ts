@@ -1,5 +1,7 @@
-import { Core } from "@merkle-mountain-range/core";
-import { Memory } from "@merkle-mountain-range/memory";
+import { CoreMMR, IHasher, IStore } from "@merkle-mountain-range/core";
+import { MMRInMemoryStore } from "@merkle-mountain-range/memory";
+import { StarkPedersenHasher } from "@merkle-mountain-range/hashes";
 
-new Core();
-new Memory();
+async function main() {}
+
+main();
