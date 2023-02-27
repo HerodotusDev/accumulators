@@ -26,9 +26,14 @@ export class CoreMMR extends TreesDatabase {
     let height = 0;
     while (getHeight(lastElementId + 1) > height) {
       lastElementId++;
-      const right = await this.store.get(`${this.mmrUuid}:hashes:${lastElementId}`);
-      const left = await this.store.get(`${this.mmrUuid}:hashes:${lastElementId - 1}`);
-      const parentHash = this.hasher.hash([lastElementId.toString(), this.hasher.hash([left, right])]);
+
+      const left = lastElementId - parentOffset(height);
+      const right = left + siblingOffset(height);
+
+      const leftHash = await this.store.get(`${this.mmrUuid}:hashes:${left}`);
+      const rightHash = await this.store.get(`${this.mmrUuid}:hashes:${right}`);
+
+      const parentHash = this.hasher.hash([lastElementId.toString(), this.hasher.hash([leftHash, rightHash])]);
       await this.store.set(`${this.mmrUuid}:hashes:${lastElementId}`, parentHash);
       height++;
     }

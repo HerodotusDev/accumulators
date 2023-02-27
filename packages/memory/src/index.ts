@@ -1,18 +1,21 @@
 import { IStore } from "@merkle-mountain-range/core";
 
 export class MMRInMemoryStore implements IStore {
-  // TODO: implement
-  get(key: string): Promise<string> {
-    throw new Error("Method not implemented.");
+  private store: Map<string, string>;
+
+  constructor() {
+    this.store = new Map();
   }
 
-  // TODO: implement
-  set(key: string, value: string): Promise<void> {
-    throw new Error("Method not implemented.");
+  async get(key: string): Promise<string | undefined> {
+    return this.store.get(key);
   }
 
-  // TODO: implement
-  delete(key: string): Promise<void> {
-    throw new Error("Method not implemented.");
+  async set(key: string, value: string): Promise<void> {
+    this.store.set(key, value);
+  }
+
+  async delete(key: string): Promise<void> {
+    this.store.delete(key);
   }
 }

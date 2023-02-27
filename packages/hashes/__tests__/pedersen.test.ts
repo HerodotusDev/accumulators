@@ -1,9 +1,10 @@
-const { pedersen } = require("../lib");
+const { StarkPedersenHasher } = require("../lib");
 
 describe("Simple Pedersen Hash", () => {
-  it("should check if 1 == 1", () => {
+  it("Should compute a hash", () => {
+    const hasher = new StarkPedersenHasher();
     const a = "10";
     const b = "20";
-    pedersen(a, b);
+    hasher.hash([a, b]);
   });
 });
