@@ -1,1 +1,3 @@
-export * from "./IKeyValueStore";
+export * from "./store";
+export * from "./hasher";
+export * from "./accumulator";
