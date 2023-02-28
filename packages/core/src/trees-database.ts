@@ -3,7 +3,7 @@ import { IStore, TREE_METADATA_KEYS } from "./types";
 export class TreesDatabase {
   constructor(protected readonly store: IStore) {}
 
-  // LEAFS METHODS
+  //? LEAFS METHODS
 
   protected async incrementLeavesCount(): Promise<number> {
     const leafCount = await this.getLeavesCount();
@@ -22,7 +22,7 @@ export class TreesDatabase {
     await this.store.set(TREE_METADATA_KEYS.LEAF_COUNT, count.toString());
   }
 
-  // ELEMENTS METHODS
+  //? ELEMENTS METHODS
 
   protected async incrementElementsCount(): Promise<number> {
     const elementsCount = await this.getElementsCount();
@@ -41,7 +41,7 @@ export class TreesDatabase {
     await this.store.set(TREE_METADATA_KEYS.ELEMENTS_COUNT, count.toString());
   }
 
-  // ROOT HASH METHODS
+  //? ROOT HASH METHODS
 
   protected async getRootHash(): Promise<string> {
     return await this.store.get(TREE_METADATA_KEYS.ROOT_HASH);

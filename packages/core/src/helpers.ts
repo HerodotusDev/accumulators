@@ -86,7 +86,7 @@ export const getHeight = (num: number): number => {
 
 // Get the offset to the next sibling from `height`
 export const siblingOffset = (height: number): number => {
-  return (2 << height) - 1;
+  return parentOffset(height) - 1;
 };
 
 // Get the offset to the next parent from `height`

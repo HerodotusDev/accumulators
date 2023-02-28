@@ -1,15 +1,12 @@
 {
-  "name": "root",
+  "name": "merkle-mountain-range",
   "private": true,
   "workspaces": [
     "packages/*"
   ],
   "devDependencies": {
-    "@types/node": "^18.14.1",
+    "@types/node": "^18.14.2",
     "lerna": "^6.5.1",
     "typescript": "^4.9.5"
-  },
-  "scripts": {
-    "test": "lerna run test; cd packages/integration; yarn start; cd ../.."
   }
 }
