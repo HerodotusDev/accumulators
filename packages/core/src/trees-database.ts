@@ -27,6 +27,11 @@ export class InStoreTable {
     return this.store.get(this.key + suffix);
   }
 
+  async getMany(suffixes: (string | number)[]): Promise<Map<string, string>> {
+    const keys = suffixes.map((suffix) => this.key + suffix.toString());
+    return this.store.getMany(keys);
+  }
+
   async set(value: string, suffix?: string | number): Promise<void> {
     suffix = suffix?.toString() || "";
     return this.store.set(this.key + suffix, value);

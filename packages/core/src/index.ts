@@ -26,8 +26,9 @@ export class CoreMMR extends TreesDatabase {
       const left = lastElementIdx - parentOffset(height);
       const right = left + siblingOffset(height);
 
-      const leftHash = await this.hashes.get(left);
-      const rightHash = await this.hashes.get(right);
+      const hashes = await this.hashes.getMany([left, right]);
+      const leftHash = hashes.get(left.toString());
+      const rightHash = hashes.get(right.toString());
 
       const parentHash = this.hasher.hash([lastElementIdx.toString(), this.hasher.hash([leftHash, rightHash])]);
       await this.hashes.set(parentHash, lastElementIdx);
@@ -56,6 +57,10 @@ export class CoreMMR extends TreesDatabase {
     const peaksIdxs = findPeaks(lastElementId);
     const peaksHashes = await this.retrievePeaksHashes(peaksIdxs);
 
+    console.log(`lastElementId: ${lastElementId}`);
+    console.log(`peaksIdxs: ${peaksIdxs}`);
+    console.log(`peaksHashes: ${peaksHashes}`);
+
     if (peaksIdxs.length === 1) {
       return this.hasher.hash([lastElementId.toString(), peaksHashes[0]]);
     }
@@ -70,8 +75,13 @@ export class CoreMMR extends TreesDatabase {
   }
 
   async retrievePeaksHashes(peaksIdxs?: number[]): Promise<string[]> {
-    const peaksHashesPromises = peaksIdxs.map(this.hashes.get);
-    return Promise.all(peaksHashesPromises);
+    const peakHashes: string[] = [];
+    const hashes = await this.hashes.getMany(peaksIdxs);
+    for (const peakId of peaksIdxs) {
+      const hash = hashes.get(peakId.toString());
+      if (hash) peakHashes.push(hash);
+    }
+    return peakHashes;
   }
 }
 
