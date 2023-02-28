@@ -2,9 +2,13 @@
   "name": "merkle-mountain-range",
   "private": true,
   "scripts": {
-    "build": "lerna run build",
     "postinstall": "yarn build",
+    "build": "lerna run build",
     "test": "jest",
+    "test:core": "yarn test packages/core",
+    "test:hashes": "yarn test packages/hashes",
+    "test:memory": "yarn test packages/memory",
+    "test:rocksdb": "yarn test packages/rocksdb",
     "integration:start": "yarn --cwd ./integration start",
     "integration:dev": "yarn --cwd ./integration dev"
   },
