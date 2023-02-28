@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  deploy:
+    depends_on:
+      devnet:
+        condition: service_healthy
+    networks:
+      - testing
+    build:
+      dockerfile: Dockerfile
+    restart: always
+    env_file:
+      - .env
+
+  devnet:
+    networks:
+      - testing
+    image: "shardlabs/starknet-devnet"
+    restart: always
+    env_file:
+      - .env
+    ports:
+      - $DEVNET_PORT:$DEVNET_PORT
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://127.0.0.1:$DEVNET_PORT/is_alive || exit 1
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+
+networks:
+  testing:
