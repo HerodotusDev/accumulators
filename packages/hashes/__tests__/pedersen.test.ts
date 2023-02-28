@@ -1,4 +1,4 @@
-const { StarkPedersenHasher } = require("../lib");
+import { StarkPedersenHasher } from "../src";
 
 describe("Simple Pedersen Hash", () => {
   it("Should compute a hash", () => {

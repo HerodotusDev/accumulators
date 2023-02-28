@@ -3,15 +3,17 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "dev": "nodemon --exec ts-node src/index.ts"
+  },
   "dependencies": {
     "@merkle-mountain-range/core": "^0.0.0",
     "@merkle-mountain-range/hashes": "^0.0.0",
     "@merkle-mountain-range/memory": "^0.0.0"
   },
   "devDependencies": {
-    "ts-node": "^10.9.1"
-  },
-  "scripts": {
-    "start": "ts-node src/index.ts"
+    "ts-node": "^10.9.1",
+    "nodemon": "^2.0.20"
   }
 }

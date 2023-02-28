@@ -15,12 +15,6 @@
     "lib"
   ],
   "scripts": {
-    "test": "jest",
     "build": "tsc"
-  },
-  "devDependencies": {
-    "@types/jest": "^29.4.0",
-    "jest": "^29.4.3",
-    "ts-jest": "^29.0.5"
   }
 }

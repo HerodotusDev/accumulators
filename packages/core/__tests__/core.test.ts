@@ -1,4 +1,4 @@
-import { CoreMMR } from "../src/";
+import { CoreMMR } from "../src";
 
 describe("core", () => {
   const database = {};
