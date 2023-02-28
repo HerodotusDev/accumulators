@@ -1,27 +1,23 @@
 import { AppendResult, IHasher, IStore } from "./types";
-import { v4 as uuid } from "uuid";
 import { findPeaks, getHeight, parentOffset, siblingOffset } from "./helpers";
 import { TreesDatabase } from "./trees-database";
 
 export class CoreMMR extends TreesDatabase {
-  private mmrUuid: string;
-
   constructor(store: IStore, private readonly hasher: IHasher, mmrUuid?: string) {
-    super(store);
-    mmrUuid ? (this.mmrUuid = mmrUuid) : (this.mmrUuid = uuid());
+    super(store, mmrUuid);
   }
 
   async append(value: string): Promise<AppendResult> {
     if (!this.hasher.isElementSizeValid(value)) throw new Error("Element size is invalid");
 
-    let lastElementIdx = await this.incrementElementsCount();
+    let lastElementIdx = await this.elementsCount.increment();
     const leafIdx = lastElementIdx;
 
     //? hash that will be stored in the database
     const hash = this.hasher.hash([lastElementIdx.toString(), value]);
 
     //? Store the hash in the database
-    await this.store.set(`${this.mmrUuid}:hashes:${lastElementIdx}`, hash);
+    await this.hashes.set(hash, lastElementIdx);
 
     let height = 0;
     while (getHeight(lastElementIdx + 1) > height) {
@@ -30,22 +26,22 @@ export class CoreMMR extends TreesDatabase {
       const left = lastElementIdx - parentOffset(height);
       const right = left + siblingOffset(height);
 
-      const leftHash = await this.store.get(`${this.mmrUuid}:hashes:${left}`);
-      const rightHash = await this.store.get(`${this.mmrUuid}:hashes:${right}`);
+      const leftHash = await this.hashes.get(left);
+      const rightHash = await this.hashes.get(right);
 
       const parentHash = this.hasher.hash([lastElementIdx.toString(), this.hasher.hash([leftHash, rightHash])]);
-      await this.store.set(`${this.mmrUuid}:hashes:${lastElementIdx}`, parentHash);
+      await this.hashes.set(parentHash, lastElementIdx);
       height++;
     }
 
     //? Update latest value.
-    await this.setElementsCount(lastElementIdx);
+    await this.elementsCount.set(lastElementIdx);
 
     //? Compute the new root hash
     const rootHash = await this.bagThePeaks();
-    await this.setRootHash(rootHash);
+    await this.rootHash.set(rootHash);
 
-    const leaves = await this.incrementLeavesCount();
+    const leaves = await this.leavesCount.increment();
     //? Returns the new total number of leaves.
     return {
       leavesCount: leaves,
@@ -56,7 +52,7 @@ export class CoreMMR extends TreesDatabase {
   }
 
   async bagThePeaks(): Promise<string> {
-    const lastElementId = await this.getElementsCount();
+    const lastElementId = await this.elementsCount.increment();
     const peaksIdxs = findPeaks(lastElementId);
     const peaksHashes = await this.retrievePeaksHashes(peaksIdxs);
 
@@ -74,7 +70,7 @@ export class CoreMMR extends TreesDatabase {
   }
 
   async retrievePeaksHashes(peaksIdxs?: number[]): Promise<string[]> {
-    const peaksHashesPromises = peaksIdxs.map((p) => this.store.get(`${this.mmrUuid}:hashes:${p}`));
+    const peaksHashesPromises = peaksIdxs.map(this.hashes.get);
     return Promise.all(peaksHashesPromises);
   }
 }

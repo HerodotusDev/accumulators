@@ -1,53 +1,55 @@
 import { IStore, TREE_METADATA_KEYS } from "./types";
+import { v4 as uuid } from "uuid";
 
 export class TreesDatabase {
-  constructor(protected readonly store: IStore) {}
+  private mmrUuid: string;
 
-  //? LEAFS METHODS
+  protected readonly leavesCount: InStoreCounter;
+  protected readonly elementsCount: InStoreCounter;
 
-  protected async incrementLeavesCount(): Promise<number> {
-    const leafCount = await this.getLeavesCount();
-    const newLeafCount = leafCount + 1;
-    await this.store.set(TREE_METADATA_KEYS.LEAF_COUNT, newLeafCount.toString());
-    return newLeafCount;
+  protected readonly hashes: InStoreTable;
+  protected readonly rootHash: InStoreTable;
+
+  constructor(private readonly store: IStore, mmrUuid?: string) {
+    mmrUuid ? (this.mmrUuid = mmrUuid) : (this.mmrUuid = uuid());
+    this.leavesCount = new InStoreCounter(this.store, `${this.mmrUuid}:${TREE_METADATA_KEYS.LEAF_COUNT}`);
+    this.elementsCount = new InStoreCounter(this.store, `${this.mmrUuid}:${TREE_METADATA_KEYS.ELEMENT_COUNT}`);
+    this.rootHash = new InStoreTable(this.store, `${this.mmrUuid}:${TREE_METADATA_KEYS.ROOT_HASH}`);
+    this.hashes = new InStoreTable(this.store, `${this.mmrUuid}:hashes:`);
+  }
+}
+
+export class InStoreTable {
+  constructor(private readonly store: IStore, private readonly key: string) {}
+
+  async get(suffix?: string | number): Promise<string> {
+    suffix = suffix?.toString() || "";
+    return this.store.get(this.key + suffix);
   }
 
-  protected async getLeavesCount(): Promise<number> {
-    const leafCount = await this.store.get(TREE_METADATA_KEYS.LEAF_COUNT);
-    return leafCount ? parseInt(leafCount) : 0;
+  async set(value: string, suffix?: string | number): Promise<void> {
+    suffix = suffix?.toString() || "";
+    return this.store.set(this.key + suffix, value);
+  }
+}
+
+export class InStoreCounter {
+  constructor(private readonly store: IStore, private readonly key: string) {}
+
+  async get(): Promise<number> {
+    const count = await this.store.get(this.key);
+    return count ? parseInt(count) : 0;
   }
 
-  protected async setLeavesCount(count: number): Promise<void> {
-    if (isNaN(count)) throw new Error("Leaf count is not a number");
-    await this.store.set(TREE_METADATA_KEYS.LEAF_COUNT, count.toString());
+  async set(count: number): Promise<void> {
+    if (isNaN(count)) throw new Error("Count is not a number");
+    await this.store.set(this.key, count.toString());
   }
 
-  //? ELEMENTS METHODS
-
-  protected async incrementElementsCount(): Promise<number> {
-    const elementsCount = await this.getElementsCount();
-    const newElementsCount = elementsCount + 1;
-    await this.store.set(TREE_METADATA_KEYS.ELEMENTS_COUNT, newElementsCount.toString());
-    return newElementsCount;
-  }
-
-  protected async getElementsCount(): Promise<number> {
-    const elementsCount = await this.store.get(TREE_METADATA_KEYS.ELEMENTS_COUNT);
-    return elementsCount ? parseInt(elementsCount) : 0;
-  }
-
-  protected async setElementsCount(count: number): Promise<void> {
-    if (isNaN(count)) throw new Error("Elements count is not a number");
-    await this.store.set(TREE_METADATA_KEYS.ELEMENTS_COUNT, count.toString());
-  }
-
-  //? ROOT HASH METHODS
-
-  protected async getRootHash(): Promise<string> {
-    return await this.store.get(TREE_METADATA_KEYS.ROOT_HASH);
-  }
-
-  protected async setRootHash(rootHash: string): Promise<void> {
-    await this.store.set(TREE_METADATA_KEYS.ROOT_HASH, rootHash);
+  async increment(): Promise<number> {
+    const count = await this.get();
+    const newCount = count + 1;
+    await this.set(newCount);
+    return newCount;
   }
 }
