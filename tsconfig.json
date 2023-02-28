@@ -8,9 +8,10 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "skipLibCheck": true,
-    "target": "es6",
+    "target": "ESNext",
     "sourceMap": true,
-    "lib": ["es6"]
+    "lib": ["ESNext"],
+    "outDir": "./tests"
   },
   "exclude": ["node_modules", "**/*.spec.ts"]
 }

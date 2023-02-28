@@ -22,10 +22,10 @@
   },
   "scripts": {
     "test": "jest",
-    "tsc": "tsc",
+    "build": "tsc",
     "import:wasm": "cp -R src/pedersen lib",
-    "postinstall": "npm run import:wasm",
-    "posttsc": "npm run import:wasm"
+    "postinstall": "yarn import:wasm",
+    "postbuild": "yarn import:wasm"
   },
   "devDependencies": {
     "@types/jest": "^29.4.0",
