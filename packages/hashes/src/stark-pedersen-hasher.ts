@@ -8,6 +8,9 @@ export class StarkPedersenHasher extends IHasher {
 
   hash(data: string[]): string {
     if (data.length !== 2) throw new Error("Stark Pedersen Hasher only accepts two elements");
+    if (data.some((e) => e === undefined)) {
+      throw new Error(`Stark Pedersen Hasher does not accept undefined elements. Got ${JSON.stringify(data)}`);
+    }
     return pedersen(data[0], data[1]);
   }
 }
