@@ -1,10 +1,25 @@
 {
   "name": "@merkle-mountain-range/core",
   "version": "0.0.0",
-  "description": "> TODO: description",
-  "author": "Marcello Bardus <marcellobardus8@gmail.com>",
-  "homepage": "",
-  "license": "ISC",
+  "description": "A TypeScript implementation of Merkle Mountain Ranges",
+  "keywords": [
+    "merkle mountain range",
+    "merkle mountain ranges",
+    "merkle tree",
+    "merkle trees",
+    "mmrs",
+    "mmr"
+  ],
+  "homepage": "https://github.com/HerodotusDev/merkle-mountain-range",
+  "bugs": {
+    "url": "https://github.com/HerodotusDev/merkle-mountain-range/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HerodotusDev/merkle-mountain-range.git"
+  },
+  "license": "GPL-3.0-or-later",
+  "author": "Herodotus Dev Ltd",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "directories": {
