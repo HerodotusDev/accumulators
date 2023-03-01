@@ -1,5 +1,5 @@
 import { AppendResult, IHasher, IStore } from "./types";
-import { findPeaks, getHeight, parentOffset, siblingOffset } from "./helpers";
+import { findPeaks, getHeight } from "./helpers";
 import { TreesDatabase } from "./trees-database";
 
 export class CoreMMR extends TreesDatabase {
@@ -10,6 +10,8 @@ export class CoreMMR extends TreesDatabase {
   async append(value: string): Promise<AppendResult> {
     if (!this.hasher.isElementSizeValid(value)) throw new Error("Element size is invalid");
 
+    const peaks = await this.retrievePeaksHashes(findPeaks(await this.elementsCount.get()));
+
     let lastElementIdx = await this.elementsCount.increment();
     const leafIdx = lastElementIdx;
 
@@ -19,16 +21,14 @@ export class CoreMMR extends TreesDatabase {
     //? Store the hash in the database
     await this.hashes.set(hash, lastElementIdx);
 
+    peaks.push(hash);
+
     let height = 0;
     while (getHeight(lastElementIdx + 1) > height) {
       lastElementIdx++;
 
-      const left = lastElementIdx - parentOffset(height);
-      const right = left + siblingOffset(height);
-
-      const hashes = await this.hashes.getMany([left, right]);
-      const leftHash = hashes.get(left.toString());
-      const rightHash = hashes.get(right.toString());
+      const rightHash = peaks.pop();
+      const leftHash = peaks.pop();
 
       const parentHash = this.hasher.hash([lastElementIdx.toString(), this.hasher.hash([leftHash, rightHash])]);
       await this.hashes.set(parentHash, lastElementIdx);
@@ -53,7 +53,7 @@ export class CoreMMR extends TreesDatabase {
   }
 
   async bagThePeaks(): Promise<string> {
-    const lastElementId = await this.elementsCount.increment();
+    const lastElementId = await this.elementsCount.get();
     const peaksIdxs = findPeaks(lastElementId);
     const peaksHashes = await this.retrievePeaksHashes(peaksIdxs);
 
@@ -77,8 +77,15 @@ export class CoreMMR extends TreesDatabase {
   async retrievePeaksHashes(peaksIdxs?: number[]): Promise<string[]> {
     const peakHashes: string[] = [];
     const hashes = await this.hashes.getMany(peaksIdxs);
+
+    // TODO hacky solution to be replaced
+    const hashesFixed = new Map();
+    hashes.forEach((value, key) => {
+      let newKey = key.split(":")[2];
+      hashesFixed.set(newKey, value);
+    });
     for (const peakId of peaksIdxs) {
-      const hash = hashes.get(peakId.toString());
+      const hash = hashesFixed.get(peakId.toString());
       if (hash) peakHashes.push(hash);
     }
     return peakHashes;
