@@ -1,5 +1,6 @@
 {
   "name": "rocksdb-example",
+  "private": true,
   "version": "1.0.0",
   "scripts": {
     "start": "ts-node index.ts",
@@ -12,6 +13,6 @@
   },
   "devDependencies": {
     "ts-node": "^10.9.1",
-    "nodemon": "^2.0.20"
+    "nodemon": "^2.0.21"
   }
 }

@@ -36,6 +36,6 @@
   },
   "dependencies": {
     "@mmr/core": "^0.0.0",
-    "@types/node": "^18.14.2"
+    "@types/node": "^18.14.4"
   }
 }
