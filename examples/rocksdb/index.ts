@@ -3,7 +3,7 @@ import { MMRRocksDBStore } from "@merkle-mountain-range/rocksdb";
 import { StarkPedersenHasher } from "@merkle-mountain-range/hashes";
 
 async function main() {
-  const rocksdbStore = new MMRRocksDBStore("./rocksdb");
+  const rocksdbStore = new MMRRocksDBStore("./rocksdb_data");
   await rocksdbStore.init(true);
   const mmr = new CoreMMR(rocksdbStore, new StarkPedersenHasher());
   await mmr.append("1");
