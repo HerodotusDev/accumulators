@@ -1,9 +1,9 @@
 {
-  "name": "example",
+  "name": "memory-example",
   "version": "1.0.0",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "nodemon --exec ts-node src/index.ts"
+    "start": "ts-node index.ts",
+    "dev": "nodemon --exec ts-node index.ts"
   },
   "dependencies": {
     "@merkle-mountain-range/core": "^0.0.0",

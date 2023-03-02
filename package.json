@@ -29,16 +29,18 @@
     "test:hashes": "yarn test packages/hashes",
     "test:memory": "yarn test packages/memory",
     "test:rocksdb": "yarn test packages/rocksdb",
-    "example:start": "yarn --cwd ./example start",
-    "example:dev": "yarn --cwd ./example dev"
+    "e:memory:start": "yarn --cwd ./examples/memory start",
+    "e:memory:dev": "yarn --cwd ./examples/memory dev",
+    "e:rocksdb:start": "yarn --cwd ./examples/rocksdb start",
+    "e:rocksdb:dev": "yarn --cwd ./examples/rocksdb dev"
   },
   "workspaces": [
     "packages/*",
-    "example"
+    "examples/*"
   ],
   "devDependencies": {
     "@types/jest": "^29.4.0",
-    "@types/node": "^18.14.2",
+    "@types/node": "^18.14.4",
     "jest": "^29.4.3",
     "lerna": "^6.5.1",
     "ts-jest": "^29.0.5",

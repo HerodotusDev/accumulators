@@ -1,0 +1,17 @@
+{
+  "name": "rocksdb-example",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "dev": "nodemon --exec ts-node index.ts"
+  },
+  "dependencies": {
+    "@merkle-mountain-range/core": "^0.0.0",
+    "@merkle-mountain-range/hashes": "^0.0.0",
+    "@merkle-mountain-range/rocksdb": "^0.0.0"
+  },
+  "devDependencies": {
+    "ts-node": "^10.9.1",
+    "nodemon": "^2.0.20"
+  }
+}

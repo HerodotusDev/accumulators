@@ -33,6 +33,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@merkle-mountain-range/core": "^0.0.0"
+    "@merkle-mountain-range/core": "^0.0.0",
+    "level-rocksdb": "^5.0.0"
   }
 }
