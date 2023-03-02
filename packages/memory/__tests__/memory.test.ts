@@ -21,9 +21,9 @@ describe("precomputation", () => {
     await mmr.append("5");
     await mmr.append("6");
 
-    expect(await mmr.bagThePeaks()).toEqual(rootAt6Leaves);
+    await expect(mmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
     const proof = await mmr.getProof(8);
-    expect(await mmr.verifyProof(8, "5", proof)).toEqual(true);
+    await expect(mmr.verifyProof(8, "5", proof)).resolves.toEqual(true);
   });
 
   it("should precompute from parent tree", async () => {
@@ -33,8 +33,10 @@ describe("precomputation", () => {
     await precomputationMmr.append("5");
     await precomputationMmr.append("6");
 
-    expect(await precomputationMmr.bagThePeaks()).toEqual(rootAt6Leaves);
+    await expect(precomputationMmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
     const proof = await precomputationMmr.getProof(8);
-    expect(await precomputationMmr.verifyProof(8, "5", proof)).toEqual(true);
+    await expect(precomputationMmr.verifyProof(8, "5", proof)).resolves.toEqual(true);
+
+    await precomputationMmr.close();
   });
 });

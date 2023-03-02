@@ -20,9 +20,9 @@ export class TreesDatabase {
 }
 
 export class InStoreTable {
-  constructor(protected readonly store: IStore, protected readonly key: string) {}
+  constructor(protected readonly store: IStore, public readonly key: string) {}
 
-  protected getFullKey(suffix: string | number): string {
+  getFullKey(suffix: string | number): string {
     return this.key + (suffix ?? "").toString() || "";
   }
 
@@ -43,7 +43,7 @@ export class InStoreTable {
 }
 
 export class InStoreCounter {
-  constructor(private readonly store: IStore, private readonly key: string) {}
+  constructor(private readonly store: IStore, public readonly key: string) {}
 
   async get(): Promise<number> {
     const count = await this.store.get(this.key);

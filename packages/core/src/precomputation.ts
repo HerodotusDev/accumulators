@@ -40,6 +40,10 @@ export class PrecomputationMMR extends CoreMMR {
 
     return precomputationMMR;
   }
+
+  async close(): Promise<void> {
+    await this.clear();
+  }
 }
 
 export class PrecomputeInStoreTable extends InStoreTable {
@@ -47,7 +51,7 @@ export class PrecomputeInStoreTable extends InStoreTable {
     super(store, key);
   }
 
-  protected getFullKey(idx?: number): string {
+  getFullKey(idx?: number): string {
     return idx > this.parentEndIdx
       ? this.key + (idx ?? "").toString() || ""
       : this.parentKey + (idx ?? "").toString() || "";

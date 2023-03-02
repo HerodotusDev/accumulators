@@ -114,4 +114,12 @@ export default class CoreMMR extends TreesDatabase {
     const hashes = await this.hashes.getMany(peaksIdxs);
     return [...hashes.values()];
   }
+
+  async clear() {
+    const toDelete = [this.elementsCount.key, this.rootHash.key, this.leavesCount.key];
+    const elementsCount = await this.elementsCount.get();
+    return this.store.deleteMany(
+      toDelete.concat(new Array(elementsCount).fill(0).map((_, i) => this.hashes.getFullKey(i + 1)))
+    );
+  }
 }

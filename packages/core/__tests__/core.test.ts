@@ -1,6 +1,6 @@
 import CoreMMR from "../src";
 import { StarkPedersenHasher } from "@merkle-mountain-range/hashes";
-import { MMRInMemoryStore } from "@merkle-mountain-range/memory";
+import MMRInMemoryStore from "@merkle-mountain-range/memory";
 
 const store = new MMRInMemoryStore();
 const hasher = new StarkPedersenHasher();
@@ -18,8 +18,8 @@ describe("precomputation", () => {
     await mmr.append("5");
     await mmr.append("6");
 
-    expect(await mmr.bagThePeaks()).toEqual(rootAt6Leaves);
+    await expect(mmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
     const proof = await mmr.getProof(8);
-    expect(await mmr.verifyProof(8, "5", proof)).toEqual(true);
+    await expect(mmr.verifyProof(8, "5", proof)).resolves.toEqual(true);
   });
 });
