@@ -1,5 +1,5 @@
 import { AppendResult, IHasher, IStore } from "./types";
-import { findPeaks, getHeight } from "./helpers";
+import { findPeaks, getHeight, parentOffset } from "./helpers";
 import { TreesDatabase } from "./trees-database";
 
 export class CoreMMR extends TreesDatabase {
@@ -50,6 +50,20 @@ export class CoreMMR extends TreesDatabase {
       rootHash,
       lastPos: lastElementIdx, //? Tree size
     };
+  }
+
+  async getProof(index: number): Promise<string[]> {
+    const proof = [];
+    const peaks = findPeaks(await this.elementsCount.get());
+
+    while (!peaks.includes(index)) {
+      // If not peak, must have parent
+      const isRight = getHeight(index + 1) == getHeight(index) + 1;
+      index = isRight ? index + 1 : index + parentOffset(getHeight(index));
+      proof.push(await this.hashes.get(index));
+    }
+
+    return proof;
   }
 
   async bagThePeaks(): Promise<string> {
