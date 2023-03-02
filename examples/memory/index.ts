@@ -5,10 +5,9 @@ import { StarkPedersenHasher } from "@merkle-mountain-range/hashes";
 async function main() {
   const mmr = new CoreMMR(new MMRInMemoryStore(), new StarkPedersenHasher());
 
-  
   await mmr.append("1");
   //assert root = 1096725095163354219926720901079039062801431726264604829411571423717521670390
-  
+
   await mmr.append("2");
   // assert root = 2934711332003820134178390936707122077693345005998397955188424773991149469919
 
@@ -50,11 +49,11 @@ async function main() {
   // 2372217121403976151604071022404115607927308803624051358707607656374683351595
   // ]
   const proof4 = await mmr.getProof(5);
-  await mmr.verifyProof(5, "5", proof4);
+  console.log("Proof 5:", proof4, "is valid", await mmr.verifyProof(5, "5", proof4));
 
   // assert proof = []
   const proof5 = await mmr.getProof(8);
-  await mmr.verifyProof(8, "8", proof5);
+  console.log("Proof 8:", proof5, "is valid", await mmr.verifyProof(8, "8", proof5));
 }
 
 main();

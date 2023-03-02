@@ -44,7 +44,7 @@ export class MMRRocksDBStore implements IStore {
 
   async get(key: string): Promise<string | undefined> {
     if (!this.db.isOperational()) throw new Error("Database not operational");
-    const result = await this.db.get(key);
+    const result = await this.db.get(key).catch(() => null);
     if (result === null) return undefined;
     return result;
   }
