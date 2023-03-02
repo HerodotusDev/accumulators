@@ -8,18 +8,17 @@ export class PrecomputationMMR extends CoreMMR {
 
     parentMmrUuid: string,
     elementsCount: number,
-    leavesCount: number,
-    rootHash: string,
 
     mmrUuid?: string
   ) {
     super(store, hasher, mmrUuid);
 
-    this.elementsCount.set(elementsCount);
-    this.leavesCount.set(leavesCount);
-    this.rootHash.set(rootHash);
-
-    this.hashes = new PrecomputeInStoreTable(store, `${mmrUuid}:hashes:`, `${parentMmrUuid}:hashes:`, elementsCount);
+    this.hashes = new PrecomputeInStoreTable(
+      store,
+      `${this.mmrUuid}:hashes:`,
+      `${parentMmrUuid}:hashes:`,
+      elementsCount
+    );
   }
 
   static async initialize(
@@ -33,7 +32,13 @@ export class PrecomputationMMR extends CoreMMR {
     const leavesCount = await parentMmr.leavesCount.get();
     const rootHash = await parentMmr.rootHash.get();
 
-    return this.constructor(store, hasher, parentMmrUuid, elementsCount, leavesCount, rootHash, mmrUuid);
+    const precomputationMMR = new PrecomputationMMR(store, hasher, parentMmrUuid, elementsCount, mmrUuid);
+
+    await precomputationMMR.elementsCount.set(elementsCount);
+    await precomputationMMR.leavesCount.set(leavesCount);
+    await precomputationMMR.rootHash.set(rootHash);
+
+    return precomputationMMR;
   }
 }
 
@@ -42,8 +47,9 @@ export class PrecomputeInStoreTable extends InStoreTable {
     super(store, key);
   }
 
-  protected getFullKey(idx: number): string {
-    if (idx >= this.parentEndIdx) return this.key + idx?.toString() || "";
-    else return this.parentKey + idx?.toString() || "";
+  protected getFullKey(idx?: number): string {
+    return idx > this.parentEndIdx
+      ? this.key + (idx ?? "").toString() || ""
+      : this.parentKey + (idx ?? "").toString() || "";
   }
 }

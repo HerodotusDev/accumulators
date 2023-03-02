@@ -23,7 +23,7 @@ export class InStoreTable {
   constructor(protected readonly store: IStore, protected readonly key: string) {}
 
   protected getFullKey(suffix: string | number): string {
-    return this.key + suffix?.toString() || "";
+    return this.key + (suffix ?? "").toString() || "";
   }
 
   async get(suffix?: string | number): Promise<string> {
@@ -33,7 +33,7 @@ export class InStoreTable {
   async getMany(suffixes: (string | number)[]): Promise<Map<string, string>> {
     const keys = suffixes.map((suffix) => this.getFullKey(suffix));
     const keyless = new Map();
-    (await this.store.getMany(keys)).forEach((value, key) => keyless.set(key.replace(this.key, ""), value));
+    (await this.store.getMany(keys)).forEach((value, key) => keyless.set(key.split(":").slice(2).join(":"), value));
     return keyless;
   }
 

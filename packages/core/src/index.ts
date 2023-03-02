@@ -10,7 +10,8 @@ export class CoreMMR extends TreesDatabase {
   async append(value: string): Promise<AppendResult> {
     if (!this.hasher.isElementSizeValid(value)) throw new Error("Element size is invalid");
 
-    const peaks = await this.retrievePeaksHashes(findPeaks(await this.elementsCount.get()));
+    const elementsCount = await this.elementsCount.get();
+    const peaks = await this.retrievePeaksHashes(findPeaks(elementsCount));
 
     let lastElementIdx = await this.elementsCount.increment();
     const leafIdx = lastElementIdx;
@@ -110,15 +111,10 @@ export class CoreMMR extends TreesDatabase {
   }
 
   async retrievePeaksHashes(peaksIdxs?: number[]): Promise<string[]> {
-    const peakHashes: string[] = [];
     const hashes = await this.hashes.getMany(peaksIdxs);
-
-    for (const peakId of peaksIdxs) {
-      const hash = hashes.get(peakId.toString());
-      if (hash) peakHashes.push(hash);
-    }
-    return peakHashes;
+    return [...hashes.values()];
   }
 }
 
 export { IHasher, IStore } from "./types";
+export { PrecomputationMMR } from "./precomputation";
