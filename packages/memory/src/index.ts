@@ -1,6 +1,6 @@
 import { IStore } from "@merkle-mountain-range/core";
 
-export class MMRInMemoryStore implements IStore {
+export default class MMRInMemoryStore implements IStore {
   private store: Map<string, string>;
 
   constructor() {

@@ -1,6 +1,6 @@
 import CoreMMR, { PrecomputationMMR } from "@merkle-mountain-range/core";
 import { StarkPedersenHasher } from "@merkle-mountain-range/hashes";
-import { MMRRocksDBStore } from "../src";
+import MMRRocksDBStore from "../src";
 
 const store = new MMRRocksDBStore("./rocksdb_data");
 const hasher = new StarkPedersenHasher();

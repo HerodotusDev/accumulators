@@ -1,32 +1,8 @@
 import { IStore, TREE_METADATA_KEYS } from "@merkle-mountain-range/core";
 import * as RocksDB from "level-rocksdb";
+import { RocksDBType } from "./types";
 
-type RocksOperationType = "put" | "del";
-type RocksGetResult = string | null;
-
-interface RocksDBType {
-  new (location: string, options?: { createIfMissing: boolean }): RocksDBType;
-
-  isOpen(): boolean;
-
-  isOperational(): boolean;
-
-  open(options?: { createIfMissing: boolean }): Promise<void>;
-
-  close(): Promise<void>;
-
-  get(key: string): Promise<RocksGetResult>;
-
-  getMany(keys: string[]): Promise<Array<RocksGetResult>>;
-
-  put(key: string, value: string): Promise<void>;
-
-  del(key: string): Promise<void>;
-
-  batch(ops: Array<{ type: RocksOperationType; key: string; value?: string }>): Promise<void>;
-}
-
-export class MMRRocksDBStore implements IStore {
+export default class MMRRocksDBStore implements IStore {
   private db: RocksDBType;
 
   constructor(location: string) {
@@ -86,3 +62,5 @@ export class MMRRocksDBStore implements IStore {
     await this.db.batch(ops);
   }
 }
+
+export * from "./types";
