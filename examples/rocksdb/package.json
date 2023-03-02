@@ -1,18 +1,18 @@
 {
   "name": "rocksdb-example",
   "private": true,
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
     "start": "ts-node index.ts",
     "dev": "nodemon --exec ts-node index.ts"
   },
   "dependencies": {
-    "@herodotus_dev/mmr-core": "^1.1.0-alpha.0",
-    "@herodotus_dev/mmr-hashes": "^1.1.0-alpha.0",
-    "@herodotus_dev/mmr-rocksdb": "^1.1.0-alpha.0"
+    "@herodotus_dev/mmr-core": "^1.1.0",
+    "@herodotus_dev/mmr-hashes": "^1.1.0",
+    "@herodotus_dev/mmr-rocksdb": "^1.1.0"
   },
   "devDependencies": {
-    "ts-node": "^10.9.1",
-    "nodemon": "^2.0.21"
+    "nodemon": "^2.0.21",
+    "ts-node": "^10.9.1"
   }
 }
