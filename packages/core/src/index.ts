@@ -55,7 +55,7 @@ export class CoreMMR extends TreesDatabase {
   }
 
   async getProof(index: number): Promise<string[]> {
-    if (index < 0) throw new Error("Index must be greater than 0");
+    if (index < 1) throw new Error("Index must be greater than 1");
     if (index > (await this.elementsCount.get())) throw new Error("Index must be less than the tree size");
 
     const proof = [];
@@ -71,6 +71,21 @@ export class CoreMMR extends TreesDatabase {
     }
 
     return proof;
+  }
+
+  async verifyProof(index: number, value: string, proof: string[]) {
+    if (index < 1) throw new Error("Index must be greater than 1");
+    if (index > (await this.elementsCount.get())) throw new Error("Index must be less than the tree size");
+
+    let hash = this.hasher.hash([index.toString(), value]);
+
+    for (const proofHash of proof) {
+      const isRight = getHeight(index + 1) == getHeight(index) + 1;
+      index = isRight ? index + 1 : index + parentOffset(getHeight(index));
+      hash = this.hasher.hash([index.toString(), isRight ? this.hasher.hash([proofHash, hash]) : this.hasher.hash([hash, proofHash])]);
+    }
+
+    return (await this.retrievePeaksHashes(findPeaks(await this.elementsCount.get()))).includes(hash);
   }
 
   async bagThePeaks(): Promise<string> {
