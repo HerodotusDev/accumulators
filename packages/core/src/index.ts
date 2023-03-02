@@ -10,6 +10,8 @@ export class CoreMMR extends TreesDatabase {
   async append(value: string): Promise<AppendResult> {
     if (!this.hasher.isElementSizeValid(value)) throw new Error("Element size is invalid");
 
+    const peaks = await this.retrievePeaksHashes(findPeaks(await this.elementsCount.get()));
+
     let lastElementIdx = await this.elementsCount.increment();
     const leafIdx = lastElementIdx;
 
@@ -19,19 +21,19 @@ export class CoreMMR extends TreesDatabase {
     //? Store the hash in the database
     await this.hashes.set(hash, lastElementIdx);
 
+    peaks.push(hash);
+
     let height = 0;
     while (getHeight(lastElementIdx + 1) > height) {
       lastElementIdx++;
 
-      const left = lastElementIdx - parentOffset(height);
-      const right = left + siblingOffset(height);
-
-      const hashes = await this.hashes.getMany([left, right]);
-      const leftHash = hashes.get(left.toString());
-      const rightHash = hashes.get(right.toString());
+      const rightHash = peaks.pop();
+      const leftHash = peaks.pop();
 
       const parentHash = this.hasher.hash([lastElementIdx.toString(), this.hasher.hash([leftHash, rightHash])]);
       await this.hashes.set(parentHash, lastElementIdx);
+      peaks.push(parentHash);
+
       height++;
     }
 
@@ -52,14 +54,47 @@ export class CoreMMR extends TreesDatabase {
     };
   }
 
+  async getProof(index: number): Promise<string[]> {
+    if (index < 1) throw new Error("Index must be greater than 1");
+    if (index > (await this.elementsCount.get())) throw new Error("Index must be less than the tree size");
+
+    const proof = [];
+    const peaks = findPeaks(await this.elementsCount.get());
+
+    while (!peaks.includes(index)) {
+      // If not peak, must have parent
+      const isRight = getHeight(index + 1) == getHeight(index) + 1;
+      const sib = isRight ? index - siblingOffset(getHeight(index)) : index + siblingOffset(getHeight(index));
+      proof.push(await this.hashes.get(sib));
+
+      index = isRight ? index + 1 : index + parentOffset(getHeight(index));
+    }
+
+    return proof;
+  }
+
+  async verifyProof(index: number, value: string, proof: string[]) {
+    if (index < 1) throw new Error("Index must be greater than 1");
+    if (index > (await this.elementsCount.get())) throw new Error("Index must be less than the tree size");
+
+    let hash = this.hasher.hash([index.toString(), value]);
+
+    for (const proofHash of proof) {
+      const isRight = getHeight(index + 1) == getHeight(index) + 1;
+      index = isRight ? index + 1 : index + parentOffset(getHeight(index));
+      hash = this.hasher.hash([
+        index.toString(),
+        isRight ? this.hasher.hash([proofHash, hash]) : this.hasher.hash([hash, proofHash]),
+      ]);
+    }
+
+    return (await this.retrievePeaksHashes(findPeaks(await this.elementsCount.get()))).includes(hash);
+  }
+
   async bagThePeaks(): Promise<string> {
-    const lastElementId = await this.elementsCount.increment();
+    const lastElementId = await this.elementsCount.get();
     const peaksIdxs = findPeaks(lastElementId);
     const peaksHashes = await this.retrievePeaksHashes(peaksIdxs);
-
-    console.log(`lastElementId: ${lastElementId}`);
-    console.log(`peaksIdxs: ${peaksIdxs}`);
-    console.log(`peaksHashes: ${peaksHashes}`);
 
     if (peaksIdxs.length === 1) {
       return this.hasher.hash([lastElementId.toString(), peaksHashes[0]]);
@@ -77,6 +112,7 @@ export class CoreMMR extends TreesDatabase {
   async retrievePeaksHashes(peaksIdxs?: number[]): Promise<string[]> {
     const peakHashes: string[] = [];
     const hashes = await this.hashes.getMany(peaksIdxs);
+
     for (const peakId of peaksIdxs) {
       const hash = hashes.get(peakId.toString());
       if (hash) peakHashes.push(hash);
