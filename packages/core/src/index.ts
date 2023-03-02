@@ -32,6 +32,8 @@ export class CoreMMR extends TreesDatabase {
 
       const parentHash = this.hasher.hash([lastElementIdx.toString(), this.hasher.hash([leftHash, rightHash])]);
       await this.hashes.set(parentHash, lastElementIdx);
+      peaks.push(parentHash);
+
       height++;
     }
 
@@ -53,6 +55,9 @@ export class CoreMMR extends TreesDatabase {
   }
 
   async getProof(index: number): Promise<string[]> {
+    if (index < 0) throw new Error("Index must be greater than 0");
+    if (index > (await this.elementsCount.get())) throw new Error("Index must be less than the tree size");
+
     const proof = [];
     const peaks = findPeaks(await this.elementsCount.get());
 
@@ -62,6 +67,8 @@ export class CoreMMR extends TreesDatabase {
       index = isRight ? index + 1 : index + parentOffset(getHeight(index));
       proof.push(await this.hashes.get(index));
     }
+
+    proof.pop();
 
     return proof;
   }
