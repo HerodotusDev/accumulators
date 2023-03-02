@@ -1,4 +1,4 @@
-import { IStore } from "@merkle-mountain-range/core";
+import { IStore } from "@mmr/core";
 
 export default class MMRInMemoryStore implements IStore {
   private store: Map<string, string>;

@@ -1,5 +1,5 @@
-import CoreMMR, { PrecomputationMMR } from "@merkle-mountain-range/core";
-import { StarkPedersenHasher } from "@merkle-mountain-range/hashes";
+import CoreMMR, { PrecomputationMMR } from "@mmr/core";
+import { StarkPedersenHasher } from "@mmr/hashes";
 import MMRRocksDBStore from "../src";
 
 const store = new MMRRocksDBStore("./rocksdb_data");

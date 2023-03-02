@@ -1,5 +1,5 @@
 {
-  "name": "@merkle-mountain-range/rocksdb",
+  "name": "@mmr/rocksdb",
   "version": "0.0.0",
   "description": "A TypeScript implementation of Merkle Mountain Ranges",
   "keywords": [
@@ -33,7 +33,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@merkle-mountain-range/core": "^0.0.0",
+    "@mmr/core": "^0.0.0",
     "level-rocksdb": "^5.0.0"
   }
 }

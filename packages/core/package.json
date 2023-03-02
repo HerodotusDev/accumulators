@@ -1,5 +1,5 @@
 {
-  "name": "@merkle-mountain-range/core",
+  "name": "@mmr/core",
   "version": "0.0.0",
   "description": "A TypeScript implementation of Merkle Mountain Ranges",
   "keywords": [

@@ -1,4 +1,4 @@
-import { IHasher } from "@merkle-mountain-range/core";
+import { IHasher } from "@mmr/core";
 import { pedersen } from "./pedersen/pedersen_wasm";
 
 export class StarkPedersenHasher extends IHasher {
