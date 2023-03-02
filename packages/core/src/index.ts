@@ -113,14 +113,8 @@ export class CoreMMR extends TreesDatabase {
     const peakHashes: string[] = [];
     const hashes = await this.hashes.getMany(peaksIdxs);
 
-    // Remove prefixes from the keys
-    const hashesNoPrefix = new Map();
-    hashes.forEach((value, key) => {
-      let elementIdx = key.split(":")[2];
-      hashesNoPrefix.set(elementIdx, value);
-    });
     for (const peakId of peaksIdxs) {
-      const hash = hashesNoPrefix.get(peakId.toString());
+      const hash = hashes.get(peakId.toString());
       if (hash) peakHashes.push(hash);
     }
     return peakHashes;
