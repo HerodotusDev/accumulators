@@ -1,5 +1,5 @@
 import { AppendResult, IHasher, IStore } from "./types";
-import { findPeaks, getHeight, parentOffset } from "./helpers";
+import { findPeaks, getHeight, parentOffset, siblingOffset } from "./helpers";
 import { TreesDatabase } from "./trees-database";
 
 export class CoreMMR extends TreesDatabase {
@@ -64,11 +64,11 @@ export class CoreMMR extends TreesDatabase {
     while (!peaks.includes(index)) {
       // If not peak, must have parent
       const isRight = getHeight(index + 1) == getHeight(index) + 1;
-      index = isRight ? index + 1 : index + parentOffset(getHeight(index));
-      proof.push(await this.hashes.get(index));
-    }
+      const sib = isRight ? index - siblingOffset(getHeight(index)) : index + siblingOffset(getHeight(index));
+      proof.push(await this.hashes.get(sib));
 
-    proof.pop();
+      index = isRight ? index + 1 : index + parentOffset(getHeight(index));
+    }
 
     return proof;
   }
