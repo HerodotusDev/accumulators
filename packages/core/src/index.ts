@@ -121,4 +121,4 @@ export class CoreMMR extends TreesDatabase {
   }
 }
 
-export { IHasher, IStore } from "./types";
+export { IHasher, IStore, TREE_METADATA_KEYS } from "./types";

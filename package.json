@@ -29,7 +29,7 @@
     "test:hashes": "yarn test packages/hashes",
     "test:memory": "yarn test packages/memory",
     "test:rocksdb": "yarn test packages/rocksdb",
-    "example:start": "yarn --cwd ./example start",
+    "example:start": "yarn --cwd ./example start:memory; yarn --cwd ./example start:rocksdb",
     "example:dev": "yarn --cwd ./example dev"
   },
   "workspaces": [

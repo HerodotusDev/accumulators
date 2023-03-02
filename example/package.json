@@ -2,13 +2,16 @@
   "name": "example",
   "version": "1.0.0",
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "dev": "nodemon --exec ts-node src/index.ts"
+    "start:memory": "ts-node src/memory.ts",
+    "dev:memory": "nodemon --exec ts-node src/memory.ts",
+    "start:rocksdb": "ts-node src/rocksdb.ts",
+    "dev:rocksdb": "nodemon --exec ts-node src/rocksdb.ts"
   },
   "dependencies": {
     "@merkle-mountain-range/core": "^0.0.0",
     "@merkle-mountain-range/hashes": "^0.0.0",
-    "@merkle-mountain-range/memory": "^0.0.0"
+    "@merkle-mountain-range/memory": "^0.0.0",
+    "@merkle-mountain-range/rocksdb": "^0.0.0"
   },
   "devDependencies": {
     "ts-node": "^10.9.1",
