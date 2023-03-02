@@ -19,7 +19,7 @@ jobs:
           node-version: "19"
 
       - name: Install dependencies
-        run: yarn install --frozen-lockfile
+        run: yarn install
 
       - name: Run tests
         run: yarn test
