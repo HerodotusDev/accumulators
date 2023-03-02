@@ -1,6 +1,6 @@
-import CoreMMR from "@mmr/core";
-import MMRRocksDBStore from "@mmr/rocksdb";
-import { StarkPedersenHasher } from "@mmr/hashes";
+import CoreMMR from "@herodotus_dev/mmr-core";
+import MMRRocksDBStore from "@herodotus_dev/mmr-rocksdb";
+import { StarkPedersenHasher } from "@herodotus_dev/mmr-hashes";
 
 async function main() {
   const rocksdbStore = new MMRRocksDBStore("./rocksdb_data");

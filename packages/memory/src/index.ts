@@ -1,4 +1,4 @@
-import { IStore } from "@mmr/core";
+import { IStore } from "@herodotus_dev/mmr-core";
 
 export default class MMRInMemoryStore implements IStore {
   private store: Map<string, string>;

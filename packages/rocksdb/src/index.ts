@@ -1,4 +1,4 @@
-import { IStore, TREE_METADATA_KEYS } from "@mmr/core";
+import { IStore, TREE_METADATA_KEYS } from "@herodotus_dev/mmr-core";
 import * as RocksDB from "level-rocksdb";
 import { RocksDBType } from "./types";
 

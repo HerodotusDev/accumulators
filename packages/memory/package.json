@@ -1,6 +1,6 @@
 {
-  "name": "@mmr/memory",
-  "version": "0.0.0",
+  "name": "@herodotus_dev/mmr-memory",
+  "version": "1.0.0",
   "description": "A TypeScript implementation of Merkle Mountain Ranges",
   "keywords": [
     "merkle mountain range",
@@ -33,6 +33,6 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@mmr/core": "^0.0.0"
+    "@herodotus_dev/mmr-core": "^1.0.0"
   }
 }

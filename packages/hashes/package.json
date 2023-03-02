@@ -1,6 +1,6 @@
 {
-  "name": "@mmr/hashes",
-  "version": "0.0.0",
+  "name": "@herodotus_dev/mmr-hashes",
+  "version": "1.0.0",
   "description": "A TypeScript implementation of Merkle Mountain Ranges",
   "keywords": [
     "merkle mountain range",
@@ -35,7 +35,7 @@
     "postbuild": "yarn import:wasm"
   },
   "dependencies": {
-    "@mmr/core": "^0.0.0",
+    "@herodotus_dev/mmr-core": "^1.0.0",
     "@types/node": "^18.14.4"
   }
 }

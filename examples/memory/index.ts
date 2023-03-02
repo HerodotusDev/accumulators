@@ -1,6 +1,6 @@
-import CoreMMR from "@mmr/core";
-import MMRInMemoryStore from "@mmr/memory";
-import { StarkPedersenHasher } from "@mmr/hashes";
+import CoreMMR from "@herodotus_dev/mmr-core";
+import MMRInMemoryStore from "@herodotus_dev/mmr-memory";
+import { StarkPedersenHasher } from "@herodotus_dev/mmr-hashes";
 
 async function main() {
   const mmr = new CoreMMR(new MMRInMemoryStore(), new StarkPedersenHasher());

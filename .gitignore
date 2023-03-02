@@ -1,3 +1,4 @@
 node_modules/
 **/lib/
 rocksdb_data
+lerna-debug.log

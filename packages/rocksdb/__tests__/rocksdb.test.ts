@@ -1,5 +1,5 @@
-import CoreMMR, { PrecomputationMMR } from "@mmr/core";
-import { StarkPedersenHasher } from "@mmr/hashes";
+import CoreMMR, { PrecomputationMMR } from "@herodotus_dev/mmr-core";
+import { StarkPedersenHasher } from "@herodotus_dev/mmr-hashes";
 import MMRRocksDBStore from "../src";
 
 const store = new MMRRocksDBStore("./rocksdb_data");

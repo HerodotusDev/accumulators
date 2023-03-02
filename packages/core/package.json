@@ -1,7 +1,6 @@
 {
-  "name": "@mmr/core",
-  "private": true,
-  "version": "0.0.0",
+  "name": "@herodotus_dev/mmr-core",
+  "version": "1.0.0",
   "description": "A TypeScript implementation of Merkle Mountain Ranges",
   "keywords": [
     "merkle mountain range",

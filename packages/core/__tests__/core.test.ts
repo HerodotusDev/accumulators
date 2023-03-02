@@ -1,6 +1,6 @@
 import CoreMMR from "../src";
-import { StarkPedersenHasher } from "@mmr/hashes";
-import MMRInMemoryStore from "@mmr/memory";
+import { StarkPedersenHasher } from "@herodotus_dev/mmr-hashes";
+import MMRInMemoryStore from "@herodotus_dev/mmr-memory";
 
 const store = new MMRInMemoryStore();
 const hasher = new StarkPedersenHasher();
