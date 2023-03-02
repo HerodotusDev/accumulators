@@ -82,7 +82,10 @@ export class CoreMMR extends TreesDatabase {
     for (const proofHash of proof) {
       const isRight = getHeight(index + 1) == getHeight(index) + 1;
       index = isRight ? index + 1 : index + parentOffset(getHeight(index));
-      hash = this.hasher.hash([index.toString(), isRight ? this.hasher.hash([proofHash, hash]) : this.hasher.hash([hash, proofHash])]);
+      hash = this.hasher.hash([
+        index.toString(),
+        isRight ? this.hasher.hash([proofHash, hash]) : this.hasher.hash([hash, proofHash]),
+      ]);
     }
 
     return (await this.retrievePeaksHashes(findPeaks(await this.elementsCount.get()))).includes(hash);
@@ -92,10 +95,6 @@ export class CoreMMR extends TreesDatabase {
     const lastElementId = await this.elementsCount.get();
     const peaksIdxs = findPeaks(lastElementId);
     const peaksHashes = await this.retrievePeaksHashes(peaksIdxs);
-
-    console.log(`lastElementId: ${lastElementId}`);
-    console.log(`peaksIdxs: ${peaksIdxs}`);
-    console.log(`peaksHashes: ${peaksHashes}`);
 
     if (peaksIdxs.length === 1) {
       return this.hasher.hash([lastElementId.toString(), peaksHashes[0]]);
@@ -114,14 +113,14 @@ export class CoreMMR extends TreesDatabase {
     const peakHashes: string[] = [];
     const hashes = await this.hashes.getMany(peaksIdxs);
 
-    // TODO hacky solution to be replaced
-    const hashesFixed = new Map();
+    // Remove prefixes from the keys
+    const hashesNoPrefix = new Map();
     hashes.forEach((value, key) => {
-      let newKey = key.split(":")[2];
-      hashesFixed.set(newKey, value);
+      let elementIdx = key.split(":")[2];
+      hashesNoPrefix.set(elementIdx, value);
     });
     for (const peakId of peaksIdxs) {
-      const hash = hashesFixed.get(peakId.toString());
+      const hash = hashesNoPrefix.get(peakId.toString());
       if (hash) peakHashes.push(hash);
     }
     return peakHashes;
