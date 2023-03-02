@@ -18,8 +18,6 @@ jobs:
         with:
           node-version: "19"
 
-      - run: npm install -g json && json -I -f package.json -e 'this.workspaces=["packages/*"]'
-
       - name: Install dependencies
         run: yarn install
 
