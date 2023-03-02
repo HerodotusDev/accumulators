@@ -1,4 +1,4 @@
-import { CoreMMR, IHasher, IStore } from ".";
+import CoreMMR, { IHasher, IStore } from ".";
 import { InStoreTable } from "./trees-database";
 
 export class PrecomputationMMR extends CoreMMR {

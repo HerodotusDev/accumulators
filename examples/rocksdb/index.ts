@@ -1,4 +1,4 @@
-import { CoreMMR } from "@merkle-mountain-range/core";
+import CoreMMR from "@merkle-mountain-range/core";
 import { MMRRocksDBStore } from "@merkle-mountain-range/rocksdb";
 import { StarkPedersenHasher } from "@merkle-mountain-range/hashes";
 

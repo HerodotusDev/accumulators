@@ -1,4 +1,4 @@
-import { CoreMMR, PrecomputationMMR } from "@merkle-mountain-range/core";
+import CoreMMR, { PrecomputationMMR } from "@merkle-mountain-range/core";
 import { StarkPedersenHasher } from "@merkle-mountain-range/hashes";
 import { MMRRocksDBStore } from "../src";
 

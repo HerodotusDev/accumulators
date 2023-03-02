@@ -1,14 +1,14 @@
 export type hash = (data: string) => string;
 
-type HasherOptions = {
+export type HasherOptions = {
   blockSizeBits: number;
 };
 
-const defaultHasherOptions: HasherOptions = {
+export const defaultHasherOptions: HasherOptions = {
   blockSizeBits: 256,
 };
 
-type HexString = string;
+export type HexString = string;
 
 export abstract class IHasher {
   constructor(protected readonly options: HasherOptions = defaultHasherOptions) {}
