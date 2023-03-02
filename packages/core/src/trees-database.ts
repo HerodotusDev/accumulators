@@ -2,15 +2,15 @@ import { IStore, TREE_METADATA_KEYS } from "./types";
 import { v4 as uuid } from "uuid";
 
 export class TreesDatabase {
-  private mmrUuid: string;
+  mmrUuid: string;
 
-  protected readonly leavesCount: InStoreCounter;
-  protected readonly elementsCount: InStoreCounter;
+  readonly leavesCount: InStoreCounter;
+  readonly elementsCount: InStoreCounter;
 
-  protected readonly hashes: InStoreTable;
-  protected readonly rootHash: InStoreTable;
+  hashes: InStoreTable;
+  readonly rootHash: InStoreTable;
 
-  constructor(private readonly store: IStore, mmrUuid?: string) {
+  constructor(protected readonly store: IStore, mmrUuid?: string) {
     mmrUuid ? (this.mmrUuid = mmrUuid) : (this.mmrUuid = uuid());
     this.leavesCount = new InStoreCounter(this.store, `${this.mmrUuid}:${TREE_METADATA_KEYS.LEAF_COUNT}`);
     this.elementsCount = new InStoreCounter(this.store, `${this.mmrUuid}:${TREE_METADATA_KEYS.ELEMENT_COUNT}`);
@@ -20,23 +20,25 @@ export class TreesDatabase {
 }
 
 export class InStoreTable {
-  constructor(private readonly store: IStore, private readonly key: string) {}
+  constructor(protected readonly store: IStore, protected readonly key: string) {}
+
+  protected getFullKey(suffix: string | number): string {
+    return this.key + suffix?.toString() || "";
+  }
 
   async get(suffix?: string | number): Promise<string> {
-    suffix = suffix?.toString() || "";
-    return this.store.get(this.key + suffix);
+    return this.store.get(this.getFullKey(suffix));
   }
 
   async getMany(suffixes: (string | number)[]): Promise<Map<string, string>> {
-    const keys = suffixes.map((suffix) => this.key + suffix.toString());
+    const keys = suffixes.map((suffix) => this.getFullKey(suffix));
     const keyless = new Map();
     (await this.store.getMany(keys)).forEach((value, key) => keyless.set(key.replace(this.key, ""), value));
     return keyless;
   }
 
   async set(value: string, suffix?: string | number): Promise<void> {
-    suffix = suffix?.toString() || "";
-    return this.store.set(this.key + suffix, value);
+    return this.store.set(this.getFullKey(suffix), value);
   }
 }
 

@@ -3,7 +3,7 @@ import { findPeaks, getHeight, parentOffset, siblingOffset } from "./helpers";
 import { TreesDatabase } from "./trees-database";
 
 export class CoreMMR extends TreesDatabase {
-  constructor(store: IStore, private readonly hasher: IHasher, mmrUuid?: string) {
+  constructor(store: IStore, protected readonly hasher: IHasher, mmrUuid?: string) {
     super(store, mmrUuid);
   }
 
