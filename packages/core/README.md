@@ -5,7 +5,7 @@
 ## Usage
 
 ```
-const core = require('core');
+import CoreMMR from '@herodotus_dev/mmr-core';
 
 // TODO: DEMONSTRATE API
 ```
