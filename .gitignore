@@ -1,4 +1,5 @@
 node_modules/
 **/lib/
-rocksdb_data
+rocksdb_data/
 lerna-debug.log
+dist/

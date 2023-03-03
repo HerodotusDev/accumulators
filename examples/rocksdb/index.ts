@@ -4,7 +4,7 @@ import { StarkPedersenHasher } from "@herodotus_dev/mmr-hashes";
 
 async function main() {
   const rocksdbStore = new MMRRocksDBStore("./rocksdb_data");
-  await rocksdbStore.init(true);
+  await rocksdbStore.init();
   const mmr = new CoreMMR(rocksdbStore, new StarkPedersenHasher());
   await mmr.append("1");
   await mmr.append("2");
