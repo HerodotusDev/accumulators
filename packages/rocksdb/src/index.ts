@@ -1,4 +1,4 @@
-import { IStore, TREE_METADATA_KEYS } from "@herodotus_dev/mmr-core";
+import { IStore } from "@herodotus_dev/mmr-core";
 import * as RocksDB from "level-rocksdb";
 import { RocksDBType } from "./types";
 
@@ -9,13 +9,8 @@ export default class MMRRocksDBStore implements IStore {
     this.db = new RocksDB(location);
   }
 
-  async init(reset = false): Promise<void> {
+  async init(): Promise<void> {
     if (!this.db.isOpen()) await this.db.open({ createIfMissing: true });
-    if (reset) {
-      await this.set(TREE_METADATA_KEYS.ELEMENT_COUNT, "0");
-      await this.set(TREE_METADATA_KEYS.LEAF_COUNT, "0");
-      await this.set(TREE_METADATA_KEYS.ROOT_HASH, "");
-    }
   }
 
   async get(key: string): Promise<string | undefined> {
