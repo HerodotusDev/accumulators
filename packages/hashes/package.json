@@ -30,12 +30,11 @@
   ],
   "scripts": {
     "build": "tsc",
-    "import:wasm": "cp -R src/pedersen lib",
-    "postinstall": "yarn import:wasm",
-    "postbuild": "yarn import:wasm"
+    "postbuild": "yarn import:wasm",
+    "import:wasm": "cp -R src/pedersen lib"
   },
   "dependencies": {
     "@herodotus_dev/mmr-core": "^1.1.1",
-    "@types/node": "^18.14.4"
+    "@types/node": "^18.14.5"
   }
 }
