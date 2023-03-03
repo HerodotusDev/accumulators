@@ -10,7 +10,8 @@ async function main() {
   await mmr.append("2");
   await mmr.append("4");
   await mmr.append("5");
-  await mmr.append("8");
+  const result = await mmr.append("8");
+  console.log("Result:", result);
 
   const peaks = await mmr.bagThePeaks();
   console.log("Root hash:", peaks);
