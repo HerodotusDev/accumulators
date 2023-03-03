@@ -10,7 +10,7 @@ describe("precomputation", () => {
   let mmr: CoreMMR;
 
   beforeAll(async () => {
-    await store.init(true);
+    await store.init();
   });
 
   beforeEach(async () => {
