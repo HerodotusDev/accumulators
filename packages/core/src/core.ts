@@ -92,6 +92,12 @@ export default class CoreMMR extends TreesDatabase {
     return (await this.retrievePeaksHashes(findPeaks(await this.elementsCount.get()))).includes(hash);
   }
 
+  async getPeaks(): Promise<string[]> {
+    const lastElementId = await this.elementsCount.get();
+    const peaksIdxs = findPeaks(lastElementId);
+    return this.retrievePeaksHashes(peaksIdxs);
+  }
+
   async bagThePeaks(): Promise<string> {
     const lastElementId = await this.elementsCount.get();
     const peaksIdxs = findPeaks(lastElementId);
