@@ -19,8 +19,7 @@ export abstract class IHasher {
    */
   abstract hash(data: HexString[]): HexString;
 
-  public isElementSizeValid(element: HexString): boolean {
-    const isPrefixed = element.startsWith("0x");
-    return (isPrefixed ? element.length - 2 : element.length) * 2 * 8 <= this.options.blockSizeBits;
-  }
+  public isElementSizeValid = (element: HexString): boolean => IHasher.byteSize(element) <= this.options.blockSizeBits;
+
+  static byteSize = (str: string) => new Blob([str.startsWith("0x") ? str.slice(2) : str]).size;
 }
