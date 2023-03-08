@@ -55,23 +55,23 @@ export default class CoreMMR extends TreesDatabase {
     };
   }
 
-  async getProof(index: number): Promise<string[]> {
-    if (index < 1) throw new Error("Index must be greater than 1");
-    if (index > (await this.elementsCount.get())) throw new Error("Index must be less than the tree size");
+  async getProof(leafIdx: number): Promise<string[]> {
+    if (leafIdx < 1) throw new Error("Index must be greater than 1");
+    if (leafIdx > (await this.elementsCount.get())) throw new Error("Index must be less than the tree size");
 
-    const proof = [];
     const peaks = findPeaks(await this.elementsCount.get());
+    const siblings = [];
 
-    while (!peaks.includes(index)) {
+    while (!peaks.includes(leafIdx)) {
       // If not peak, must have parent
-      const isRight = getHeight(index + 1) == getHeight(index) + 1;
-      const sib = isRight ? index - siblingOffset(getHeight(index)) : index + siblingOffset(getHeight(index));
-      proof.push(await this.hashes.get(sib));
+      const isRight = getHeight(leafIdx + 1) == getHeight(leafIdx) + 1;
+      const sib = isRight ? leafIdx - siblingOffset(getHeight(leafIdx)) : leafIdx + siblingOffset(getHeight(leafIdx));
+      siblings.push(sib);
 
-      index = isRight ? index + 1 : index + parentOffset(getHeight(index));
+      leafIdx = isRight ? leafIdx + 1 : leafIdx + parentOffset(getHeight(leafIdx));
     }
 
-    return proof;
+    return [...(await this.hashes.getMany(siblings)).values()];
   }
 
   async verifyProof(index: number, value: string, proof: string[]) {
