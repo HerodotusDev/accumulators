@@ -10,17 +10,21 @@ async function main() {
   await mmr.append("2");
   await mmr.append("4");
   await mmr.append("5");
-  const result = await mmr.append("8");
+  const result = await mmr.append("6");
   console.log("Result:", result);
 
   const peaks = await mmr.bagThePeaks();
   console.log("Root hash:", peaks);
 
-  const proof4 = await mmr.getProof(5);
-  console.log("Proof 5:", proof4, "is valid", await mmr.verifyProof(5, "5", proof4));
+  const proof5 = await mmr.getProof(5);
+  console.log("Proof 5:", proof5, "is valid", await mmr.verifyProof(5, "5", proof5));
 
-  const proof5 = await mmr.getProof(8);
-  console.log("Proof 8:", proof5, "is valid", await mmr.verifyProof(8, "8", proof5));
+  const proof6 = await mmr.getProof(result.leafIdx);
+  console.log("Proof 6:", proof6, "is valid", await mmr.verifyProof(result.leafIdx, "6", proof6));
+
+  const result2 = await mmr.append("9");
+  const proof7 = await mmr.getProof(result2.leafIdx);
+  console.log("Proof 7:", proof7, "is valid", await mmr.verifyProof(result2.leafIdx, "7", proof7));
 }
 
 main();

@@ -39,5 +39,13 @@ describe("precomputation", () => {
 
     await precomputationMmr.close();
     await expect(precomputationMmr.bagThePeaks()).rejects.toThrow();
+
+    //? After closing the precomputation, the parent MMR should still work
+    await mmr.append("4");
+    await mmr.append("5");
+    await mmr.append("6");
+    await expect(mmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
+    const parentProof = await mmr.getProof(8);
+    await expect(mmr.verifyProof(8, "5", parentProof)).resolves.toEqual(true);
   });
 });

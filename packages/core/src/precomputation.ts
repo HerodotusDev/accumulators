@@ -2,6 +2,7 @@ import CoreMMR, { IHasher, IStore } from ".";
 import { InStoreTable } from "./trees-database";
 
 export class PrecomputationMMR extends CoreMMR {
+  private readonly parentEndIdx: number;
   private constructor(
     store: IStore,
     hasher: IHasher,
@@ -19,6 +20,7 @@ export class PrecomputationMMR extends CoreMMR {
       `${parentMmrUuid}:hashes:`,
       elementsCount
     );
+    this.parentEndIdx = elementsCount;
   }
 
   static async initialize(
@@ -43,6 +45,16 @@ export class PrecomputationMMR extends CoreMMR {
 
   async close(): Promise<void> {
     await this.clear();
+  }
+
+  async clear() {
+    const toDelete = [this.elementsCount.key, this.rootHash.key, this.leavesCount.key];
+    const elementsCount = await this.elementsCount.get();
+
+    const hashes = Array.from({ length: elementsCount - this.parentEndIdx }, (_, i) => i + this.parentEndIdx + 1).map(
+      (idx) => this.hashes.getFullKey(idx)
+    );
+    return this.store.deleteMany(toDelete.concat(hashes));
   }
 }
 
