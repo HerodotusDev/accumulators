@@ -124,6 +124,10 @@ export default class CoreMMR extends TreesDatabase {
   async clear() {
     const toDelete = [this.elementsCount.key, this.rootHash.key, this.leavesCount.key];
     const elementsCount = await this.elementsCount.get();
+
+    console.log(this.store);
+    console.log(toDelete.concat(new Array(elementsCount).fill(0).map((_, i) => this.hashes.getFullKey(i + 1))));
+
     return this.store.deleteMany(
       toDelete.concat(new Array(elementsCount).fill(0).map((_, i) => this.hashes.getFullKey(i + 1)))
     );

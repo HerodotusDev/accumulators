@@ -31,5 +31,8 @@ describe("precomputation", () => {
     await expect(mmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
     const proof = await mmr.getProof(append.leafIdx);
     await expect(mmr.verifyProof(append.leafIdx, "5", proof)).resolves.toEqual(true);
+
+    await mmr.clear();
+    await expect(mmr.getPeaks()).resolves.toEqual([]);
   });
 });
