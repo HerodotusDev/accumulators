@@ -24,9 +24,9 @@ export interface Proof {
    */
   peaksHashes: string[];
   /**
-   * The size of the tree, aka the position, aka the number of leaves
+   * The size of the tree, aka the position, aka the number of all elements in the tree
    *
    * @example 1
    */
-  leavesCount: number;
+  elementsCount: number;
 }

@@ -1,4 +1,4 @@
-import CoreMMR from "../src";
+import CoreMMR, { AppendResult } from "../src";
 import { StarkPedersenHasher } from "@herodotus_dev/mmr-hashes";
 import MMRInMemoryStore from "@herodotus_dev/mmr-memory";
 
@@ -18,11 +18,11 @@ describe("precomputation", () => {
     const { leafIndex } = await mmr.append("5");
 
     await expect(mmr.append("6")).resolves.toEqual({
-      lastPos: 10,
-      leafIndex: 9,
       leavesCount: 6,
+      elementsCount: 10,
+      leafIndex: 9,
       rootHash: "0x04a1ae364258121690285af43cd4ee91adfd6a8647211748657d8e66835a20a1",
-    });
+    } as AppendResult);
 
     await expect(mmr.getPeaks()).resolves.toEqual([
       "0x004a1fead9ecdd90793ba10b7da6e8a30d655843296f148f147a89cb3e978528",

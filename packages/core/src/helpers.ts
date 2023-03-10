@@ -1,12 +1,12 @@
 // Find the peaks (if any) of a tree of size `num`.
-export const findPeaks = (num: number): number[] => {
-  if (num === 0) return [];
+export const findPeaks = (elementsCount: number): number[] => {
+  if (elementsCount === 0) return [];
 
   // Check for siblings without parents
-  if (getHeight(num + 1) > getHeight(num)) return [];
+  if (getHeight(elementsCount + 1) > getHeight(elementsCount)) return [];
 
   let top = 1;
-  while (top - 1 <= num) {
+  while (top - 1 <= elementsCount) {
     top <<= 1;
   }
   top = (top >> 1) - 1;
@@ -19,7 +19,7 @@ export const findPeaks = (num: number): number[] => {
   let outer = true;
   while (outer) {
     peak = bintreeJumpRightSibling(peak);
-    while (peak > num) {
+    while (peak > elementsCount) {
       peak = bintreeMoveDownLeft(peak);
       if (peak === 0) {
         outer = false;
@@ -32,7 +32,7 @@ export const findPeaks = (num: number): number[] => {
 };
 
 // Returns true if a specified index `num` is also the index of a peak inside `peaks`.
-export const isPeak = (num: number, peaks: number[]): boolean => peaks.indexOf(num) !== -1;
+export const isPeak = (leafIndex: number, peaks: number[]): boolean => peaks.indexOf(leafIndex) !== -1;
 
 // Returns the number of bits in num
 export function bitLength(num: number): number {
@@ -74,8 +74,8 @@ export function peakMapHeight(size: number) {
 // the height of a node correspond to the number of 1 digits (in binary)
 // on the leftmost branch of the tree, minus 1
 // To travel left on a tree we can subtract the position by it's MSB, minus 1
-export const getHeight = (num: number): number => {
-  let h = num;
+export const getHeight = (elementIndex: number): number => {
+  let h = elementIndex;
   // Travel left until reaching leftmost branch (all bits 1)
   while (!allOnes(h)) {
     h = h - ((1 << (bitLength(h) - 1)) - 1);
@@ -94,17 +94,17 @@ export const parentOffset = (height: number): number => {
   return 2 << height;
 };
 
-// Jump to the next right sibling from `num`
-const bintreeJumpRightSibling = (num: number) => {
-  const height = getHeight(num);
-  return num + (1 << (height + 1)) - 1;
+// Jump to the next right sibling from `elementIndex`
+const bintreeJumpRightSibling = (elementIndex: number) => {
+  const height = getHeight(elementIndex);
+  return elementIndex + (1 << (height + 1)) - 1;
 };
 
-// Jump down left from `num`
-const bintreeMoveDownLeft = (num: number) => {
-  const height = getHeight(num);
+// Jump down left from `elementIndex`
+const bintreeMoveDownLeft = (elementIndex: number) => {
+  const height = getHeight(elementIndex);
   if (height === 0) {
     return 0;
   }
-  return num - (1 << height);
+  return elementIndex - (1 << height);
 };

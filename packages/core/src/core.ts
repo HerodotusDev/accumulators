@@ -45,13 +45,14 @@ export default class CoreMMR extends TreesDatabase {
     const rootHash = await this.bagThePeaks();
     await this.rootHash.set(rootHash);
 
-    const leaves = await this.leavesCount.increment();
     //? Returns the new total number of leaves.
+    const leaves = await this.leavesCount.increment();
+
     return {
       leavesCount: leaves,
+      elementsCount: lastElementIdx,
       leafIndex,
       rootHash,
-      lastPos: lastElementIdx, //? Tree size
     };
   }
 
@@ -77,7 +78,7 @@ export default class CoreMMR extends TreesDatabase {
       leafHash: await this.hashes.get(leafIndex),
       siblingsHashes: [...(await this.hashes.getMany(siblings)).values()],
       peaksHashes: await this.retrievePeaksHashes(peaks),
-      leavesCount: await this.leavesCount.get(),
+      elementsCount: await this.elementsCount.get(),
     };
   }
 
