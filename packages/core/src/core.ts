@@ -1,4 +1,4 @@
-import { AppendResult, IHasher, IStore } from "./types";
+import { AppendResult, IHasher, IStore, Proof } from "./types";
 import { findPeaks, getHeight, parentOffset, siblingOffset } from "./helpers";
 import { TreesDatabase } from "./trees-database";
 
@@ -8,13 +8,13 @@ export default class CoreMMR extends TreesDatabase {
   }
 
   async append(value: string): Promise<AppendResult> {
-    if (!this.hasher.isElementSizeValid(value)) throw new Error("Element size is invalid");
+    if (!this.hasher.isElementSizeValid(value)) throw new Error("Element size is too big to hash with this hasher");
 
     const elementsCount = await this.elementsCount.get();
     const peaks = await this.retrievePeaksHashes(findPeaks(elementsCount));
 
     let lastElementIdx = await this.elementsCount.increment();
-    const leafIdx = lastElementIdx;
+    const leafIndex = lastElementIdx;
 
     //? hash that will be stored in the database
     const hash = this.hasher.hash([lastElementIdx.toString(), value]);
@@ -49,42 +49,57 @@ export default class CoreMMR extends TreesDatabase {
     //? Returns the new total number of leaves.
     return {
       leavesCount: leaves,
-      leafIdx,
+      leafIndex,
       rootHash,
       lastPos: lastElementIdx, //? Tree size
     };
   }
 
-  async getProof(leafIdx: number): Promise<string[]> {
-    if (leafIdx < 1) throw new Error("Index must be greater than 1");
-    if (leafIdx > (await this.elementsCount.get())) throw new Error("Index must be less than the tree size");
+  async getProof(leafIndex: number): Promise<Proof> {
+    if (leafIndex < 1) throw new Error("Index must be greater than 1");
+    if (leafIndex > (await this.elementsCount.get())) throw new Error("Index must be less than the tree size");
 
     const peaks = findPeaks(await this.elementsCount.get());
     const siblings = [];
 
-    while (!peaks.includes(leafIdx)) {
+    let index = leafIndex;
+    while (!peaks.includes(index)) {
       // If not peak, must have parent
-      const isRight = getHeight(leafIdx + 1) == getHeight(leafIdx) + 1;
-      const sib = isRight ? leafIdx - siblingOffset(getHeight(leafIdx)) : leafIdx + siblingOffset(getHeight(leafIdx));
+      const isRight = getHeight(index + 1) == getHeight(index) + 1;
+      const sib = isRight ? index - siblingOffset(getHeight(index)) : index + siblingOffset(getHeight(index));
       siblings.push(sib);
 
-      leafIdx = isRight ? leafIdx + 1 : leafIdx + parentOffset(getHeight(leafIdx));
+      index = isRight ? index + 1 : index + parentOffset(getHeight(index));
     }
 
-    return [...(await this.hashes.getMany(siblings)).values()];
+    return {
+      leafIndex: leafIndex,
+      leafHash: await this.hashes.get(leafIndex),
+      siblingsHashes: [...(await this.hashes.getMany(siblings)).values()],
+      peaksHashes: await this.retrievePeaksHashes(peaks),
+      leavesCount: await this.leavesCount.get(),
+    };
   }
 
-  async verifyProof(index: number, value: string, proof: string[]) {
-    if (index < 1) throw new Error("Index must be greater than 1");
-    if (index > (await this.elementsCount.get())) throw new Error("Index must be less than the tree size");
+  /**
+   * Verifies a proof
+   *
+   * @param proof the proof to verify
+   * @param leafValue the actual value appended to the tree, a preimage of the leaf hash
+   * @returns boolean
+   */
+  async verifyProof(proof: Proof, leafValue: string): Promise<boolean> {
+    let { leafIndex, siblingsHashes } = proof;
+    if (leafIndex < 1) throw new Error("Index must be greater than 1");
+    if (leafIndex > (await this.elementsCount.get())) throw new Error("Index must be in the tree");
 
-    let hash = this.hasher.hash([index.toString(), value]);
+    let hash = this.hasher.hash([leafIndex.toString(), leafValue]);
 
-    for (const proofHash of proof) {
-      const isRight = getHeight(index + 1) == getHeight(index) + 1;
-      index = isRight ? index + 1 : index + parentOffset(getHeight(index));
+    for (const proofHash of siblingsHashes) {
+      const isRight = getHeight(leafIndex + 1) == getHeight(leafIndex) + 1;
+      leafIndex = isRight ? leafIndex + 1 : leafIndex + parentOffset(getHeight(leafIndex));
       hash = this.hasher.hash([
-        index.toString(),
+        leafIndex.toString(),
         isRight ? this.hasher.hash([proofHash, hash]) : this.hasher.hash([hash, proofHash]),
       ]);
     }
@@ -116,7 +131,7 @@ export default class CoreMMR extends TreesDatabase {
     return this.hasher.hash([lastElementId.toString(), root]);
   }
 
-  async retrievePeaksHashes(peaksIdxs?: number[]): Promise<string[]> {
+  async retrievePeaksHashes(peaksIdxs: number[]): Promise<string[]> {
     const hashes = await this.hashes.getMany(peaksIdxs);
     return [...hashes.values()];
   }
@@ -124,9 +139,6 @@ export default class CoreMMR extends TreesDatabase {
   async clear() {
     const toDelete = [this.elementsCount.key, this.rootHash.key, this.leavesCount.key];
     const elementsCount = await this.elementsCount.get();
-
-    console.log(this.store);
-    console.log(toDelete.concat(new Array(elementsCount).fill(0).map((_, i) => this.hashes.getFullKey(i + 1))));
 
     return this.store.deleteMany(
       toDelete.concat(new Array(elementsCount).fill(0).map((_, i) => this.hashes.getFullKey(i + 1)))

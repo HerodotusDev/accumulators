@@ -17,14 +17,14 @@ async function main() {
   console.log("Root hash:", peaks);
 
   const proof5 = await mmr.getProof(5);
-  console.log("Proof 5:", proof5, "is valid", await mmr.verifyProof(5, "5", proof5));
+  console.log("Proof 5:", proof5, "is valid", await mmr.verifyProof(proof5, "5"));
 
-  const proof6 = await mmr.getProof(result.leafIdx);
-  console.log("Proof 6:", proof6, "is valid", await mmr.verifyProof(result.leafIdx, "6", proof6));
+  const proof6 = await mmr.getProof(result.leafIndex);
+  console.log("Proof 6:", proof6, "is valid", await mmr.verifyProof(proof6, "6"));
 
   const result2 = await mmr.append("9");
-  const proof7 = await mmr.getProof(result2.leafIdx);
-  console.log("Proof 7:", proof7, "is valid", await mmr.verifyProof(result2.leafIdx, "7", proof7));
+  const proof7 = await mmr.getProof(result2.leafIndex);
+  console.log("Proof 7:", proof7, "is valid", await mmr.verifyProof(proof7, "9"));
 }
 
 main();

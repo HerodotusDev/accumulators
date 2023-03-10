@@ -1,6 +1,6 @@
 export type AppendResult = {
   leavesCount: number;
-  leafIdx: number;
+  leafIndex: number;
   rootHash: string;
   lastPos: number; // == tree size.
 };
