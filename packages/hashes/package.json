@@ -35,6 +35,6 @@
   },
   "dependencies": {
     "@herodotus_dev/mmr-core": "^1.1.7",
-    "@types/node": "^18.14.5"
+    "@types/node": "^18.15.0"
   }
 }

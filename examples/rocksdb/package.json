@@ -7,9 +7,9 @@
     "dev": "nodemon --exec ts-node index.ts"
   },
   "dependencies": {
-    "@herodotus_dev/mmr-core": "^1.1.0",
-    "@herodotus_dev/mmr-hashes": "^1.1.0",
-    "@herodotus_dev/mmr-rocksdb": "^1.1.0"
+    "@herodotus_dev/mmr-core": "^1.1.7",
+    "@herodotus_dev/mmr-hashes": "^1.1.7",
+    "@herodotus_dev/mmr-rocksdb": "^1.1.7"
   },
   "devDependencies": {
     "nodemon": "^2.0.21",
