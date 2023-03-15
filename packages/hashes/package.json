@@ -35,6 +35,7 @@
   },
   "dependencies": {
     "@herodotus_dev/mmr-core": "^1.1.8",
-    "@types/node": "^18.15.0"
+    "@types/node": "^18.15.0",
+    "circomlibjs": "^0.1.7"
   }
 }
