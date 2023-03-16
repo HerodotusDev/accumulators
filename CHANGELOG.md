@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.10](https://github.com/HerodotusDev/merkle-mountain-range/compare/v1.1.9...v1.1.10) (2023-03-16)
+
+**Note:** Version bump only for package mmr
+
+
+
+
+
 ## [1.1.9](https://github.com/HerodotusDev/merkle-mountain-range/compare/v1.1.8...v1.1.9) (2023-03-15)
 
 **Note:** Version bump only for package mmr
