@@ -9,7 +9,7 @@ describe("Poseidon Hash", () => {
     expect(hasher.isElementSizeValid(a)).toBeTruthy();
     expect(hasher.isElementSizeValid(b)).toBeTruthy();
 
-    expect(hasher.hash([a, b])).toEqual("0x18433416403794301596483207088684198735797709562727577873544144374638863283852");
+    expect(hasher.hash([a, b])).toEqual("0x28c0f1a708075c53bc4f53b850efbc05879cca19dc51771a5bcda7513525768c");
   });
 
   it("Should throw", async () => {
