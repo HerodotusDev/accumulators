@@ -1,6 +1,3 @@
-// Import your Client Component
-import CoreMMR from "@herodotus_dev/mmr-core/lib/core";
-import MMRInMemoryStore from "@herodotus_dev/mmr-memory";
 import { Quote } from "../types";
 import HomePage from "./home-page";
 
@@ -14,12 +11,21 @@ async function getQuotes() {
 
 export default async function Page() {
   const quotes = await getQuotes();
-  // const mmr = new CoreMMR(new MMRInMemoryStore(), await PoseidonHasher.create());
-  // Fetch data directly in a Server Component
+
+  // TODO: Make our MMR work with Next.js
+  // const hasher = ;
+  // const mmr = new CoreMMR(new MMRInMemoryStore(), hasher);
+
   // for (const quote of quotes) {
-  //   mmr.append(quote.quote);
+  //   console.log(quote.quote);
+  //   const authHash = await hasher.hash([quote.author]);
+  //   console.log(authHash);
+  //   const append = await mmr.append(authHash);
+  //   console.log(append)
   // }
   // const root = await mmr.bagThePeaks();
+  // console.log(root);
+
   // Forward fetched data to your Client Component
   return <HomePage quotes={quotes} root={"root"} />;
 }
