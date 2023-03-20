@@ -1,5 +1,5 @@
-import { IStore } from "@herodotus_dev/mmr-core";
 import * as RocksDB from "level-rocksdb";
+import { IStore } from "@herodotus_dev/mmr-core";
 import { RocksDBType } from "./types";
 
 export default class MMRRocksDBStore implements IStore {
@@ -48,6 +48,7 @@ export default class MMRRocksDBStore implements IStore {
     if (!this.db.isOperational()) throw new Error("Database not operational");
     await this.db.del(key);
   }
+
   async deleteMany(keys: string[]): Promise<void> {
     if (!this.db.isOperational()) throw new Error("Database not operational");
     const ops = [];

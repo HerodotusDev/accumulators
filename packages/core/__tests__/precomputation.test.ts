@@ -27,7 +27,7 @@ describe("precomputation", () => {
   });
 
   it("should precompute from parent tree", async () => {
-    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher as any, mmr.mmrUuid, "precomputed");
+    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrUuid, "precomputed");
 
     await precomputationMmr.append("4");
     const { leafIndex } = await precomputationMmr.append("5");

@@ -1,3 +1,5 @@
+import { PeaksFormattingOptions, ProofFormattingOptions } from "./formatting";
+
 export interface Proof {
   /**
    * The index of the leaf
@@ -30,3 +32,16 @@ export interface Proof {
    */
   elementsCount: number;
 }
+
+export type ProofOptions = {
+  elementsCount?: number;
+  formattingOpts?: {
+    proof: ProofFormattingOptions;
+    peaks: PeaksFormattingOptions;
+  };
+};
+
+export type PeaksOptions = {
+  elementsCount?: number;
+  formattingOpts?: PeaksFormattingOptions;
+};

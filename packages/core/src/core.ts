@@ -7,6 +7,8 @@ import {
   Proof,
   formatPeaks,
   formatProof,
+  ProofOptions,
+  PeaksOptions,
 } from "./types";
 import { findPeaks, getHeight, parentOffset, siblingOffset } from "./helpers";
 import { TreesDatabase } from "./trees-database";
@@ -65,17 +67,22 @@ export default class CoreMMR extends TreesDatabase {
     };
   }
 
-  async getProof(
-    leafIndex: number,
-    formattingOpts?: {
-      proof: ProofFormattingOptions;
-      peaks: PeaksFormattingOptions;
-    }
-  ): Promise<Proof> {
+  /**
+   *
+   * Generates an inclusion proof of a leaf at a certain tree state
+   *
+   * @param leafIndex the leaf index of the element to prove the inclusion of
+   * @param [options] Options containing the optional tree size at which the proof should be generated alongside formatting specifiers
+   * @returns the generated inclusion proof.
+   */
+  async getProof(leafIndex: number, options: ProofOptions = {}): Promise<Proof> {
     if (leafIndex < 1) throw new Error("Index must be greater than 1");
-    if (leafIndex > (await this.elementsCount.get())) throw new Error("Index must be less than the tree size");
 
-    const peaks = findPeaks(await this.elementsCount.get());
+    const { elementsCount, formattingOpts } = options;
+    const treeSize = elementsCount ?? (await this.elementsCount.get());
+    if (leafIndex > treeSize) throw new Error("Index must be less than the tree tree size");
+
+    const peaks = findPeaks(treeSize);
     const siblings = [];
 
     let index = leafIndex;
@@ -91,8 +98,8 @@ export default class CoreMMR extends TreesDatabase {
     const peaksHashes = await this.retrievePeaksHashes(peaks, formattingOpts?.peaks);
     let siblingsHashes = [...(await this.hashes.getMany(siblings)).values()];
 
-    if (formattingOpts) {
-      const { proof: proofFormattingOpts } = formattingOpts;
+    if (options.formattingOpts) {
+      const { proof: proofFormattingOpts } = options.formattingOpts;
       siblingsHashes = formatProof(siblingsHashes, proofFormattingOpts);
     }
 
@@ -101,7 +108,7 @@ export default class CoreMMR extends TreesDatabase {
       leafHash: await this.hashes.get(leafIndex),
       siblingsHashes,
       peaksHashes,
-      elementsCount: await this.elementsCount.get(),
+      elementsCount: treeSize,
     };
   }
 
@@ -110,17 +117,13 @@ export default class CoreMMR extends TreesDatabase {
    *
    * @param proof the proof to verify
    * @param leafValue the actual value appended to the tree, a preimage of the leaf hash
-   * @param proofFormat the proof formatting options, optional
+   * @param [options] Options containing the optional tree size at which the proof should be generated alongside formatting specifiers
    * @returns boolean
    */
-  async verifyProof(
-    proof: Proof,
-    leafValue: string,
-    formattingOpts?: {
-      proof: ProofFormattingOptions;
-      peaks: PeaksFormattingOptions;
-    }
-  ): Promise<boolean> {
+  async verifyProof(proof: Proof, leafValue: string, options: ProofOptions = {}): Promise<boolean> {
+    const { elementsCount, formattingOpts } = options;
+    const treeSize = elementsCount ?? (await this.elementsCount.get());
+
     // Check if proof is formatted
     if (formattingOpts) {
       const { proof: proofFormat, peaks: peaksFormat } = formattingOpts;
@@ -134,7 +137,7 @@ export default class CoreMMR extends TreesDatabase {
 
     let { leafIndex, siblingsHashes } = proof;
     if (leafIndex < 1) throw new Error("Index must be greater than 1");
-    if (leafIndex > (await this.elementsCount.get())) throw new Error("Index must be in the tree");
+    if (leafIndex > treeSize) throw new Error("Index must be in the tree");
 
     let hash = this.hasher.hash([leafIndex.toString(), leafValue]);
 
@@ -147,12 +150,13 @@ export default class CoreMMR extends TreesDatabase {
       ]);
     }
 
-    return (await this.retrievePeaksHashes(findPeaks(await this.elementsCount.get()))).includes(hash);
+    return (await this.retrievePeaksHashes(findPeaks(treeSize))).includes(hash);
   }
 
-  async getPeaks(formattingOpts?: PeaksFormattingOptions): Promise<string[]> {
-    const lastElementId = await this.elementsCount.get();
-    const peaksIdxs = findPeaks(lastElementId);
+  async getPeaks(options: PeaksOptions = {}): Promise<string[]> {
+    const { elementsCount, formattingOpts } = options;
+    const treeSize = elementsCount ?? (await this.elementsCount.get());
+    const peaksIdxs = findPeaks(treeSize);
     const peaks = await this.retrievePeaksHashes(peaksIdxs);
     if (formattingOpts) {
       return formatPeaks(peaks, formattingOpts);
@@ -160,22 +164,22 @@ export default class CoreMMR extends TreesDatabase {
     return peaks;
   }
 
-  async bagThePeaks(): Promise<string> {
-    const lastElementId = await this.elementsCount.get();
-    const peaksIdxs = findPeaks(lastElementId);
+  async bagThePeaks(elementsCount?: number): Promise<string> {
+    const treeSize = elementsCount ?? (await this.elementsCount.get());
+    const peaksIdxs = findPeaks(treeSize);
     const peaksHashes = await this.retrievePeaksHashes(peaksIdxs);
 
     if (peaksIdxs.length === 1) {
-      return this.hasher.hash([lastElementId.toString(), peaksHashes[0]]);
+      return this.hasher.hash([treeSize.toString(), peaksHashes[0]]);
     }
 
     const root0 = this.hasher.hash([peaksHashes[peaksHashes.length - 2], peaksHashes[peaksHashes.length - 1]]);
-
     const root = peaksHashes
       .slice(0, peaksHashes.length - 2)
       .reverse()
       .reduce((prev, cur) => this.hasher.hash([cur, prev]), root0);
-    return this.hasher.hash([lastElementId.toString(), root]);
+
+    return this.hasher.hash([treeSize.toString(), root]);
   }
 
   async retrievePeaksHashes(peaksIdxs: number[], formattingOpts?: PeaksFormattingOptions): Promise<string[]> {

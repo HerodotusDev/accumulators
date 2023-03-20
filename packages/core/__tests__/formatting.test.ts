@@ -25,13 +25,15 @@ describe("Core: formatting", () => {
     const expectedFormattedProofPeaksLength = 4;
 
     const proofFormatted = await mmr.getProof(4, {
-      proof: {
-        outputSize: expectedFormattedProofSiblingHashesLength,
-        nullValue,
-      },
-      peaks: {
-        outputSize: expectedFormattedProofPeaksLength,
-        nullValue,
+      formattingOpts: {
+        proof: {
+          outputSize: expectedFormattedProofSiblingHashesLength,
+          nullValue,
+        },
+        peaks: {
+          outputSize: expectedFormattedProofPeaksLength,
+          nullValue,
+        },
       },
     });
 
@@ -54,8 +56,10 @@ describe("Core: formatting", () => {
     const expectedFormattedPeaksLength = 4;
 
     const peaksFormatted = await mmr.getPeaks({
-      outputSize: expectedFormattedPeaksLength,
-      nullValue,
+      formattingOpts: {
+        outputSize: expectedFormattedPeaksLength,
+        nullValue,
+      },
     });
 
     const expectedNullValuesInPeaks = peaksFormatted.length - actualPeaksLength;
@@ -69,10 +73,12 @@ describe("Core: formatting", () => {
       outputSize: 4,
     };
 
-    const proof = await mmr.getProof(4, { peaks: formattingOptions, proof: formattingOptions });
+    const proof = await mmr.getProof(4, { formattingOpts: { peaks: formattingOptions, proof: formattingOptions } });
 
     // TODO explain why 3 is the value
-    const isValid = await mmr.verifyProof(proof, "3", { peaks: formattingOptions, proof: formattingOptions });
+    const isValid = await mmr.verifyProof(proof, "3", {
+      formattingOpts: { peaks: formattingOptions, proof: formattingOptions },
+    });
     expect(isValid).toBe(true);
   });
 });
