@@ -1,4 +1,5 @@
 export type RocksOperationType = "put" | "del";
+
 export type RocksGetResult = string | null;
 
 export interface RocksDBType {
