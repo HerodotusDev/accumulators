@@ -42,10 +42,10 @@ describe("core", () => {
 
   it("should generate and verify non-expiring proofs", async () => {
     const proofs = await Promise.all(
-      appendsResults.map(({ leafIndex, elementsCount }) => mmr.getProof(leafIndex, elementsCount))
+      appendsResults.map(({ leafIndex, elementsCount }) => mmr.getProof(leafIndex, { elementsCount }))
     );
     const verifications = await Promise.all(
-      proofs.map((proof, idx) => mmr.verifyProof(proof, leaves[idx], proof.elementsCount))
+      proofs.map((proof, idx) => mmr.verifyProof(proof, leaves[idx], { elementsCount: proof.elementsCount }))
     );
 
     expect(verifications.every((verification) => verification === true)).toBe(true);

@@ -11,7 +11,7 @@ export const defaultHasherOptions: HasherOptions = {
 export type HexString = string;
 
 export abstract class IHasher {
-  constructor(protected readonly options: HasherOptions = defaultHasherOptions) {}
+  constructor(public readonly options: HasherOptions = defaultHasherOptions) {}
 
   /**
    *
