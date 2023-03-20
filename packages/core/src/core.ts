@@ -1,4 +1,13 @@
-import { AppendResult, IHasher, IStore, Proof } from "./types";
+import {
+  AppendResult,
+  PeaksFormattingOptions,
+  ProofFormattingOptions,
+  IHasher,
+  IStore,
+  Proof,
+  formatPeaks,
+  formatProof,
+} from "./types";
 import { findPeaks, getHeight, parentOffset, siblingOffset } from "./helpers";
 import { TreesDatabase } from "./trees-database";
 
@@ -56,7 +65,13 @@ export default class CoreMMR extends TreesDatabase {
     };
   }
 
-  async getProof(leafIndex: number): Promise<Proof> {
+  async getProof(
+    leafIndex: number,
+    formattingOpts?: {
+      proof: ProofFormattingOptions;
+      peaks: PeaksFormattingOptions;
+    }
+  ): Promise<Proof> {
     if (leafIndex < 1) throw new Error("Index must be greater than 1");
     if (leafIndex > (await this.elementsCount.get())) throw new Error("Index must be less than the tree size");
 
@@ -73,11 +88,19 @@ export default class CoreMMR extends TreesDatabase {
       index = isRight ? index + 1 : index + parentOffset(getHeight(index));
     }
 
+    const peaksHashes = await this.retrievePeaksHashes(peaks, formattingOpts?.peaks);
+    let siblingsHashes = [...(await this.hashes.getMany(siblings)).values()];
+
+    if (formattingOpts) {
+      const { proof: proofFormattingOpts } = formattingOpts;
+      siblingsHashes = formatProof(siblingsHashes, proofFormattingOpts);
+    }
+
     return {
       leafIndex: leafIndex,
       leafHash: await this.hashes.get(leafIndex),
-      siblingsHashes: [...(await this.hashes.getMany(siblings)).values()],
-      peaksHashes: await this.retrievePeaksHashes(peaks),
+      siblingsHashes,
+      peaksHashes,
       elementsCount: await this.elementsCount.get(),
     };
   }
@@ -87,9 +110,28 @@ export default class CoreMMR extends TreesDatabase {
    *
    * @param proof the proof to verify
    * @param leafValue the actual value appended to the tree, a preimage of the leaf hash
+   * @param proofFormat the proof formatting options, optional
    * @returns boolean
    */
-  async verifyProof(proof: Proof, leafValue: string): Promise<boolean> {
+  async verifyProof(
+    proof: Proof,
+    leafValue: string,
+    formattingOpts?: {
+      proof: ProofFormattingOptions;
+      peaks: PeaksFormattingOptions;
+    }
+  ): Promise<boolean> {
+    // Check if proof is formatted
+    if (formattingOpts) {
+      const { proof: proofFormat, peaks: peaksFormat } = formattingOpts;
+
+      const proofNullValuesCount = proof.siblingsHashes.filter((s) => s === proofFormat.nullValue).length;
+      proof.siblingsHashes = proof.siblingsHashes.slice(0, proof.siblingsHashes.length - proofNullValuesCount);
+
+      const peaksNullValuesCount = proof.peaksHashes.filter((s) => s === peaksFormat.nullValue).length;
+      proof.peaksHashes = proof.peaksHashes.slice(0, proof.peaksHashes.length - peaksNullValuesCount);
+    }
+
     let { leafIndex, siblingsHashes } = proof;
     if (leafIndex < 1) throw new Error("Index must be greater than 1");
     if (leafIndex > (await this.elementsCount.get())) throw new Error("Index must be in the tree");
@@ -108,10 +150,14 @@ export default class CoreMMR extends TreesDatabase {
     return (await this.retrievePeaksHashes(findPeaks(await this.elementsCount.get()))).includes(hash);
   }
 
-  async getPeaks(): Promise<string[]> {
+  async getPeaks(formattingOpts?: PeaksFormattingOptions): Promise<string[]> {
     const lastElementId = await this.elementsCount.get();
     const peaksIdxs = findPeaks(lastElementId);
-    return this.retrievePeaksHashes(peaksIdxs);
+    const peaks = await this.retrievePeaksHashes(peaksIdxs);
+    if (formattingOpts) {
+      return formatPeaks(peaks, formattingOpts);
+    }
+    return peaks;
   }
 
   async bagThePeaks(): Promise<string> {
@@ -132,8 +178,11 @@ export default class CoreMMR extends TreesDatabase {
     return this.hasher.hash([lastElementId.toString(), root]);
   }
 
-  async retrievePeaksHashes(peaksIdxs: number[]): Promise<string[]> {
+  async retrievePeaksHashes(peaksIdxs: number[], formattingOpts?: PeaksFormattingOptions): Promise<string[]> {
     const hashes = await this.hashes.getMany(peaksIdxs);
+    if (formattingOpts) {
+      return formatPeaks([...hashes.values()], formattingOpts);
+    }
     return [...hashes.values()];
   }
 

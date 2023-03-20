@@ -5,12 +5,12 @@ import MMRInMemoryStore from "@herodotus_dev/mmr-memory";
 const store = new MMRInMemoryStore();
 const hasher = new StarkPedersenHasher();
 
-describe("precomputation", () => {
+describe("Core: core functionalities", () => {
   let mmr: CoreMMR;
   const rootAt6Leaves = "0x04a1ae364258121690285af43cd4ee91adfd6a8647211748657d8e66835a20a1";
 
   it("should compute parent tree", async () => {
-    mmr = new CoreMMR(store, hasher as any);
+    mmr = new CoreMMR(store, hasher);
     await mmr.append("1");
     await mmr.append("2");
     await mmr.append("3");
