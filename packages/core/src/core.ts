@@ -56,11 +56,21 @@ export default class CoreMMR extends TreesDatabase {
     };
   }
 
-  async getProof(leafIndex: number): Promise<Proof> {
+  /**
+   *
+   * Generates an inclusion proof of a leaf at a certain tree state.
+   *
+   * @param leafIndex the leaf index of the element to prove the inclusion of.
+   * @param [elementsCount] the optional tree size at which the proof should be generated. Defaults to latest.
+   * @returns the generated inclusion proof.
+   */
+  async getProof(leafIndex: number, elementsCount?: number): Promise<Proof> {
     if (leafIndex < 1) throw new Error("Index must be greater than 1");
-    if (leafIndex > (await this.elementsCount.get())) throw new Error("Index must be less than the tree size");
 
-    const peaks = findPeaks(await this.elementsCount.get());
+    const treeSize = elementsCount ?? (await this.elementsCount.get());
+    if (leafIndex > treeSize) throw new Error("Index must be less than the tree tree size");
+
+    const peaks = findPeaks(treeSize);
     const siblings = [];
 
     let index = leafIndex;
@@ -78,7 +88,7 @@ export default class CoreMMR extends TreesDatabase {
       leafHash: await this.hashes.get(leafIndex),
       siblingsHashes: [...(await this.hashes.getMany(siblings)).values()],
       peaksHashes: await this.retrievePeaksHashes(peaks),
-      elementsCount: await this.elementsCount.get(),
+      elementsCount: treeSize,
     };
   }
 
@@ -87,12 +97,15 @@ export default class CoreMMR extends TreesDatabase {
    *
    * @param proof the proof to verify
    * @param leafValue the actual value appended to the tree, a preimage of the leaf hash
+   * @param [elementsCount] the optional tree size at which the proof should be generated. Defaults to latest.
    * @returns boolean
    */
-  async verifyProof(proof: Proof, leafValue: string): Promise<boolean> {
+  async verifyProof(proof: Proof, leafValue: string, elementsCount?: number): Promise<boolean> {
     let { leafIndex, siblingsHashes } = proof;
     if (leafIndex < 1) throw new Error("Index must be greater than 1");
-    if (leafIndex > (await this.elementsCount.get())) throw new Error("Index must be in the tree");
+
+    const treeSize = elementsCount ?? (await this.elementsCount.get());
+    if (leafIndex > treeSize) throw new Error("Index must be in the tree");
 
     let hash = this.hasher.hash([leafIndex.toString(), leafValue]);
 
@@ -105,7 +118,7 @@ export default class CoreMMR extends TreesDatabase {
       ]);
     }
 
-    return (await this.retrievePeaksHashes(findPeaks(await this.elementsCount.get()))).includes(hash);
+    return (await this.retrievePeaksHashes(findPeaks(treeSize))).includes(hash);
   }
 
   async getPeaks(): Promise<string[]> {
