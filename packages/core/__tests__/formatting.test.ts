@@ -6,7 +6,7 @@ describe("Core: formatting", () => {
   let mmr: CoreMMR;
 
   beforeAll(async () => {
-    mmr = new CoreMMR(new MMRInMemoryStore(), new StarkPedersenHasher() as any);
+    mmr = new CoreMMR(new MMRInMemoryStore(), new StarkPedersenHasher());
     await mmr.append("1");
     await mmr.append("2");
     await mmr.append("3");

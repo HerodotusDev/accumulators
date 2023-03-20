@@ -13,7 +13,7 @@ describe("core", () => {
     const store = new MMRInMemoryStore();
     const hasher = new StarkPedersenHasher();
 
-    mmr = new CoreMMR(store, hasher as any);
+    mmr = new CoreMMR(store, hasher);
     appendsResults = [];
 
     for (const leaf of leaves) {
