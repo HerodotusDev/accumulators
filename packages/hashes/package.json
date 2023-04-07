@@ -37,7 +37,7 @@
     "@herodotus_dev/mmr-core": "^1.1.12",
     "@types/node": "^18.15.0",
     "circomlibjs": "^0.1.7",
-    "ethers": "^6.2.3"
+    "ethers": "5.7.2"
   },
   "devDependencies": {}
 }
