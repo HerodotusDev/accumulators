@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.14](https://github.com/HerodotusDev/merkle-mountain-range/compare/v1.1.13...v1.1.14) (2023-04-07)
+
+**Note:** Version bump only for package @herodotus_dev/mmr-hashes
+
+
+
+
+
 ## [1.1.13](https://github.com/HerodotusDev/merkle-mountain-range/compare/v1.1.12...v1.1.13) (2023-04-07)
 
 **Note:** Version bump only for package @herodotus_dev/mmr-hashes
