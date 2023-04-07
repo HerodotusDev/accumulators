@@ -1,6 +1,6 @@
 {
   "name": "@herodotus_dev/mmr-hashes",
-  "version": "1.1.12",
+  "version": "1.1.13",
   "description": "A TypeScript implementation of Merkle Mountain Ranges",
   "keywords": [
     "merkle mountain range",
@@ -38,6 +38,5 @@
     "@types/node": "^18.15.0",
     "circomlibjs": "^0.1.7",
     "ethers": "^6.2.3"
-  },
-  "devDependencies": {}
+  }
 }
