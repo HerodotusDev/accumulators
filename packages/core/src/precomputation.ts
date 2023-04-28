@@ -32,12 +32,12 @@ export class PrecomputationMMR extends CoreMMR {
     const parentMmr = new CoreMMR(store, hasher, parentMmrUuid);
     const elementsCount = await parentMmr.elementsCount.get();
     const leavesCount = await parentMmr.leavesCount.get();
-    const rootHash = (await parentMmr.rootHash.get()) ?? "0x0";
+    const rootHash = await parentMmr.rootHash.get();
     const precomputationMMR = new PrecomputationMMR(store, hasher, parentMmrUuid, elementsCount, mmrUuid);
 
     await precomputationMMR.elementsCount.set(elementsCount);
     await precomputationMMR.leavesCount.set(leavesCount);
-    await precomputationMMR.rootHash.set(rootHash);
+    if (rootHash) await precomputationMMR.rootHash.set(rootHash);
 
     return precomputationMMR;
   }
