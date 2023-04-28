@@ -169,7 +169,8 @@ export default class CoreMMR extends TreesDatabase {
     const peaksIdxs = findPeaks(treeSize);
     const peaksHashes = await this.retrievePeaksHashes(peaksIdxs);
 
-    if (peaksIdxs.length === 1) {
+    if (peaksIdxs.length === 0) return "0x0";
+    else if (peaksIdxs.length === 1) {
       return this.hasher.hash([treeSize.toString(), peaksHashes[0]]);
     }
 
