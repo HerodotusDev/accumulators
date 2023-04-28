@@ -44,3 +44,24 @@ describe("precomputation", () => {
     await precomputationMmr.close();
   });
 });
+
+describe("empty mmr", () => {
+  let mmr: CoreMMR;
+
+  beforeEach(async () => {
+    mmr = new CoreMMR(store, hasher);
+  });
+
+  it("should precompute from empty mmr", async () => {
+    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrUuid, "precomputed");
+
+    await expect(precomputationMmr.bagThePeaks()).resolves.toEqual("0x0");
+
+    await precomputationMmr.append("1");
+    await precomputationMmr.append("2");
+
+    await expect(precomputationMmr.bagThePeaks()).resolves.toEqual(
+      "0x067cfcdd3b4a8f67853ecac650440dad1bac6de440def9f196e9b9968d9a00df"
+    );
+  });
+});
