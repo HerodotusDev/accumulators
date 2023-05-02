@@ -32,19 +32,20 @@
     "e:memory:start": "yarn --cwd ./examples/memory start",
     "e:memory:dev": "yarn --cwd ./examples/memory dev",
     "e:rocksdb:start": "yarn --cwd ./examples/rocksdb start",
-    "e:rocksdb:dev": "yarn --cwd ./examples/rocksdb dev"
+    "e:rocksdb:dev": "yarn --cwd ./examples/rocksdb dev",
+    "e:next-js": "yarn --cwd ./examples/next-js dev"
   },
   "workspaces": [
     "packages/*",
     "examples/*"
   ],
   "devDependencies": {
-    "@types/jest": "^29.4.0",
-    "@types/node": "^18.15.0",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.15.3",
     "jest": "^29.5.0",
     "lerna": "^6.5.1",
     "ts-jest": "^29.0.5",
-    "typescript": "^4.9.5",
+    "typescript": "^5.0.2",
     "ts-node": "^10.9.1"
   }
 }
