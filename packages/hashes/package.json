@@ -37,6 +37,7 @@
     "@herodotus_dev/mmr-core": "^1.1.16",
     "@types/node": "^18.15.0",
     "circomlibjs": "^0.1.7",
-    "ethers": "5.7.2"
+    "ethers": "5.7.2",
+    "micro-starknet": "^0.2.3"
   }
 }
