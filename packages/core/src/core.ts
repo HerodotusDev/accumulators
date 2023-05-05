@@ -113,6 +113,66 @@ export default class CoreMMR extends TreesDatabase {
   }
 
   /**
+   *
+   * Generates an inclusion proof of a leaf at a certain tree state
+   *
+   * @param leavesIds the leaves indexes of the elements to prove the inclusion of
+   * @param [options] Options containing the optional tree size at which the proof should be generated alongside formatting specifiers
+   * @returns the generated inclusion proofs.
+   */
+  async getProofs(leavesIds: number[], options: ProofOptions = {}): Promise<Proof[]> {
+    const { elementsCount, formattingOpts } = options;
+    const treeSize = elementsCount ?? (await this.elementsCount.get());
+
+    leavesIds.forEach((leafIndex) => {
+      if (leafIndex < 1) throw new Error("Index must be greater than 1");
+      if (leafIndex > treeSize) throw new Error("Index must be less than the tree tree size");
+    });
+    const peaks = findPeaks(treeSize);
+    const siblingsPerLeaf = new Map<number, number[]>();
+
+    for (const leafIndex of leavesIds) {
+      const siblings = [];
+      let index = leafIndex;
+      while (!peaks.includes(index)) {
+        // If not peak, must have parent
+        const isRight = getHeight(index + 1) == getHeight(index) + 1;
+        const sib = isRight ? index - siblingOffset(getHeight(index)) : index + siblingOffset(getHeight(index));
+        siblings.push(sib);
+        index = isRight ? index + 1 : index + parentOffset(getHeight(index));
+      }
+      siblingsPerLeaf.set(leafIndex, siblings);
+    }
+
+    const peaksHashes = await this.retrievePeaksHashes(peaks, formattingOpts?.peaks);
+    const allSiblingsHashes = await this.hashes.getMany(Array.from(siblingsPerLeaf.values()).flat());
+    const leafHashes = await this.hashes.getMany(leavesIds);
+
+    const proofs: Proof[] = [];
+    for (const leafIndex of leavesIds) {
+      const siblings = siblingsPerLeaf.get(leafIndex);
+      let siblingsHashes: string[] = [];
+      for (const sibling of siblings) {
+        siblingsHashes.push(allSiblingsHashes.get(sibling.toString()));
+      }
+
+      if (options.formattingOpts) {
+        const { proof: proofFormattingOpts } = options.formattingOpts;
+        siblingsHashes = formatProof(siblingsHashes, proofFormattingOpts);
+      }
+
+      proofs.push({
+        leafIndex: leafIndex,
+        leafHash: leafHashes.get(leafIndex.toString()),
+        siblingsHashes,
+        peaksHashes,
+        elementsCount: treeSize,
+      });
+    }
+    return proofs;
+  }
+
+  /**
    * Verifies a proof
    *
    * @param proof the proof to verify
