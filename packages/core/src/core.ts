@@ -124,10 +124,10 @@ export default class CoreMMR extends TreesDatabase {
     const { elementsCount, formattingOpts } = options;
     const treeSize = elementsCount ?? (await this.elementsCount.get());
 
-    leavesIds.forEach(leafIndex => {
+    leavesIds.forEach((leafIndex) => {
       if (leafIndex < 1) throw new Error("Index must be greater than 1");
       if (leafIndex > treeSize) throw new Error("Index must be less than the tree tree size");
-    })
+    });
     const peaks = findPeaks(treeSize);
     const siblingsPerLeaf = new Map<number, number[]>();
 
@@ -151,7 +151,7 @@ export default class CoreMMR extends TreesDatabase {
     const proofs: Proof[] = [];
     for (const leafIndex of leavesIds) {
       const siblings = siblingsPerLeaf.get(leafIndex);
-      let siblingsHashes: string[] = []
+      let siblingsHashes: string[] = [];
       for (const sibling of siblings) {
         siblingsHashes.push(allSiblingsHashes.get(sibling.toString()));
       }
@@ -167,8 +167,7 @@ export default class CoreMMR extends TreesDatabase {
         siblingsHashes,
         peaksHashes,
         elementsCount: treeSize,
-
-      })
+      });
     }
     return proofs;
   }
