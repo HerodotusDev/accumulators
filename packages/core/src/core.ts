@@ -112,6 +112,14 @@ export default class CoreMMR extends TreesDatabase {
     };
   }
 
+  /**
+   *
+   * Generates an inclusion proof of a leaf at a certain tree state
+   *
+   * @param leavesIds the leaves indexes of the elements to prove the inclusion of
+   * @param [options] Options containing the optional tree size at which the proof should be generated alongside formatting specifiers
+   * @returns the generated inclusion proofs.
+   */
   async getProofs(leavesIds: number[], options: ProofOptions = {}): Promise<Proof[]> {
     const { elementsCount, formattingOpts } = options;
     const treeSize = elementsCount ?? (await this.elementsCount.get());
