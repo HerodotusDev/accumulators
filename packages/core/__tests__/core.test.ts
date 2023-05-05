@@ -51,6 +51,12 @@ describe("core", () => {
     expect(verifications.every((verification) => verification === true)).toBe(true);
   });
 
+  it("Should generate multiple proofs", async () => {
+    const proofs = await mmr.getProofs(appendsResults.map(r => r.leafIndex));
+    const verifications = await Promise.all(proofs.map((proof, idx) => mmr.verifyProof(proof, leaves[idx])));
+    expect(verifications.every((verification) => verification === true)).toBe(true);
+  });
+
   afterEach(async () => {
     await mmr.clear();
     await expect(mmr.getPeaks()).resolves.toEqual([]);
