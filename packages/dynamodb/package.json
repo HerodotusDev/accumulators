@@ -1,0 +1,39 @@
+{
+  "name": "@herodotus_dev/mmr-dynamodb",
+  "version": "1.1.17",
+  "description": "A TypeScript implementation of Merkle Mountain Ranges",
+  "keywords": [
+    "merkle mountain range",
+    "merkle mountain ranges",
+    "merkle tree",
+    "merkle trees",
+    "mmrs",
+    "mmr"
+  ],
+  "homepage": "https://github.com/HerodotusDev/merkle-mountain-range",
+  "bugs": {
+    "url": "https://github.com/HerodotusDev/merkle-mountain-range/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/HerodotusDev/merkle-mountain-range.git"
+  },
+  "license": "GPL-3.0-or-later",
+  "author": "Herodotus Dev Ltd",
+  "main": "lib/index.js",
+  "typings": "lib/index.d.ts",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@herodotus_dev/mmr-core": "^1.1.17",
+    "aws-sdk": "^2.1376.0"
+  }
+}

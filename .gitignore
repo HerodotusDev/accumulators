@@ -3,3 +3,4 @@ node_modules/
 rocksdb_data/
 lerna-debug.log
 dist/
+.env
