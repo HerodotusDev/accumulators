@@ -1,18 +1,18 @@
-import CoreMMR, { IStore, PrecomputationMMR } from "@herodotus_dev/mmr-core";
+import CoreMMR, { PrecomputationMMR } from "@herodotus_dev/mmr-core";
 import { StarkPedersenHasher } from "@herodotus_dev/mmr-hashes";
 import DynamoDbStore from "../src";
-import { DynamoDB } from "aws-sdk";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 
 const hasher = new StarkPedersenHasher();
+const client = new DynamoDBClient({ region: "eu-west-2" });
+const store = new DynamoDbStore(client, "mmrs");
 
 describe("precomputation", () => {
   const rootAt6Leaves = "0x04a1ae364258121690285af43cd4ee91adfd6a8647211748657d8e66835a20a1";
   let mmr: CoreMMR;
-  let store: IStore;
 
   beforeAll(async () => {
-    const client = new DynamoDB.DocumentClient({ region: "eu-west-2" });
-    store = new DynamoDbStore(client, "mmrs");
+    await store.deleteAll();
   });
 
   beforeEach(async () => {
@@ -30,7 +30,7 @@ describe("precomputation", () => {
     await expect(mmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
     const proof = await mmr.getProof(8);
     await expect(mmr.verifyProof(proof, "5")).resolves.toEqual(true);
-  });
+  }, 10000);
 
   it("should precompute from parent tree", async () => {
     const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrUuid, "precomputed");
@@ -44,5 +44,5 @@ describe("precomputation", () => {
     await expect(precomputationMmr.verifyProof(proof, "5")).resolves.toEqual(true);
 
     await precomputationMmr.close();
-  });
+  }, 10000);
 });

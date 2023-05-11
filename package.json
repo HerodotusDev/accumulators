@@ -24,7 +24,7 @@
   "scripts": {
     "postinstall": "yarn build",
     "build": "lerna run build",
-    "test": "jest",
+    "test": "AWS_PROFILE=herodotus jest",
     "test:core": "yarn test packages/core",
     "test:hashes": "yarn test packages/hashes",
     "test:memory": "yarn test packages/memory",

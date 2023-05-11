@@ -34,6 +34,7 @@
   },
   "dependencies": {
     "@herodotus_dev/mmr-core": "^1.1.17",
-    "aws-sdk": "^2.1376.0"
+    "@aws-sdk/client-dynamodb": "^3.329.0",
+    "@aws-sdk/util-dynamodb": "^3.329.0"
   }
 }
