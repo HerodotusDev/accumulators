@@ -22,7 +22,7 @@ export class TreesDatabase {
 export class InStoreTable {
   constructor(protected readonly store: IStore, public readonly key: string) {}
 
-  getFullKey(suffix: string | number): string {
+  getFullKey(suffix?: string | number): string {
     return this.key + (suffix ?? "").toString() || "";
   }
 
@@ -39,6 +39,13 @@ export class InStoreTable {
 
   async set(value: string, suffix?: string | number): Promise<void> {
     return this.store.set(this.getFullKey(suffix), value);
+  }
+
+  async setMany(values: Map<string | number, string>): Promise<void> {
+    const withKeys = new Map();
+    values.forEach((value, suffix) => withKeys.set(this.getFullKey(suffix), value));
+
+    return this.store.setMany(withKeys);
   }
 }
 

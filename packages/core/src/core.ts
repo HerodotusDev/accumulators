@@ -1,7 +1,6 @@
 import {
   AppendResult,
   PeaksFormattingOptions,
-  ProofFormattingOptions,
   IHasher,
   IStore,
   Proof,
@@ -36,6 +35,7 @@ export default class CoreMMR extends TreesDatabase {
     peaks.push(hash);
 
     let height = 0;
+    let setOperations = new Map();
     while (getHeight(lastElementIdx + 1) > height) {
       lastElementIdx++;
 
@@ -43,11 +43,14 @@ export default class CoreMMR extends TreesDatabase {
       const leftHash = peaks.pop();
 
       const parentHash = this.hasher.hash([lastElementIdx.toString(), this.hasher.hash([leftHash, rightHash])]);
-      await this.hashes.set(parentHash, lastElementIdx);
+      setOperations.set(lastElementIdx, parentHash);
       peaks.push(parentHash);
 
       height++;
     }
+
+    //? Batch store the new hashes
+    await this.hashes.setMany(setOperations);
 
     //? Update latest value.
     await this.elementsCount.set(lastElementIdx);
