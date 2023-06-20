@@ -1,4 +1,4 @@
-import { IHasher } from "@herodotus_dev/mmr-core";
+import { IHasher } from "@accumulators/core";
 import { pedersen } from "./pedersen/pedersen_wasm";
 
 export class StarkPedersenHasher extends IHasher {

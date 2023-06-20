@@ -1,8 +1,8 @@
-import CoreMMR, { PrecomputationMMR } from "@herodotus_dev/mmr-core";
-import { StarkPedersenHasher } from "@herodotus_dev/mmr-hashes";
-import MMRInMemoryStore from "../src";
+import CoreMMR, { PrecomputationMMR } from "@accumulators/merkle-mountain-range";
+import { StarkPedersenHasher } from "@accumulators/hashers";
+import MemoryStore from "../src";
 
-const store = new MMRInMemoryStore();
+const store = new MemoryStore();
 const hasher = new StarkPedersenHasher();
 
 describe("precomputation", () => {
@@ -27,7 +27,7 @@ describe("precomputation", () => {
   });
 
   it("should precompute from parent tree", async () => {
-    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrUuid, "precomputed");
+    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrId, "precomputed");
 
     await precomputationMmr.append("4");
     await precomputationMmr.append("5");

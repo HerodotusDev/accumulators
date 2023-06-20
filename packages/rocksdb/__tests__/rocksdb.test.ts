@@ -1,8 +1,8 @@
-import CoreMMR, { PrecomputationMMR } from "@herodotus_dev/mmr-core";
-import { StarkPedersenHasher } from "@herodotus_dev/mmr-hashes";
-import MMRRocksDBStore from "../src";
+import CoreMMR, { PrecomputationMMR } from "@accumulators/merkle-mountain-range";
+import { StarkPedersenHasher } from "@accumulators/hashers";
+import RocksDBStore from "../src";
 
-const store = new MMRRocksDBStore("./rocksdb_data");
+const store = new RocksDBStore("./rocksdb_data");
 const hasher = new StarkPedersenHasher();
 
 describe("precomputation", () => {
@@ -31,7 +31,7 @@ describe("precomputation", () => {
   });
 
   it("should precompute from parent tree", async () => {
-    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrUuid, "precomputed");
+    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrId, "precomputed");
 
     await precomputationMmr.append("4");
     await precomputationMmr.append("5");
@@ -53,7 +53,7 @@ describe("empty mmr", () => {
   });
 
   it("should precompute from empty mmr", async () => {
-    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrUuid, "precomputed");
+    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrId, "precomputed");
 
     await expect(precomputationMmr.bagThePeaks()).resolves.toEqual("0x0");
 

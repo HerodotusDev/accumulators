@@ -1,12 +1,12 @@
 import CoreMMR, { AppendResult } from "../src";
-import { StarkPedersenHasher } from "@herodotus_dev/mmr-hashes";
-import MMRInMemoryStore from "@herodotus_dev/mmr-memory";
+import { StarkPedersenHasher } from "@accumulators/hashers";
+import MemoryStore from "@accumulators/memory";
 
 describe("Core: formatting", () => {
   let mmr: CoreMMR;
 
   beforeAll(async () => {
-    mmr = new CoreMMR(new MMRInMemoryStore(), new StarkPedersenHasher());
+    mmr = new CoreMMR(new MemoryStore(), new StarkPedersenHasher());
     await mmr.append("1");
     await mmr.append("2");
     await mmr.append("3");

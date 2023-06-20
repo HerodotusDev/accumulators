@@ -1,4 +1,4 @@
-import { IHasher } from "@herodotus_dev/mmr-core";
+import { IHasher } from "@accumulators/core";
 const buildPoseidon = require("circomlibjs").buildPoseidon;
 
 export class PoseidonHasher extends IHasher {
@@ -22,6 +22,6 @@ export class PoseidonHasher extends IHasher {
           IHasher.byteSize(data[sizeErrorIndex])
         )}`
       );
-    return '0x' + BigInt(this.poseidon.F.toString(this.poseidon(data))).toString(16);
+    return "0x" + BigInt(this.poseidon.F.toString(this.poseidon(data))).toString(16);
   }
 }

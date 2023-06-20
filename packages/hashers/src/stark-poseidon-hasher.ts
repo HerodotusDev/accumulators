@@ -1,4 +1,4 @@
-import { IHasher } from "@herodotus_dev/mmr-core";
+import { IHasher } from "@accumulators/core";
 import { poseidonHash } from "micro-starknet";
 
 export class StarkPoseidonHasher extends IHasher {

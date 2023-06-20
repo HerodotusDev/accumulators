@@ -1,9 +1,9 @@
-import CoreMMR from "@herodotus_dev/mmr-core";
-import MMRInMemoryStore from "@herodotus_dev/mmr-memory";
-import { StarkPedersenHasher } from "@herodotus_dev/mmr-hashes";
+import CoreMMR from "@accumulators/core";
+import MemoryStore from "@accumulators/memory";
+import { StarkPedersenHasher } from "@accumulators/hashers";
 
 async function main() {
-  const mmr = new CoreMMR(new MMRInMemoryStore(), new StarkPedersenHasher());
+  const mmr = new CoreMMR(new MemoryStore(), new StarkPedersenHasher());
 
   await mmr.append("1");
   //assert root = 1096725095163354219926720901079039062801431726264604829411571423717521670390
