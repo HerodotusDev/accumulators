@@ -1,8 +1,12 @@
 {
-  "name": "@accumulators/memory",
-  "version": "1.1.17",
-  "description": "In Memory IStore implementation for Accumulators",
-  "keywords": [],
+  "name": "@accumulators/incremental-merkle-tree",
+  "version": "1.0.0",
+  "description": "A TypeScript implementation of Incremental Merkle Trees with multiproofs",
+  "keywords": [
+    "incremental merkle tree",
+    "multiproofs",
+    "merkle proofs"
+  ],
   "homepage": "https://github.com/HerodotusDev/merkle-mountain-range",
   "bugs": {
     "url": "https://github.com/HerodotusDev/merkle-mountain-range/issues"
@@ -26,10 +30,11 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@accumulators/core": "^1.1.17"
+    "@accumulators/core": "^1.1.17",
+    "ulid": "^2.3.0"
   },
   "devDependencies": {
-    "@accumulators/hashers": "^1.1.17",
-    "@accumulators/merkle-mountain-range": "^1.1.17"
+    "@accumulators/memory": "^1.1.17",
+    "@accumulators/hashers": "^1.1.17"
   }
 }

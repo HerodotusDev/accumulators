@@ -1,9 +1,6 @@
 import {
   AppendResult,
   PeaksFormattingOptions,
-  ProofFormattingOptions,
-  IHasher,
-  IStore,
   Proof,
   formatPeaks,
   formatProof,
@@ -12,10 +9,11 @@ import {
 } from "./types";
 import { findPeaks, getHeight, parentOffset, siblingOffset } from "./helpers";
 import { TreesDatabase } from "./trees-database";
+import { IHasher, IStore } from "@accumulators/core";
 
 export default class CoreMMR extends TreesDatabase {
-  constructor(store: IStore, protected readonly hasher: IHasher, mmrUuid?: string) {
-    super(store, mmrUuid);
+  constructor(store: IStore, protected readonly hasher: IHasher, mmrId?: string) {
+    super(store, mmrId);
   }
 
   async append(value: string): Promise<AppendResult> {

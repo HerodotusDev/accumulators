@@ -1,8 +1,8 @@
 import CoreMMR, { PrecomputationMMR } from "../src";
-import { StarkPedersenHasher } from "@herodotus_dev/mmr-hashes";
-import MMRInMemoryStore from "@herodotus_dev/mmr-memory";
+import { StarkPedersenHasher } from "@accumulators/hashers";
+import MemoryStore from "@accumulators/memory";
 
-const store = new MMRInMemoryStore();
+const store = new MemoryStore();
 const hasher = new StarkPedersenHasher();
 
 describe("precomputation", () => {
@@ -27,7 +27,7 @@ describe("precomputation", () => {
   });
 
   it("should precompute from parent tree", async () => {
-    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrUuid, "precomputed");
+    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrId, "precomputed");
 
     await precomputationMmr.append("4");
     const { leafIndex } = await precomputationMmr.append("5");
@@ -58,7 +58,7 @@ describe("empty mmr", () => {
   });
 
   it("should precompute from empty mmr", async () => {
-    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrUuid, "precomputed");
+    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrId, "precomputed");
 
     await expect(precomputationMmr.bagThePeaks()).resolves.toEqual("0x0");
 

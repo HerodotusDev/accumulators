@@ -1,6 +1,6 @@
-import { IStore } from "@herodotus_dev/mmr-core";
+import { IStore } from "@accumulators/core";
 
-export default class MMRInMemoryStore implements IStore {
+export default class MemoryStore implements IStore {
   private store: Map<string, string>;
 
   constructor() {

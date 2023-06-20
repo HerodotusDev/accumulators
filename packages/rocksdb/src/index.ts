@@ -1,8 +1,8 @@
 import * as RocksDB from "level-rocksdb";
-import { IStore } from "@herodotus_dev/mmr-core";
+import { IStore } from "@accumulators/core";
 import { RocksDBType } from "./types";
 
-export default class MMRRocksDBStore implements IStore {
+export default class RocksDBStore implements IStore {
   private db: RocksDBType;
 
   constructor(location: string) {

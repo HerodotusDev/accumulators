@@ -1,15 +1,8 @@
 {
-  "name": "@herodotus_dev/mmr-core",
+  "name": "@accumulators/core",
   "version": "1.1.17",
-  "description": "A TypeScript implementation of Merkle Mountain Ranges",
-  "keywords": [
-    "merkle mountain range",
-    "merkle mountain ranges",
-    "merkle tree",
-    "merkle trees",
-    "mmrs",
-    "mmr"
-  ],
+  "description": "A collection of TypeScript accumulators packages, each using the core package",
+  "keywords": [],
   "homepage": "https://github.com/HerodotusDev/merkle-mountain-range",
   "bugs": {
     "url": "https://github.com/HerodotusDev/merkle-mountain-range/issues"
@@ -31,11 +24,5 @@
   ],
   "scripts": {
     "build": "tsc"
-  },
-  "dependencies": {
-    "uuid": "^9.0.0"
-  },
-  "devDependencies": {
-    "@types/uuid": "^9.0.1"
   }
 }

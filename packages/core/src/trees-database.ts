@@ -1,23 +1,4 @@
-import { IStore, TREE_METADATA_KEYS } from "./types";
-import { v4 as uuid } from "uuid";
-
-export class TreesDatabase {
-  mmrUuid: string;
-
-  readonly leavesCount: InStoreCounter;
-  readonly elementsCount: InStoreCounter;
-
-  hashes: InStoreTable;
-  readonly rootHash: InStoreTable;
-
-  constructor(protected readonly store: IStore, mmrUuid?: string) {
-    mmrUuid ? (this.mmrUuid = mmrUuid) : (this.mmrUuid = uuid());
-    this.leavesCount = new InStoreCounter(this.store, `${this.mmrUuid}:${TREE_METADATA_KEYS.LEAF_COUNT}`);
-    this.elementsCount = new InStoreCounter(this.store, `${this.mmrUuid}:${TREE_METADATA_KEYS.ELEMENT_COUNT}`);
-    this.rootHash = new InStoreTable(this.store, `${this.mmrUuid}:${TREE_METADATA_KEYS.ROOT_HASH}`);
-    this.hashes = new InStoreTable(this.store, `${this.mmrUuid}:hashes:`);
-  }
-}
+import { IStore } from "./types";
 
 export class InStoreTable {
   constructor(protected readonly store: IStore, public readonly key: string) {}
@@ -39,6 +20,14 @@ export class InStoreTable {
 
   async set(value: string, suffix?: string | number): Promise<void> {
     return this.store.set(this.getFullKey(suffix), value);
+  }
+
+  async setMany(entries: Record<string, string>): Promise<void> {
+    const storeEntries = new Map<string, string>();
+    for (const key in entries) {
+      storeEntries.set(this.getFullKey(key), entries[key]);
+    }
+    return this.store.setMany(storeEntries);
   }
 }
 

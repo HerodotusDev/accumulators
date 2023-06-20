@@ -1,5 +1,5 @@
-import CoreMMR, { IHasher, IStore } from ".";
-import { InStoreTable } from "./trees-database";
+import { IHasher, IStore, InStoreTable } from "@accumulators/core";
+import CoreMMR from ".";
 
 export class PrecomputationMMR extends CoreMMR {
   private readonly parentEndIdx: number;
@@ -7,33 +7,28 @@ export class PrecomputationMMR extends CoreMMR {
     store: IStore,
     hasher: IHasher,
 
-    parentMmrUuid: string,
+    parentmmrId: string,
     elementsCount: number,
 
-    mmrUuid?: string
+    mmrId?: string
   ) {
-    super(store, hasher, mmrUuid);
+    super(store, hasher, mmrId);
 
-    this.hashes = new PrecomputeInStoreTable(
-      store,
-      `${this.mmrUuid}:hashes:`,
-      `${parentMmrUuid}:hashes:`,
-      elementsCount
-    );
+    this.hashes = new PrecomputeInStoreTable(store, `${this.mmrId}:hashes:`, `${parentmmrId}:hashes:`, elementsCount);
     this.parentEndIdx = elementsCount;
   }
 
   static async initialize(
     store: IStore,
     hasher: IHasher,
-    parentMmrUuid: string,
-    mmrUuid?: string
+    parentmmrId: string,
+    mmrId?: string
   ): Promise<PrecomputationMMR> {
-    const parentMmr = new CoreMMR(store, hasher, parentMmrUuid);
+    const parentMmr = new CoreMMR(store, hasher, parentmmrId);
     const elementsCount = await parentMmr.elementsCount.get();
     const leavesCount = await parentMmr.leavesCount.get();
     const rootHash = await parentMmr.rootHash.get();
-    const precomputationMMR = new PrecomputationMMR(store, hasher, parentMmrUuid, elementsCount, mmrUuid);
+    const precomputationMMR = new PrecomputationMMR(store, hasher, parentmmrId, elementsCount, mmrId);
 
     await precomputationMMR.elementsCount.set(elementsCount);
     await precomputationMMR.leavesCount.set(leavesCount);

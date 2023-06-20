@@ -1,5 +1,5 @@
-import MMRInMemoryStore from "@herodotus_dev/mmr-memory";
-import { StarkPedersenHasher } from "@herodotus_dev/mmr-hashes";
+import MemoryStore from "@accumulators/memory";
+import { StarkPedersenHasher } from "@accumulators/hashers";
 import CoreMMR, { AppendResult } from "../src";
 
 describe("core", () => {
@@ -10,7 +10,7 @@ describe("core", () => {
   let appendsResults: AppendResult[];
 
   beforeEach(async () => {
-    const store = new MMRInMemoryStore();
+    const store = new MemoryStore();
     const hasher = new StarkPedersenHasher();
 
     mmr = new CoreMMR(store, hasher);
