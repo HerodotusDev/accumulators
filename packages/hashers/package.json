@@ -22,7 +22,7 @@
     "lib"
   ],
   "scripts": {
-    "build": "tsc && mkdir -p lib/pedersen && ls src && ls src/pedersen && cp src/pedersen/{pedersen_wasm_bg.wasm,pedersen_wasm_bg.wasm.d.ts,pedersen_wasm.js,pedersen_wasm.d.ts} lib/pedersen"
+    "build": "tsc && mkdir -p lib/pedersen && cp src/pedersen/pedersen_wasm_bg.wasm lib/pedersen && cp src/pedersen/pedersen_wasm_bg.wasm.d.ts lib/pedersen && cp src/pedersen/pedersen_wasm.js lib/pedersen && cp src/pedersen/pedersen_wasm.d.ts lib/pedersen"
   },
   "dependencies": {
     "@accumulators/core": "^1.1.17",
