@@ -37,13 +37,13 @@ importers:
     dependencies:
       '@accumulators/core':
         specifier: ^1.1.7
-        version: link:../../packages/core
+        version: 1.2.1
       '@accumulators/hashers':
         specifier: ^1.1.7
-        version: link:../../packages/hashers
+        version: 1.2.1
       '@accumulators/memory':
         specifier: ^1.1.7
-        version: link:../../packages/memory
+        version: 1.2.1
     devDependencies:
       nodemon:
         specifier: ^2.0.21
@@ -56,13 +56,13 @@ importers:
     dependencies:
       '@accumulators/core':
         specifier: ^1.1.7
-        version: link:../../packages/core
+        version: 1.2.1
       '@accumulators/hashers':
         specifier: ^1.1.7
-        version: link:../../packages/hashers
+        version: 1.2.1
       '@accumulators/rocksdb':
         specifier: ^1.1.7
-        version: link:../../packages/rocksdb
+        version: 1.2.1
     devDependencies:
       nodemon:
         specifier: ^2.0.21
@@ -76,7 +76,7 @@ importers:
   packages/hashers:
     dependencies:
       '@accumulators/core':
-        specifier: ^1.2.1
+        specifier: ^2.0.0
         version: link:../core
       '@ethersproject/solidity':
         specifier: ^5.7.0
@@ -94,65 +94,95 @@ importers:
   packages/incremental-merkle-tree:
     dependencies:
       '@accumulators/core':
-        specifier: ^1.2.1
+        specifier: ^2.0.0
         version: link:../core
       ulid:
         specifier: ^2.3.0
         version: 2.3.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^1.2.1
+        specifier: ^2.0.0
         version: link:../hashers
       '@accumulators/memory':
-        specifier: ^1.2.1
+        specifier: ^2.0.0
         version: link:../memory
 
   packages/memory:
     dependencies:
       '@accumulators/core':
-        specifier: ^1.2.1
+        specifier: ^2.0.0
         version: link:../core
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^1.2.1
+        specifier: ^2.0.0
         version: link:../hashers
       '@accumulators/merkle-mountain-range':
-        specifier: ^1.2.1
+        specifier: ^2.0.0
         version: link:../merkle-mountain-range
 
   packages/merkle-mountain-range:
     dependencies:
       '@accumulators/core':
-        specifier: ^1.2.1
+        specifier: ^2.0.0
         version: link:../core
       ulid:
         specifier: ^2.3.0
         version: 2.3.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^1.2.1
+        specifier: ^2.0.0
         version: link:../hashers
       '@accumulators/memory':
-        specifier: ^1.2.1
+        specifier: ^2.0.0
         version: link:../memory
 
   packages/rocksdb:
     dependencies:
       '@accumulators/core':
-        specifier: ^1.2.1
+        specifier: ^2.0.0
         version: link:../core
       level-rocksdb:
         specifier: ^5.0.0
         version: 5.0.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^1.2.1
+        specifier: ^2.0.0
         version: link:../hashers
       '@accumulators/merkle-mountain-range':
-        specifier: ^1.2.1
+        specifier: ^2.0.0
         version: link:../merkle-mountain-range
 
 packages:
+
+  /@accumulators/core@1.2.1:
+    resolution: {integrity: sha512-CFmcdGrYQ16Cjj3ZAZPyQ5bOAIHR4LGVtbsfaNxjFoWYzKA16bcoa3Kf825z2yJj5kzmtC7pfHv/YMTTVj+e7w==}
+    dev: false
+
+  /@accumulators/hashers@1.2.1:
+    resolution: {integrity: sha512-4mCDeVR6TB+wNP+k237NYxZU+Qbgp53oTIReW+bEr56JBt2etwll6uqdu5Hr2KGkEEzn5A1fw4irN/NYg7J89A==}
+    dependencies:
+      '@accumulators/core': 1.2.1
+      '@ethersproject/solidity': 5.7.0
+      circomlibjs: 0.1.7
+      ethers: 6.6.0
+      micro-starknet: 0.2.3
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
+
+  /@accumulators/memory@1.2.1:
+    resolution: {integrity: sha512-mHIIJ6XEuvzp6w5nxJo33L1M7Hvw+WmGZUAwq1wFwRhyEc+jKPLyCuDF8x3KtDErVSViyrNGSVz/jIGbCn49DA==}
+    dependencies:
+      '@accumulators/core': 1.2.1
+    dev: false
+
+  /@accumulators/rocksdb@1.2.1:
+    resolution: {integrity: sha512-lrmpjnTe2gYpKqBp5H2P6uiGU62+loGCs/ZDD6O7bhGenjHM+vDMeiwn3gJCpoqKqYQkGvx7smgcEjhyzZ4pUg==}
+    dependencies:
+      '@accumulators/core': 1.2.1
+      level-rocksdb: 5.0.0
+    dev: false
 
   /@adraffy/ens-normalize@1.9.2:
     resolution: {integrity: sha512-0h+FrQDqe2Wn+IIGFkTCd4aAwTJ+7834Ek1COohCyV26AXhwQ7WQaz+4F/nLOeVl/3BtWHOHLPsq46V8YB46Eg==}
