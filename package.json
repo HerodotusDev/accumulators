@@ -4,13 +4,13 @@
   "version": "1.0.0",
   "description": "A set of packages around cryptographic accumulators",
   "keywords": [],
-  "homepage": "https://github.com/HerodotusDev/merkle-mountain-range",
+  "homepage": "https://github.com/HerodotusDev/accumulators",
   "bugs": {
-    "url": "https://github.com/HerodotusDev/merkle-mountain-range/issues"
+    "url": "https://github.com/HerodotusDev/accumulators/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/HerodotusDev/merkle-mountain-range.git"
+    "url": "https://github.com/HerodotusDev/accumulators.git"
   },
   "license": "GPL-3.0-or-later",
   "author": "Herodotus Dev Ltd",
