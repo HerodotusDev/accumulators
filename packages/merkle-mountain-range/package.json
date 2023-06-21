@@ -1,6 +1,6 @@
 {
   "name": "@accumulators/merkle-mountain-range",
-  "version": "1.1.17",
+  "version": "1.2.1",
   "description": "A TypeScript implementation of Merkle Mountain Ranges",
   "keywords": [
     "merkle mountain range",
@@ -10,13 +10,13 @@
     "mmrs",
     "mmr"
   ],
-  "homepage": "https://github.com/HerodotusDev/merkle-mountain-range",
+  "homepage": "https://github.com/HerodotusDev/accumulators",
   "bugs": {
-    "url": "https://github.com/HerodotusDev/merkle-mountain-range/issues"
+    "url": "https://github.com/HerodotusDev/accumulators/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/HerodotusDev/merkle-mountain-range.git"
+    "url": "https://github.com/HerodotusDev/accumulators.git"
   },
   "license": "GPL-3.0-or-later",
   "author": "Herodotus Dev Ltd",
@@ -33,11 +33,11 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@accumulators/core": "^1.1.17",
+    "@accumulators/core": "^1.2.1",
     "ulid": "^2.3.0"
   },
   "devDependencies": {
-    "@accumulators/hashers": "^1.1.17",
-    "@accumulators/memory": "^1.1.17"
+    "@accumulators/hashers": "^1.2.1",
+    "@accumulators/memory": "^1.2.1"
   }
 }

@@ -1,19 +1,19 @@
 {
   "name": "@accumulators/incremental-merkle-tree",
-  "version": "1.0.0",
+  "version": "1.2.1",
   "description": "A TypeScript implementation of Incremental Merkle Trees with multiproofs",
   "keywords": [
     "incremental merkle tree",
     "multiproofs",
     "merkle proofs"
   ],
-  "homepage": "https://github.com/HerodotusDev/merkle-mountain-range",
+  "homepage": "https://github.com/HerodotusDev/accumulators",
   "bugs": {
-    "url": "https://github.com/HerodotusDev/merkle-mountain-range/issues"
+    "url": "https://github.com/HerodotusDev/accumulators/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/HerodotusDev/merkle-mountain-range.git"
+    "url": "https://github.com/HerodotusDev/accumulators.git"
   },
   "license": "GPL-3.0-or-later",
   "author": "Herodotus Dev Ltd",
@@ -30,11 +30,11 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@accumulators/core": "^1.1.17",
+    "@accumulators/core": "^1.2.1",
     "ulid": "^2.3.0"
   },
   "devDependencies": {
-    "@accumulators/memory": "^1.1.17",
-    "@accumulators/hashers": "^1.1.17"
+    "@accumulators/hashers": "^1.2.1",
+    "@accumulators/memory": "^1.2.1"
   }
 }

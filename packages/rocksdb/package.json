@@ -1,15 +1,15 @@
 {
   "name": "@accumulators/rocksdb",
-  "version": "1.1.17",
+  "version": "1.2.1",
   "description": "RocksDb IStore implementation for Accumulators",
   "keywords": [],
-  "homepage": "https://github.com/HerodotusDev/merkle-mountain-range",
+  "homepage": "https://github.com/HerodotusDev/accumulators",
   "bugs": {
-    "url": "https://github.com/HerodotusDev/merkle-mountain-range/issues"
+    "url": "https://github.com/HerodotusDev/accumulators/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/HerodotusDev/merkle-mountain-range.git"
+    "url": "https://github.com/HerodotusDev/accumulators.git"
   },
   "license": "GPL-3.0-or-later",
   "author": "Herodotus Dev Ltd",
@@ -26,11 +26,11 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@accumulators/core": "^1.1.17",
+    "@accumulators/core": "^1.2.1",
     "level-rocksdb": "^5.0.0"
   },
   "devDependencies": {
-    "@accumulators/merkle-mountain-range": "^1.1.17",
-    "@accumulators/hashers": "^1.1.17"
+    "@accumulators/hashers": "^1.2.1",
+    "@accumulators/merkle-mountain-range": "^1.2.1"
   }
 }
