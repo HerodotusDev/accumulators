@@ -67,7 +67,7 @@ describe("core", () => {
     return mmr;
   };
 
-  it("Update successful", async () => {
+  it("Should successfully perform an update", async () => {
     await mmr.update(1, "7");
 
     const expected = await createMmrWithValues(["7", "2", "3", "4", "5"], mmr.mmrId);
@@ -77,7 +77,7 @@ describe("core", () => {
 
     expected.clear();
   });
-  it("Update invalid index", async () => {
+  it("Should throw index error", async () => {
     await expect(mmr.update(3, "1")).rejects.toThrow("Provided index is not a leaf");
   });
 
