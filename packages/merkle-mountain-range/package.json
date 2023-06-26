@@ -34,7 +34,6 @@
   },
   "dependencies": {
     "@accumulators/core": "^2.0.0",
-    "lodash": "^4.17.21",
     "ulid": "^2.3.0"
   },
   "devDependencies": {
