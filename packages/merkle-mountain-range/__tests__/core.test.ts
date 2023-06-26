@@ -79,6 +79,9 @@ describe("core", () => {
   });
   it("Should throw index error", async () => {
     await expect(mmr.update(3, "1")).rejects.toThrow("Provided index is not a leaf");
+
+    const expected = await createMmrWithValues(["1", "2", "3", "4", "5"], mmr.mmrId);
+    expect(mmr.hashes).toEqual(expected.hashes);
   });
 
   afterEach(async () => {
