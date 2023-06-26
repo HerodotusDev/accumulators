@@ -112,7 +112,7 @@ export default class CoreMMR extends TreesDatabase {
       verticesHashes.set(parent, parentHash);
       kvUpdates[parent] = parentHash;
     }
-    this.hashes.setMany(kvUpdates);
+    await this.hashes.setMany(kvUpdates);
 
     const rootHash = await this.bagThePeaks();
     await this.rootHash.set(rootHash);
