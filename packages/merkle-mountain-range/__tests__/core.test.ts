@@ -68,66 +68,68 @@ describe("core", () => {
     return mmr;
   };
 
-  it("Should successfully perform an update", async () => {
-    await mmr.update(1, "7");
+  describe("Updates", () => {
+    it("Should successfully perform an update", async () => {
+      await mmr.update(1, "7");
 
-    const expected = await createMmrWithValues(["7", "2", "3", "4", "5"], mmr.mmrId);
+      const expected = await createMmrWithValues(["7", "2", "3", "4", "5"], mmr.mmrId);
 
-    expect(await mmr.rootHash.get()).toEqual(await expected.rootHash.get());
-    expect(mmr.hashes).toEqual(expected.hashes);
+      expect(await mmr.rootHash.get()).toEqual(await expected.rootHash.get());
+      expect(mmr.hashes).toEqual(expected.hashes);
 
-    expected.clear();
-  });
+      expected.clear();
+    });
 
-  it("Should throw index error", async () => {
-    await expect(mmr.update(3, "1")).rejects.toThrow("Provided index is not a leaf");
+    it("Should throw index error", async () => {
+      await expect(mmr.update(3, "1")).rejects.toThrow("Provided index is not a leaf");
 
-    const expected = await createMmrWithValues(["1", "2", "3", "4", "5"], mmr.mmrId);
-    expect(mmr.hashes).toEqual(expected.hashes);
-  });
+      const expected = await createMmrWithValues(["1", "2", "3", "4", "5"], mmr.mmrId);
+      expect(mmr.hashes).toEqual(expected.hashes);
+    });
 
-  it("Should change hashes in db", async () => {
-    const store = new MemoryStore();
-    const hasher = new StarkPedersenHasher();
-    const mmr = new CoreMMR(store, hasher);
-    for (let i = 0; i < 6; i++) {
-      await mmr.append((Math.pow(7, i) % 13).toString());
-    }
-    const storeCopy = new MemoryStore();
-    (storeCopy as any).store = cloneDeep((store as any).store);
+    it("Should change hashes in db", async () => {
+      const store = new MemoryStore();
+      const hasher = new StarkPedersenHasher();
+      const mmr = new CoreMMR(store, hasher);
+      for (let i = 0; i < 6; i++) {
+        await mmr.append((Math.pow(7, i) % 13).toString());
+      }
+      const storeCopy = new MemoryStore();
+      (storeCopy as any).store = cloneDeep((store as any).store);
 
-    await mmr.update(4, "0");
-    const id = mmr.mmrId;
+      await mmr.update(4, "0");
+      const id = mmr.mmrId;
 
-    // check if root hash changed
-    expect(await store.get(`${id}:root_hash`)).not.toEqual(await storeCopy.get(`${id}:root_hash`));
+      // check if root hash changed
+      expect(await store.get(`${id}:root_hash`)).not.toEqual(await storeCopy.get(`${id}:root_hash`));
 
-    // check if path did change
-    const path = [4, 6, 7];
-    for (const p of path) {
-      expect(await store.get(`${id}:hashes:${p}`)).not.toEqual(await storeCopy.get(`${id}:hashes:${p}`));
-    }
-    // check if other did not change
-    const other = [1, 2, 3, 5, 8, 9, 10];
-    for (const o of other) {
-      expect(await store.get(`${id}:hashes:${o}`)).toEqual(await storeCopy.get(`${id}:hashes:${o}`));
-    }
-  });
+      // check if path did change
+      const path = [4, 6, 7];
+      for (const p of path) {
+        expect(await store.get(`${id}:hashes:${p}`)).not.toEqual(await storeCopy.get(`${id}:hashes:${p}`));
+      }
+      // check if other did not change
+      const other = [1, 2, 3, 5, 8, 9, 10];
+      for (const o of other) {
+        expect(await store.get(`${id}:hashes:${o}`)).toEqual(await storeCopy.get(`${id}:hashes:${o}`));
+      }
+    });
 
-  it("Should match root hash after updates", async () => {
-    const store = new MemoryStore();
-    const hasher = new StarkPedersenHasher();
-    const mmr = new CoreMMR(store, hasher);
-    let x = 1;
-    for (let i = 0; i < 1000; i++) {
-      x *= 127;
-      x %= 79;
-      await mmr.append(x.toString());
-    }
-    await mmr.update(74, "21");
-    await mmr.update(979, "40");
-    await mmr.update(1395, "1");
-    expect(await mmr.rootHash.get()).toEqual("0x062b72ee620b9fa5e2526e7260d4acd8ab5e1e01279aedf0e74e35e5a277393a");
+    it("Should match root hash after updates", async () => {
+      const store = new MemoryStore();
+      const hasher = new StarkPedersenHasher();
+      const mmr = new CoreMMR(store, hasher);
+      let x = 1;
+      for (let i = 0; i < 1000; i++) {
+        x *= 127;
+        x %= 79;
+        await mmr.append(x.toString());
+      }
+      await mmr.update(74, "21");
+      await mmr.update(979, "40");
+      await mmr.update(1395, "1");
+      expect(await mmr.rootHash.get()).toEqual("0x062b72ee620b9fa5e2526e7260d4acd8ab5e1e01279aedf0e74e35e5a277393a");
+    });
   });
 
   afterEach(async () => {
