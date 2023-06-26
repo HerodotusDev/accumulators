@@ -57,6 +57,30 @@ describe("core", () => {
     expect(verifications.every((verification) => verification === true)).toBe(true);
   });
 
+  const createMmrWithValues = async (values: string[], mmrId?: string) => {
+    const store = new MemoryStore();
+    const hasher = new StarkPedersenHasher();
+    const mmr = new CoreMMR(store, hasher, mmrId);
+    for (const leaf of values) {
+      await mmr.append(leaf);
+    }
+    return mmr;
+  };
+
+  it("Update successful", async () => {
+    await mmr.update(1, "7");
+
+    const expected = await createMmrWithValues(["7", "2", "3", "4", "5"], mmr.mmrId);
+
+    expect(await mmr.rootHash.get()).toEqual(await expected.rootHash.get());
+    expect(mmr.hashes).toEqual(expected.hashes);
+
+    expected.clear();
+  });
+  it("Update invalid index", async () => {
+    await expect(mmr.update(3, "1")).rejects.toThrow("Provided index is not a leaf");
+  });
+
   afterEach(async () => {
     await mmr.clear();
     await expect(mmr.getPeaks()).resolves.toEqual([]);
