@@ -54,9 +54,9 @@ jobs:
           git config user.email "${{ github.actor }}@users.noreply.github.com"
 
           if [ ${{ github.base_ref }} = develop ]; then
-            pnpm lerna version --conventional-commits --conventional-prerelease --preid beta --yes --no-private
+            pnpm lerna version --conventional-graduate --conventional-commits --conventional-prerelease --preid beta --yes --no-private
           else
-            pnpm lerna version --conventional-commits --conventional-graduate --yes --no-private
+            pnpm lerna version --conventional-graduate --conventional-commits --conventional-graduate --yes --no-private
           fi
 
           pnpm lerna publish from-git --yes --no-private
