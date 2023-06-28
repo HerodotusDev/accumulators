@@ -202,6 +202,38 @@ export class IncrementalMerkleTree extends TreeDatabase {
     return currentValue;
   }
 
+  async updateAuthenticated(index: number, value: HexString): Promise<string> {
+    let currentIndex = index;
+    let currentDepth = this.getTreeDepth();
+    const kvGets: string[] = [];
+    while (currentDepth > 0) {
+      const neighbourIndex = currentIndex % 2 === 0 ? currentIndex + 1 : currentIndex - 1;
+      kvGets.push(`${currentDepth}:${neighbourIndex}`);
+      currentDepth--;
+      currentIndex = Math.floor(currentIndex / 2);
+    }
+    const neighbours = await this.nodes.getMany(kvGets);
+
+    currentIndex = index;
+    currentDepth = this.getTreeDepth();
+    const kvUpdates: Record<string, string> = { [`${currentDepth}:${currentIndex}`]: value };
+    let currentValue = value;
+    while (currentDepth > 0) {
+      const isCurrentIndexEven = currentIndex % 2 === 0;
+      const neighbourIndex = isCurrentIndexEven ? currentIndex + 1 : currentIndex - 1;
+      const neighbour = neighbours.get(`${currentDepth}:${neighbourIndex}`);
+      currentValue = isCurrentIndexEven
+        ? this.hasher.hash([currentValue, neighbour])
+        : this.hasher.hash([neighbour, currentValue]);
+      currentDepth--;
+      currentIndex = Math.floor(currentIndex / 2);
+      kvUpdates[`${currentDepth}:${currentIndex}`] = currentValue;
+    }
+    await this.nodes.setMany(kvUpdates);
+    await this.rootHash.set(currentValue);
+    return currentValue;
+  }
+
   private getTreeDepth(): number {
     return Math.ceil(Math.log2(this.size));
   }
