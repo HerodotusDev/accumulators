@@ -12,9 +12,9 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@accumulators/core": "2.0.0",
-    "@accumulators/merkle-mountain-range": "2.0.0",
-    "@accumulators/incremental-merkle-tree": "2.0.0"
+    "@accumulators/core": "^2.0.0",
+    "@accumulators/merkle-mountain-range": "^2.0.0",
+    "@accumulators/incremental-merkle-tree": "^2.0.0"
   },
   "devDependencies": {
     "@accumulators/memory": "^2.0.0",

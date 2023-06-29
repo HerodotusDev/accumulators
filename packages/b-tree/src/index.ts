@@ -1,10 +1,6 @@
 import { IStore, IHasher } from "@accumulators/core";
 import CoreMMR from "@accumulators/merkle-mountain-range";
-// import { IncrementalMerkleTree } from "@accumulators/incremental-merkle-tree";
 import { IncrementalMerkleTree } from "../../incremental-merkle-tree/src";
-
-import MemoryStore from "@accumulators/memory";
-import { StarkPedersenHasher } from "@accumulators/hashers";
 
 export type UpdateResult = {
   mmrRoot: string;
@@ -18,16 +14,18 @@ export type UpdateResult = {
 
 export class BTree {
   private mmr: CoreMMR;
+  private store: IStore;
   private merkleTrees: Map<number, IncrementalMerkleTree>; // index in MMR -> merkle tree
 
   constructor(
-    protected readonly store: IStore,
+    protected readonly getStore: () => IStore,
     protected readonly hasher: IHasher,
     protected readonly NULL_VALUE: string,
     protected readonly CHAIN_ID: number = 1,
     protected readonly PAGE_SIZE: number = 1024
   ) {
-    this.mmr = new CoreMMR(new MemoryStore(), hasher); // TODO: move to one store
+    this.store = getStore();
+    this.mmr = new CoreMMR(getStore(), hasher); // TODO: move to one store
     this.merkleTrees = new Map();
   }
 
@@ -64,7 +62,7 @@ export class BTree {
     let regionCommittment: string;
     if (pageIndex === undefined) {
       // create new merkle tree
-      const newStore = new MemoryStore();
+      const newStore = this.getStore();
       const newMerkleTree = await IncrementalMerkleTree.initialize(
         this.PAGE_SIZE,
         this.NULL_VALUE,

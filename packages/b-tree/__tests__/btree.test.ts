@@ -6,7 +6,7 @@ describe("BTree", () => {
   let btree: BTree;
 
   beforeEach(async () => {
-    btree = new BTree(new MemoryStore(), new StarkPoseidonHasher(), "0x0", 1, 8);
+    btree = new BTree(() => new MemoryStore(), new StarkPoseidonHasher(), "0x0", 1, 8);
   });
 
   it("Should change root hash", async () => {
