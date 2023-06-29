@@ -6,83 +6,96 @@ import { IncrementalMerkleTree } from "../../incremental-merkle-tree/src";
 import MemoryStore from "@accumulators/memory";
 import { StarkPedersenHasher } from "@accumulators/hashers";
 
+export type UpdateResult = {
+  mmrRoot: string;
+  region: {
+    account: string;
+    from: number;
+    to: number;
+    hash: string;
+  };
+};
+
 export class BTree {
   private mmr: CoreMMR;
   private merkleTrees: Map<number, IncrementalMerkleTree>; // index in MMR -> merkle tree
-  private treeStores: Map<number, IStore>; // TODO: remove, index in MMR -> store (TEMPORARY JUST FOR PRINTING)
 
   constructor(
     protected readonly store: IStore,
     protected readonly hasher: IHasher,
+    protected readonly NULL_VALUE: string,
+    protected readonly CHAIN_ID: number = 1,
     protected readonly BLOCK_SIZE: number = 8
   ) {
     this.mmr = new CoreMMR(new MemoryStore(), hasher); // TODO: move to one store
     this.merkleTrees = new Map();
-    this.treeStores = new Map(); // TODO: move to one store
   }
 
-  private splitBlockOffset(index: number) {
-    const blockIndex = Math.floor(index / this.BLOCK_SIZE);
-    const blockBegin = blockIndex * this.BLOCK_SIZE;
-    const blockEnd = blockBegin + this.BLOCK_SIZE - 1;
-    const blockName = `${blockBegin}-${blockEnd}`;
-    return [blockName, index % this.BLOCK_SIZE] as const;
+  private getPageAndIndex(blockNumber: number): { pageRange: string; offset: number } {
+    const pageIndex = Math.floor(blockNumber / this.BLOCK_SIZE);
+    const pageBegin = pageIndex * this.BLOCK_SIZE;
+    const pageEnd = pageBegin + this.BLOCK_SIZE - 1;
+    const pageRange = `${pageBegin}-${pageEnd}`;
+    return { pageRange, offset: blockNumber % this.BLOCK_SIZE };
   }
 
-  private getMerkleHash(blockName: string, account: string, rootHash: string) {
+  private computeRegionCommittment(blockName: string, account: string, rootHash: string) {
     const [blockBegin, blockEnd] = blockName.split("-");
-    return this.hasher.hash([
-      this.hasher.hash([
-        this.hasher.hash(["0x" + parseInt(blockBegin).toString(16), "0x" + parseInt(blockEnd).toString(16)]),
-        account,
-      ]),
+    return [
+      `0x${parseInt(blockBegin).toString(16)}`,
+      `0x${parseInt(blockEnd).toString(16)}`,
+      account,
+      `${this.CHAIN_ID}`,
       rootHash,
-    ]); // TODO: what about chainId
+    ].reduce((acc, val) => this.hasher.hash([acc, val]));
   }
 
   getRootHash() {
     return this.mmr.rootHash.get();
   }
 
-  async update(account: string, index: number, value: string) {
-    const [block, offset] = this.splitBlockOffset(index);
-    const blockIndexAsString = await this.store.get(`${account}:${block}`);
-    const blockIndex = blockIndexAsString === undefined ? undefined : parseInt(blockIndexAsString);
-    if (blockIndex === undefined) {
+  async update(account: string, index: number, value: string): Promise<UpdateResult> {
+    const { pageRange, offset } = this.getPageAndIndex(index);
+
+    const pageIndexAsString = await this.store.get(`${account}:${pageRange}`);
+    const pageIndex = pageIndexAsString === undefined ? undefined : parseInt(pageIndexAsString);
+
+    let rootHash: string;
+    let regionCommittment: string;
+    if (pageIndex === undefined) {
       // create new merkle tree
       const newStore = new MemoryStore();
-      const newMerkleTree = await IncrementalMerkleTree.initialize(this.BLOCK_SIZE, "0x0", this.hasher, newStore); // TODO: update null value
+      const newMerkleTree = await IncrementalMerkleTree.initialize(
+        this.BLOCK_SIZE,
+        this.NULL_VALUE,
+        this.hasher,
+        newStore
+      );
       const merkleRootHash = await newMerkleTree.updateAuthenticated(offset, value);
-      const mmrLeaf = this.getMerkleHash(block, account, merkleRootHash);
+      regionCommittment = this.computeRegionCommittment(pageRange, account, merkleRootHash);
 
       // add to mmr
-      const blockIndex = (await this.mmr.append(mmrLeaf)).leafIndex;
-      await this.store.set(`${account}:${block}`, `${blockIndex}`);
-      this.treeStores.set(blockIndex, newStore); // TODO: remove
+      const appendResult = await this.mmr.append(regionCommittment);
+      const blockIndex = appendResult.leafIndex;
+      rootHash = appendResult.rootHash;
+      await this.store.set(`${account}:${pageRange}`, `${blockIndex}`);
       this.merkleTrees.set(blockIndex, newMerkleTree);
     } else {
-      const merkleTree = this.merkleTrees.get(blockIndex);
+      const merkleTree = this.merkleTrees.get(pageIndex);
       const merkleRootHash = await merkleTree.updateAuthenticated(offset, value);
-      const mmrLeaf = this.getMerkleHash(block, account, merkleRootHash);
-      await this.mmr.update(blockIndex, mmrLeaf);
+      regionCommittment = this.computeRegionCommittment(pageRange, account, merkleRootHash);
+      rootHash = await this.mmr.update(pageIndex, regionCommittment);
     }
 
-    // update mmr
-
-    for (const [key, val] of this.merkleTrees.entries()) {
-      console.log(key, (val as any).store.store);
-    }
-    console.log(this.store);
-    console.log((this.mmr.hashes as any).store);
+    const [from, to] = pageRange.split("-");
+    return {
+      mmrRoot: rootHash,
+      region: {
+        account,
+        from: parseInt(from),
+        to: parseInt(to),
+        hash: regionCommittment,
+      },
+    };
   }
 }
-
-// TODO: jest tests
-(async function () {
-  const store = new MemoryStore();
-  const hasher = new StarkPedersenHasher();
-  const tree = new BTree(store, hasher);
-  await tree.update("0xacc07", 12, "0x12");
-  await tree.update("0xacc07", 6, "0x14");
-  await tree.update("0xacc07", 13, "0x13");
-})();
