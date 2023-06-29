@@ -25,25 +25,25 @@ export class BTree {
     protected readonly hasher: IHasher,
     protected readonly NULL_VALUE: string,
     protected readonly CHAIN_ID: number = 1,
-    protected readonly BLOCK_SIZE: number = 8
+    protected readonly PAGE_SIZE: number = 1024
   ) {
     this.mmr = new CoreMMR(new MemoryStore(), hasher); // TODO: move to one store
     this.merkleTrees = new Map();
   }
 
   private getPageAndIndex(blockNumber: number): { pageRange: string; offset: number } {
-    const pageIndex = Math.floor(blockNumber / this.BLOCK_SIZE);
-    const pageBegin = pageIndex * this.BLOCK_SIZE;
-    const pageEnd = pageBegin + this.BLOCK_SIZE - 1;
+    const pageIndex = Math.floor(blockNumber / this.PAGE_SIZE);
+    const pageBegin = pageIndex * this.PAGE_SIZE;
+    const pageEnd = pageBegin + this.PAGE_SIZE - 1;
     const pageRange = `${pageBegin}-${pageEnd}`;
-    return { pageRange, offset: blockNumber % this.BLOCK_SIZE };
+    return { pageRange, offset: blockNumber % this.PAGE_SIZE };
   }
 
-  private computeRegionCommittment(blockName: string, account: string, rootHash: string) {
-    const [blockBegin, blockEnd] = blockName.split("-");
+  private computeRegionCommittment(pageName: string, account: string, rootHash: string) {
+    const [pageBegin, pageEnd] = pageName.split("-");
     return [
-      `0x${parseInt(blockBegin).toString(16)}`,
-      `0x${parseInt(blockEnd).toString(16)}`,
+      `0x${parseInt(pageBegin).toString(16)}`,
+      `0x${parseInt(pageEnd).toString(16)}`,
       account,
       `${this.CHAIN_ID}`,
       rootHash,
@@ -66,7 +66,7 @@ export class BTree {
       // create new merkle tree
       const newStore = new MemoryStore();
       const newMerkleTree = await IncrementalMerkleTree.initialize(
-        this.BLOCK_SIZE,
+        this.PAGE_SIZE,
         this.NULL_VALUE,
         this.hasher,
         newStore
