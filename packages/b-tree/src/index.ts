@@ -40,6 +40,10 @@ export class BTree {
     ]); // TODO: what about chainId
   }
 
+  getRootHash() {
+    return this.mmr.rootHash.get();
+  }
+
   async update(account: string, index: number, value: string) {
     const [block, offset] = this.splitBlockOffset(index);
     const blockIndexAsString = await this.store.get(`${account}:${block}`);
