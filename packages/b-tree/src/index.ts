@@ -1,5 +1,5 @@
 import { IStore, IHasher } from "@accumulators/core";
-import CoreMMR from "@accumulators/merkle-mountain-range";
+import CoreMMR from "../../merkle-mountain-range";
 import { IncrementalMerkleTree } from "../../incremental-merkle-tree/src";
 
 export type UpdateResult = {
