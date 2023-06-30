@@ -65,60 +65,6 @@ export default class CoreMMR extends TreesDatabase {
     };
   }
 
-  async update(index: number, value: string): Promise<string> {
-    if (!this.hasher.isElementSizeValid(value)) throw new Error("Element size is too big to hash with this hasher");
-
-    const elementsCount = await this.elementsCount.get();
-    const peaks = findPeaks(elementsCount);
-
-    let peakIndex = 0; // in which peak the leaf is
-    for (const peak of peaks) {
-      if (peak >= index) break;
-      peakIndex++;
-    }
-    // vertices of current subtree have indices in the range [p, q]
-    let p = peakIndex == 0 ? 1 : peaks[peakIndex - 1] + 1;
-    let q = peaks[peakIndex]; // q is also the root of current subtree
-
-    const neededVertices: number[] = []; // indices of vertices that we need to calculate hashes
-    const path: [string, string, string][] = []; // path from the peak root to the leaf
-
-    while (p != q) {
-      const leftChild = (p + q) / 2 - 1;
-      const rightChild = q - 1;
-      path.push([q.toString(), leftChild.toString(), rightChild.toString()]);
-      if (index <= leftChild) {
-        neededVertices.push(rightChild);
-        q = leftChild;
-      } else {
-        neededVertices.push(leftChild);
-        p = leftChild + 1;
-        q = rightChild;
-      }
-    }
-    if (q != index) throw new Error("Provided index is not a leaf");
-
-    const kvUpdates: Record<string, string> = {};
-    const verticesHashes = await this.hashes.getMany(neededVertices);
-    const leafHash = this.hasher.hash([index.toString(), value]);
-    verticesHashes.set(index.toString(), leafHash);
-    kvUpdates[index.toString()] = leafHash;
-
-    for (let i = path.length - 1; i >= 0; i--) {
-      const [parent, leftChild, rightChild] = path[i];
-      const leftHash = verticesHashes.get(leftChild);
-      const rightHash = verticesHashes.get(rightChild);
-      const parentHash = this.hasher.hash([parent, this.hasher.hash([leftHash, rightHash])]);
-      verticesHashes.set(parent, parentHash);
-      kvUpdates[parent] = parentHash;
-    }
-    await this.hashes.setMany(kvUpdates);
-
-    const rootHash = await this.bagThePeaks();
-    await this.rootHash.set(rootHash);
-    return rootHash;
-  }
-
   /**
    *
    * Generates an inclusion proof of a leaf at a certain tree state
