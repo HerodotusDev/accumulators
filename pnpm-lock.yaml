@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 importers:
 
   .:
@@ -104,7 +100,7 @@ importers:
         specifier: ^2.0.0
         version: link:../hashers
       '@accumulators/memory':
-        specifier: ^2.0.0
+        specifier: ^2.1.0
         version: link:../memory
 
   packages/memory:
@@ -117,7 +113,7 @@ importers:
         specifier: ^2.0.0
         version: link:../hashers
       '@accumulators/merkle-mountain-range':
-        specifier: ^2.0.0
+        specifier: ^2.1.0
         version: link:../merkle-mountain-range
 
   packages/merkle-mountain-range:
@@ -133,7 +129,7 @@ importers:
         specifier: ^2.0.0
         version: link:../hashers
       '@accumulators/memory':
-        specifier: ^2.0.0
+        specifier: ^2.1.0
         version: link:../memory
 
   packages/rocksdb:
@@ -149,7 +145,7 @@ importers:
         specifier: ^2.0.0
         version: link:../hashers
       '@accumulators/merkle-mountain-range':
-        specifier: ^2.0.0
+        specifier: ^2.1.0
         version: link:../merkle-mountain-range
 
 packages:
@@ -6445,3 +6441,7 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
