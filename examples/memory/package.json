@@ -8,7 +8,6 @@
   },
   "dependencies": {
     "@accumulators/core": "^1.1.7",
-    "@accumulators/hashers": "^1.1.7",
     "@accumulators/memory": "^1.1.7"
   },
   "devDependencies": {
