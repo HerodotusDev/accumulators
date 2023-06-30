@@ -70,13 +70,13 @@ importers:
   packages/b-tree:
     dependencies:
       '@accumulators/core':
-        specifier: 2.0.0
+        specifier: ^2.0.0
         version: link:../core
       '@accumulators/incremental-merkle-tree':
-        specifier: 2.0.0
+        specifier: ^2.0.0
         version: link:../incremental-merkle-tree
       '@accumulators/merkle-mountain-range':
-        specifier: 2.0.0
+        specifier: ^2.0.0
         version: link:../merkle-mountain-range
     devDependencies:
       '@accumulators/hashers':
