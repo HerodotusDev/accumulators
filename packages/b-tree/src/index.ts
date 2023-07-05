@@ -1,7 +1,12 @@
 import { IStore, IHasher } from "@accumulators/core";
-import CoreMMR from "@accumulators/merkle-mountain-range";
-import { IncrementalMerkleTree } from "@accumulators/incremental-merkle-tree";
-import MemoryStore from "@accumulators/memory";
+// import CoreMMR from "@accumulators/merkle-mountain-range";
+import CoreMMR from "../../merkle-mountain-range/src";
+// import { IncrementalMerkleTree } from "@accumulators/incremental-merkle-tree";
+// TODO: change import
+import { IncrementalMerkleTree } from "../../incremental-merkle-tree/src";
+import MemoryStore from "@accumulators/memory"; // TODO: remove
+import { StarkPoseidonHasher } from "@accumulators/hashers"; // TODO: remove
+import { ulid } from "ulid";
 
 export type UpdateResult = {
   mmrRoot: string;
@@ -13,19 +18,41 @@ export type UpdateResult = {
   };
 };
 
+export enum BTREE_METADATA_KEYS {
+  MMR_LEAF_INDEX = "mmr-leaf-index",
+  PAGES = "pages",
+  MAIN_TREE = "main",
+  REGION_TO_TREE = "region",
+}
+
+/*
+ 3
+1 2   4
+*/
+interface ILogger {
+  log(...args: any[]): void;
+}
+
+class ConsoleLogger implements ILogger {
+  log(...args: any[]) {
+    console.log(...args);
+  }
+}
+
 export class BTree {
   private mmr: CoreMMR;
-  private merkleTrees: Map<number, IncrementalMerkleTree>; // index in MMR -> merkle tree
 
   constructor(
     protected readonly store: IStore,
     protected readonly hasher: IHasher,
     protected readonly NULL_VALUE: string,
     protected readonly CHAIN_ID: number = 1,
-    protected readonly PAGE_SIZE: number = 1024
+    protected readonly PAGE_SIZE: number = 8,
+    protected readonly logger?: ILogger, // TODO: add logger
+    protected readonly treeId: string = ulid()
   ) {
-    this.mmr = new CoreMMR(new MemoryStore(), hasher); // TODO: move to one store
-    this.merkleTrees = new Map();
+    // TODO: when recreating BTree, there is an issue with tree ids
+    this.mmr = new CoreMMR(store, hasher, `${this.treeId}:${BTREE_METADATA_KEYS.MAIN_TREE}`);
   }
 
   private getPageAndIndex(blockNumber: number): { pageRange: string; offset: number } {
@@ -54,34 +81,53 @@ export class BTree {
   async update(account: string, index: number, value: string): Promise<UpdateResult> {
     const { pageRange, offset } = this.getPageAndIndex(index);
 
-    const pageIndexAsString = await this.store.get(`${account}:${pageRange}`);
-    const pageIndex = pageIndexAsString === undefined ? undefined : parseInt(pageIndexAsString);
+    const pageMerkleTreeId = await this.store.get(
+      `${this.treeId}:${BTREE_METADATA_KEYS.REGION_TO_TREE}:${account}:${pageRange}`
+    );
 
     let rootHash: string;
     let regionCommittment: string;
-    if (pageIndex === undefined) {
+    if (pageMerkleTreeId === undefined) {
       // create new merkle tree
-      const newStore = new MemoryStore();
       const newMerkleTree = await IncrementalMerkleTree.initialize(
         this.PAGE_SIZE,
         this.NULL_VALUE,
         this.hasher,
-        newStore
+        this.store,
+        `${this.treeId}:${BTREE_METADATA_KEYS.PAGES}:${ulid()}`
       );
       const merkleRootHash = await newMerkleTree.updateAuthenticated(offset, value);
       regionCommittment = this.computeRegionCommittment(pageRange, account, merkleRootHash);
 
       // add to mmr
+      // TODO: add to mmr in batch
       const appendResult = await this.mmr.append(regionCommittment);
-      const blockIndex = appendResult.leafIndex;
       rootHash = appendResult.rootHash;
-      await this.store.set(`${account}:${pageRange}`, `${blockIndex}`);
-      this.merkleTrees.set(blockIndex, newMerkleTree);
+      await this.store.set(
+        `${newMerkleTree.treeId}:${BTREE_METADATA_KEYS.MMR_LEAF_INDEX}`,
+        `${appendResult.leafIndex}`
+      );
+      await this.store.set(
+        `${this.treeId}:${BTREE_METADATA_KEYS.REGION_TO_TREE}:${account}:${pageRange}`,
+        `${newMerkleTree.treeId}`
+      );
     } else {
-      const merkleTree = this.merkleTrees.get(pageIndex);
+      // reconstruct existing merkle tree from memory
+      const merkleTree = new IncrementalMerkleTree(
+        this.PAGE_SIZE,
+        this.NULL_VALUE,
+        this.hasher,
+        this.store,
+        pageMerkleTreeId
+      );
       const merkleRootHash = await merkleTree.updateAuthenticated(offset, value);
       regionCommittment = this.computeRegionCommittment(pageRange, account, merkleRootHash);
-      rootHash = await this.mmr.update(pageIndex, regionCommittment);
+
+      // update mmr
+      const leafIndex = parseInt(await this.store.get(`${pageMerkleTreeId}:${BTREE_METADATA_KEYS.MMR_LEAF_INDEX}`));
+      console.log("---", leafIndex, regionCommittment);
+      rootHash = await this.mmr.update(leafIndex, regionCommittment);
+      console.log("+++");
     }
 
     const [from, to] = pageRange.split("-");
