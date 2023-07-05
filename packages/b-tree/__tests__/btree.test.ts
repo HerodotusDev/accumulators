@@ -4,9 +4,11 @@ import { StarkPoseidonHasher } from "@accumulators/hashers";
 
 describe("BTree", () => {
   let btree: BTree;
+  let storage: MemoryStore;
 
   beforeEach(async () => {
-    btree = new BTree(new MemoryStore(), new StarkPoseidonHasher(), "0x0", 1, 8);
+    storage = new MemoryStore();
+    btree = new BTree(storage, new StarkPoseidonHasher(), "0x0", 1, 8);
   });
 
   it("Should change root hash", async () => {
@@ -33,5 +35,23 @@ describe("BTree", () => {
     expect(h5).not.toEqual(h3);
     expect(h5).not.toEqual(h2);
     expect(h5).not.toEqual(h1);
+  });
+
+  it("Should recreate tree from storage", async () => {
+    await btree.update("0x668481d1d3c3822d", 3, "0x1");
+    await btree.update("0x668481d1d3c3822d", 4, "0x2");
+    await btree.update("0x668481d1d3c3822d", 273, "0x3");
+
+    const h1 = await btree.getRootHash();
+
+    // recreate tree
+    const btree2 = new BTree(storage, new StarkPoseidonHasher(), "0x0", 1, 8, undefined, btree.treeId);
+
+    const h2 = await btree2.getRootHash();
+    const h3 = (await btree2.update("0x668481d1d3c3822d", 900, "0x4")).mmrRoot;
+
+    expect(h1).toEqual("0x450cd2e15f56cad7b93d0fda754eb1c9ea08ccd8547cba4eb2ba82d7c08fe71");
+    expect(h2).toEqual("0x450cd2e15f56cad7b93d0fda754eb1c9ea08ccd8547cba4eb2ba82d7c08fe71");
+    expect(h3).toEqual("0x71d0e580fa81bb399c68f7c63c5d3b7488a27f696e37c8a1c459a77ec88c768");
   });
 });
