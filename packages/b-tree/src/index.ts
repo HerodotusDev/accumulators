@@ -25,10 +25,6 @@ export enum BTREE_METADATA_KEYS {
   REGION_TO_TREE = "region",
 }
 
-/*
- 3
-1 2   4
-*/
 interface ILogger {
   log(...args: any[]): void;
 }
@@ -49,9 +45,8 @@ export class BTree {
     protected readonly CHAIN_ID: number = 1,
     protected readonly PAGE_SIZE: number = 8,
     protected readonly logger?: ILogger, // TODO: add logger
-    protected readonly treeId: string = ulid()
+    public readonly treeId: string = ulid()
   ) {
-    // TODO: when recreating BTree, there is an issue with tree ids
     this.mmr = new CoreMMR(store, hasher, `${this.treeId}:${BTREE_METADATA_KEYS.MAIN_TREE}`);
   }
 
@@ -125,9 +120,7 @@ export class BTree {
 
       // update mmr
       const leafIndex = parseInt(await this.store.get(`${pageMerkleTreeId}:${BTREE_METADATA_KEYS.MMR_LEAF_INDEX}`));
-      console.log("---", leafIndex, regionCommittment);
       rootHash = await this.mmr.update(leafIndex, regionCommittment);
-      console.log("+++");
     }
 
     const [from, to] = pageRange.split("-");
