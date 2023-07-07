@@ -10,12 +10,17 @@ import { ulid } from "ulid";
 
 export type UpdateResult = {
   mmrRoot: string;
-  region: {
+  regions: {
     account: string;
-    from: number;
-    to: number;
-    hash: string;
-  };
+    page: string;
+    rootHash: string;
+  }[];
+};
+
+export type UpdateData = {
+  account: string;
+  index: number;
+  value: string;
 };
 
 export enum BTREE_METADATA_KEYS {
@@ -73,65 +78,67 @@ export class BTree {
     return this.mmr.rootHash.get();
   }
 
-  async update(account: string, index: number, value: string): Promise<UpdateResult> {
-    const { pageRange, offset } = this.getPageAndIndex(index);
+  async updateMany(updates: UpdateData[]): Promise<UpdateResult> {
+    const perPageUpdates = new Map(); // account:pageRange -> { offset, value }[]
+    for (const update of updates) {
+      const { pageRange, offset } = this.getPageAndIndex(update.index);
+      const pageUpdates = perPageUpdates.get(`${update.account}:${pageRange}`) || [];
+      pageUpdates.push({ offset, value: update.value });
+      perPageUpdates.set(`${update.account}:${pageRange}`, pageUpdates);
+    }
+    const keysToGet = Array.from(perPageUpdates, ([pageName]) => {
+      return `${this.treeId}:${BTREE_METADATA_KEYS.REGION_TO_TREE}:${pageName}`;
+    });
+    const pageMerkleTreeKeys = await this.store.getMany(keysToGet);
+    const regionResults = [];
+    let rootHash;
+    for (const [pageName, updates] of perPageUpdates) {
+      const pageMerkleTreeId = pageMerkleTreeKeys.get(
+        `${this.treeId}:${BTREE_METADATA_KEYS.REGION_TO_TREE}:${pageName}`
+      );
 
-    const pageMerkleTreeId = await this.store.get(
-      `${this.treeId}:${BTREE_METADATA_KEYS.REGION_TO_TREE}:${account}:${pageRange}`
-    );
+      // create new merkle tree or recreate existing one
+      const merkleTree =
+        pageMerkleTreeId === undefined
+          ? await IncrementalMerkleTree.initialize(
+              this.PAGE_SIZE,
+              this.NULL_VALUE,
+              this.hasher,
+              this.store,
+              `${this.treeId}:${BTREE_METADATA_KEYS.PAGES}:${ulid()}`
+            )
+          : new IncrementalMerkleTree(this.PAGE_SIZE, this.NULL_VALUE, this.hasher, this.store, pageMerkleTreeId);
 
-    let rootHash: string;
-    let regionCommittment: string;
-    if (pageMerkleTreeId === undefined) {
-      // create new merkle tree
-      const newMerkleTree = await IncrementalMerkleTree.initialize(
-        this.PAGE_SIZE,
-        this.NULL_VALUE,
-        this.hasher,
-        this.store,
-        `${this.treeId}:${BTREE_METADATA_KEYS.PAGES}:${ulid()}`
-      );
-      const merkleRootHash = await newMerkleTree.updateAuthenticated(offset, value);
-      regionCommittment = this.computeRegionCommittment(pageRange, account, merkleRootHash);
-
-      // add to mmr
-      // TODO: add to mmr in batch
-      const appendResult = await this.mmr.append(regionCommittment);
-      rootHash = appendResult.rootHash;
-      await this.store.set(
-        `${newMerkleTree.treeId}:${BTREE_METADATA_KEYS.MMR_LEAF_INDEX}`,
-        `${appendResult.leafIndex}`
-      );
-      await this.store.set(
-        `${this.treeId}:${BTREE_METADATA_KEYS.REGION_TO_TREE}:${account}:${pageRange}`,
-        `${newMerkleTree.treeId}`
-      );
-    } else {
-      // reconstruct existing merkle tree from memory
-      const merkleTree = new IncrementalMerkleTree(
-        this.PAGE_SIZE,
-        this.NULL_VALUE,
-        this.hasher,
-        this.store,
-        pageMerkleTreeId
-      );
-      const merkleRootHash = await merkleTree.updateAuthenticated(offset, value);
-      regionCommittment = this.computeRegionCommittment(pageRange, account, merkleRootHash);
+      // make updates to merkle tree
+      const [account, pageRange] = pageName.split(":");
+      let merkleRootHash;
+      for (const { offset, value } of updates) {
+        merkleRootHash = await merkleTree.updateAuthenticated(offset, value);
+      }
 
       // update mmr
-      const leafIndex = parseInt(await this.store.get(`${pageMerkleTreeId}:${BTREE_METADATA_KEYS.MMR_LEAF_INDEX}`));
-      rootHash = await this.mmr.update(leafIndex, regionCommittment);
+      const regionCommittment = this.computeRegionCommittment(pageRange, account, merkleRootHash);
+      if (pageMerkleTreeId === undefined) {
+        const appendResult = await this.mmr.append(regionCommittment);
+        rootHash = appendResult.rootHash;
+        await this.store.set(`${merkleTree.treeId}:${BTREE_METADATA_KEYS.MMR_LEAF_INDEX}`, `${appendResult.leafIndex}`);
+        await this.store.set(
+          `${this.treeId}:${BTREE_METADATA_KEYS.REGION_TO_TREE}:${account}:${pageRange}`,
+          `${merkleTree.treeId}`
+        );
+      } else {
+        const leafIndex = parseInt(await this.store.get(`${pageMerkleTreeId}:${BTREE_METADATA_KEYS.MMR_LEAF_INDEX}`));
+        rootHash = await this.mmr.update(leafIndex, regionCommittment);
+      }
+      regionResults.push({
+        account: account,
+        rootHash: merkleRootHash,
+        page: pageRange,
+      });
     }
-
-    const [from, to] = pageRange.split("-");
-    return {
-      mmrRoot: rootHash,
-      region: {
-        account,
-        from: parseInt(from),
-        to: parseInt(to),
-        hash: regionCommittment,
-      },
-    };
+    return { regions: regionResults, mmrRoot: rootHash };
+  }
+  update(account: string, index: number, value: string) {
+    return this.updateMany([{ account, index, value }]);
   }
 }
