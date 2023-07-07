@@ -5,7 +5,7 @@ type InclusionProof = string[];
 type Node = { hash: string; index: number; depth: number };
 
 export class IncrementalMerkleTree extends TreeDatabase {
-  private constructor(
+  constructor(
     public readonly size: number,
     private readonly nullValue: HexString,
     private readonly hasher: IHasher,
