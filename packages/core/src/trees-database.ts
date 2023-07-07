@@ -1,7 +1,11 @@
 import { IStore } from "./types";
 
 export class InStoreTable {
-  constructor(protected readonly store: IStore, public readonly key: string) {}
+  private readonly keySplitLength: number;
+  constructor(protected readonly store: IStore, public readonly key: string) {
+    const keySegments = key.split(":");
+    this.keySplitLength = keySegments.length + (keySegments[keySegments.length - 1] === "" ? -1 : 0);
+  }
 
   getFullKey(suffix: string | number): string {
     return this.key + (suffix ?? "").toString() || "";
@@ -14,7 +18,10 @@ export class InStoreTable {
   async getMany(suffixes: (string | number)[]): Promise<Map<string, string>> {
     const keys = suffixes.map((suffix) => this.getFullKey(suffix));
     const keyless = new Map();
-    (await this.store.getMany(keys)).forEach((value, key) => keyless.set(key.split(":").slice(2).join(":"), value));
+
+    (await this.store.getMany(keys)).forEach((value, key) =>
+      keyless.set(key.split(":").slice(this.keySplitLength).join(":"), value)
+    );
     return keyless;
   }
 
