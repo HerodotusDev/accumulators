@@ -1,4 +1,5 @@
-import { IHasher, IStore, InStoreTable } from "@accumulators/core";
+// TODO: change import
+import { IHasher, IStore, InStoreTable } from "../../core/src";
 import CoreMMR from ".";
 
 export class PrecomputationMMR extends CoreMMR {

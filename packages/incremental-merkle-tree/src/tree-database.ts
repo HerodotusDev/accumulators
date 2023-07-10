@@ -1,4 +1,5 @@
-import { IStore, InStoreTable } from "@accumulators/core";
+// TODO: change import
+import { IStore, InStoreTable } from "../../core/src";
 import { ulid } from "ulid";
 import { TREE_METADATA_KEYS } from "./metadata";
 
