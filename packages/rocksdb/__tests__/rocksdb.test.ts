@@ -1,4 +1,5 @@
-import CoreMMR, { PrecomputationMMR } from "@accumulators/merkle-mountain-range";
+// TODO: change import
+import CoreMMR, { PrecomputationMMR } from "../../merkle-mountain-range/src";
 import { StarkPedersenHasher } from "@accumulators/hashers";
 import RocksDBStore from "../src";
 
