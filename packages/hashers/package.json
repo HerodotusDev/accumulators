@@ -1,6 +1,6 @@
 {
   "name": "@accumulators/hashers",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "A TypeScript implementation of multiple hashing functions",
   "keywords": [],
   "homepage": "https://github.com/HerodotusDev/accumulators",
