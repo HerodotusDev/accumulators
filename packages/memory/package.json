@@ -1,6 +1,6 @@
 {
   "name": "@accumulators/memory",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "In Memory IStore implementation for Accumulators",
   "keywords": [],
   "homepage": "https://github.com/HerodotusDev/accumulators",
@@ -29,7 +29,7 @@
     "@accumulators/core": "^2.0.0"
   },
   "devDependencies": {
-    "@accumulators/hashers": "^2.0.1",
-    "@accumulators/merkle-mountain-range": "^2.0.1"
+    "@accumulators/hashers": "^2.0.2",
+    "@accumulators/merkle-mountain-range": "^2.0.2"
   }
 }

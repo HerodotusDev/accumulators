@@ -101,10 +101,10 @@ importers:
         version: 2.3.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^2.0.1
+        specifier: ^2.0.2
         version: link:../hashers
       '@accumulators/memory':
-        specifier: ^2.0.1
+        specifier: ^2.0.2
         version: link:../memory
 
   packages/memory:
@@ -114,10 +114,10 @@ importers:
         version: link:../core
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^2.0.1
+        specifier: ^2.0.2
         version: link:../hashers
       '@accumulators/merkle-mountain-range':
-        specifier: ^2.0.1
+        specifier: ^2.0.2
         version: link:../merkle-mountain-range
 
   packages/merkle-mountain-range:
@@ -130,10 +130,10 @@ importers:
         version: 2.3.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^2.0.1
+        specifier: ^2.0.2
         version: link:../hashers
       '@accumulators/memory':
-        specifier: ^2.0.1
+        specifier: ^2.0.2
         version: link:../memory
 
   packages/rocksdb:
@@ -146,10 +146,10 @@ importers:
         version: 5.0.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^2.0.1
+        specifier: ^2.0.2
         version: link:../hashers
       '@accumulators/merkle-mountain-range':
-        specifier: ^2.0.1
+        specifier: ^2.0.2
         version: link:../merkle-mountain-range
 
 packages:
