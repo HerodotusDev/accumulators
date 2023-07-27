@@ -1,5 +1,5 @@
 import { IHasher } from "@accumulators/core";
-import { poseidonHash } from "micro-starknet";
+import { poseidonHashMany } from "micro-starknet";
 
 export class StarkPoseidonHasher extends IHasher {
   constructor() {
@@ -7,8 +7,6 @@ export class StarkPoseidonHasher extends IHasher {
   }
 
   hash(data: string[]): string {
-    if (data.length !== 2) throw new Error("Stark Poseidon Hasher only accepts two elements");
-
     const sizeErrorIndex = data.findIndex((e) => this.isElementSizeValid(e) === false);
     if (sizeErrorIndex > -1)
       throw new Error(
@@ -16,6 +14,6 @@ export class StarkPoseidonHasher extends IHasher {
           IHasher.byteSize(data[sizeErrorIndex])
         )}`
       );
-    return "0x" + poseidonHash(BigInt(data[0]), BigInt(data[1])).toString(16);
+    return "0x" + poseidonHashMany(data.map((data_piece) => BigInt(data_piece))).toString(16);
   }
 }
