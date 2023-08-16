@@ -25,13 +25,10 @@ export default class CoreMMR extends TreesDatabase {
     let lastElementIdx = await this.elementsCount.increment();
     const leafIndex = lastElementIdx;
 
-    //? hash that will be stored in the database
-    const hash = this.hasher.hash([lastElementIdx.toString(), value]);
-
     //? Store the hash in the database
-    await this.hashes.set(hash, lastElementIdx);
+    await this.hashes.set(value, lastElementIdx);
 
-    peaks.push(hash);
+    peaks.push(value);
 
     let height = 0;
     while (getHeight(lastElementIdx + 1) > height) {
@@ -40,7 +37,7 @@ export default class CoreMMR extends TreesDatabase {
       const rightHash = peaks.pop();
       const leftHash = peaks.pop();
 
-      const parentHash = this.hasher.hash([lastElementIdx.toString(), this.hasher.hash([leftHash, rightHash])]);
+      const parentHash = this.hasher.hash([leftHash, rightHash]);
       await this.hashes.set(parentHash, lastElementIdx);
       peaks.push(parentHash);
 
@@ -197,15 +194,12 @@ export default class CoreMMR extends TreesDatabase {
     if (leafIndex < 1) throw new Error("Index must be greater than 1");
     if (leafIndex > treeSize) throw new Error("Index must be in the tree");
 
-    let hash = this.hasher.hash([leafIndex.toString(), leafValue]);
+    let hash = leafValue;
 
     for (const proofHash of siblingsHashes) {
       const isRight = getHeight(leafIndex + 1) == getHeight(leafIndex) + 1;
       leafIndex = isRight ? leafIndex + 1 : leafIndex + parentOffset(getHeight(leafIndex));
-      hash = this.hasher.hash([
-        leafIndex.toString(),
-        isRight ? this.hasher.hash([proofHash, hash]) : this.hasher.hash([hash, proofHash]),
-      ]);
+      hash = isRight ? this.hasher.hash([proofHash, hash]) : this.hasher.hash([hash, proofHash]);
     }
 
     return (await this.retrievePeaksHashes(findPeaks(treeSize))).includes(hash);
@@ -229,7 +223,7 @@ export default class CoreMMR extends TreesDatabase {
 
     if (peaksIdxs.length === 0) return "0x0";
     else if (peaksIdxs.length === 1) {
-      return this.hasher.hash([treeSize.toString(), peaksHashes[0]]);
+      return peaksHashes[0];
     }
 
     const root0 = this.hasher.hash([peaksHashes[peaksHashes.length - 2], peaksHashes[peaksHashes.length - 1]]);
@@ -238,7 +232,7 @@ export default class CoreMMR extends TreesDatabase {
       .reverse()
       .reduce((prev, cur) => this.hasher.hash([cur, prev]), root0);
 
-    return this.hasher.hash([treeSize.toString(), root]);
+    return root;
   }
 
   async retrievePeaksHashes(peaksIdxs: number[], formattingOpts?: PeaksFormattingOptions): Promise<string[]> {
