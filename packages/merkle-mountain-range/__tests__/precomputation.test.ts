@@ -7,7 +7,7 @@ const hasher = new StarkPedersenHasher();
 
 describe("precomputation", () => {
   let mmr: CoreMMR;
-  const rootAt6Leaves = "0x04a1ae364258121690285af43cd4ee91adfd6a8647211748657d8e66835a20a1";
+  const rootAt6Leaves = "0x03203d652ecaf8ad941cbbccddcc0ce904d81e2c37e6dcff4377cf988dac493c";
 
   beforeEach(async () => {
     mmr = new CoreMMR(store, hasher);
@@ -66,7 +66,7 @@ describe("empty mmr", () => {
     await precomputationMmr.append("2");
 
     await expect(precomputationMmr.bagThePeaks()).resolves.toEqual(
-      "0x067cfcdd3b4a8f67853ecac650440dad1bac6de440def9f196e9b9968d9a00df"
+      "0x05bb9440e27889a364bcb678b1f679ecd1347acdedcbf36e83494f857cc58026"
     );
   });
 });
