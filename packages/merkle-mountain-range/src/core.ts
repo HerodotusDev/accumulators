@@ -16,6 +16,13 @@ export default class CoreMMR extends TreesDatabase {
     super(store, mmrId);
   }
 
+  // creates new MMR with a single element which is hash of "brave new world" string
+  static async createWithGenesis(store: IStore, hasher: IHasher, mmrId?: string) {
+    const mmr = new CoreMMR(store, hasher, mmrId);
+    if ((await mmr.elementsCount.get()) == 0) await mmr.append(hasher.getGenesis());
+    return mmr;
+  }
+
   async append(value: string): Promise<AppendResult> {
     if (!this.hasher.isElementSizeValid(value)) throw new Error("Element size is too big to hash with this hasher");
 
