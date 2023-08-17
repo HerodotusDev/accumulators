@@ -1,5 +1,5 @@
 import MemoryStore from "@accumulators/memory";
-import { StarkPedersenHasher } from "@accumulators/hashers";
+import { KeccakHasher, StarkPedersenHasher, StarkPoseidonHasher } from "@accumulators/hashers";
 import CoreMMR, { AppendResult } from "../src";
 
 describe("core", () => {
@@ -19,6 +19,18 @@ describe("core", () => {
     for (const leaf of leaves) {
       appendsResults.push(await mmr.append(leaf));
     }
+  });
+
+  it("should generate mmr with genesis for keccak hasher", async () => {
+    const mmr = await CoreMMR.createWithGenesis(new MemoryStore(), new KeccakHasher());
+    expect(await mmr.rootHash.get()).toEqual("0xce92cc894a17c107be8788b58092c22cd0634d1489ca0ce5b4a045a1ce31b168");
+  });
+
+  it("should generate mmr with genesis for poseidon hasher", async () => {
+    const mmr = await CoreMMR.createWithGenesis(new MemoryStore(), new StarkPoseidonHasher());
+    await expect(mmr.rootHash.get()).resolves.toEqual(
+      "0x2241b3b7f1c4b9cf63e670785891de91f7237b1388f6635c1898ae397ad32dd"
+    );
   });
 
   it("should compute parent tree", async () => {
