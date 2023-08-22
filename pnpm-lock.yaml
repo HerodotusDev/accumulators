@@ -76,7 +76,7 @@ importers:
   packages/hashers:
     dependencies:
       '@accumulators/core':
-        specifier: ^2.0.4
+        specifier: ^3.0.0
         version: link:../core
       '@ethersproject/solidity':
         specifier: ^5.7.0
@@ -94,55 +94,55 @@ importers:
   packages/incremental-merkle-tree:
     dependencies:
       '@accumulators/core':
-        specifier: ^2.0.4
+        specifier: ^3.0.0
         version: link:../core
       ulid:
         specifier: ^2.3.0
         version: 2.3.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^2.0.4
+        specifier: ^3.0.0
         version: link:../hashers
       '@accumulators/memory':
-        specifier: ^2.0.4
+        specifier: ^3.0.0
         version: link:../memory
 
   packages/memory:
     dependencies:
       '@accumulators/core':
-        specifier: ^2.0.4
+        specifier: ^3.0.0
         version: link:../core
 
   packages/merkle-mountain-range:
     dependencies:
       '@accumulators/core':
-        specifier: ^2.0.4
+        specifier: ^3.0.0
         version: link:../core
       ulid:
         specifier: ^2.3.0
         version: 2.3.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^2.0.4
+        specifier: ^3.0.0
         version: link:../hashers
       '@accumulators/memory':
-        specifier: ^2.0.4
+        specifier: ^3.0.0
         version: link:../memory
 
   packages/rocksdb:
     dependencies:
       '@accumulators/core':
-        specifier: ^2.0.4
+        specifier: ^3.0.0
         version: link:../core
       level-rocksdb:
         specifier: ^5.0.0
         version: 5.0.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^2.0.4
+        specifier: ^3.0.0
         version: link:../hashers
       '@accumulators/merkle-mountain-range':
-        specifier: ^2.0.4
+        specifier: ^3.0.0
         version: link:../merkle-mountain-range
 
 packages:
