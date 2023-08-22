@@ -1,6 +1,6 @@
 {
   "name": "@accumulators/merkle-mountain-range",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "A TypeScript implementation of Merkle Mountain Ranges",
   "keywords": [
     "merkle mountain range",
@@ -33,11 +33,11 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@accumulators/core": "^3.0.0",
+    "@accumulators/core": "^3.0.1",
     "ulid": "^2.3.0"
   },
   "devDependencies": {
-    "@accumulators/hashers": "^3.0.0",
-    "@accumulators/memory": "^3.0.0"
+    "@accumulators/hashers": "^3.0.1",
+    "@accumulators/memory": "^3.0.1"
   }
 }
