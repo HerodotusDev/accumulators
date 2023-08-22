@@ -10,6 +10,8 @@ export const defaultHasherOptions: HasherOptions = {
 
 export type HexString = string;
 
+export const GENESIS_STRING = "brave new world";
+
 export abstract class IHasher {
   constructor(public readonly options: HasherOptions = defaultHasherOptions) {}
 
@@ -28,7 +30,7 @@ export abstract class IHasher {
   }
 
   public getGenesis = (): HexString => {
-    const s = "brave new world";
+    const s = GENESIS_STRING;
     let hex = "0x";
     for (let i = 0; i < s.length; i++) {
       hex += s.charCodeAt(i).toString(16).padStart(2, "0");
