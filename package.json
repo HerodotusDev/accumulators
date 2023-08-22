@@ -26,7 +26,8 @@
     "e:memory:start": "pnpm --cwd ./examples/memory start",
     "e:memory:dev": "pnpm --cwd ./examples/memory dev",
     "e:rocksdb:start": "pnpm --cwd ./examples/rocksdb start",
-    "e:rocksdb:dev": "pnpm --cwd ./examples/rocksdb dev"
+    "e:rocksdb:dev": "pnpm --cwd ./examples/rocksdb dev",
+    "manual-version": "lerna version --no-private"
   },
   "devDependencies": {
     "@jest/types": "^29.5.0",

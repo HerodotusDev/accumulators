@@ -1,10 +1,10 @@
 import MemoryStore from "@accumulators/memory";
-import { StarkPedersenHasher } from "@accumulators/hashers";
+import { KeccakHasher, StarkPedersenHasher, StarkPoseidonHasher } from "@accumulators/hashers";
 import CoreMMR, { AppendResult } from "../src";
 
 describe("core", () => {
   const leaves = ["1", "2", "3", "4", "5"]; // Elements data for this test suite (do not modify).
-  const rootAt6Leaves = "0x04a1ae364258121690285af43cd4ee91adfd6a8647211748657d8e66835a20a1";
+  const rootAt6Leaves = "0x03203d652ecaf8ad941cbbccddcc0ce904d81e2c37e6dcff4377cf988dac493c";
 
   let mmr: CoreMMR;
   let appendsResults: AppendResult[];
@@ -21,6 +21,18 @@ describe("core", () => {
     }
   });
 
+  it("should generate mmr with genesis for keccak hasher", async () => {
+    const mmr = await CoreMMR.createWithGenesis(new MemoryStore(), new KeccakHasher());
+    expect(await mmr.rootHash.get()).toEqual("0xce92cc894a17c107be8788b58092c22cd0634d1489ca0ce5b4a045a1ce31b168");
+  });
+
+  it("should generate mmr with genesis for poseidon hasher", async () => {
+    const mmr = await CoreMMR.createWithGenesis(new MemoryStore(), new StarkPoseidonHasher());
+    await expect(mmr.rootHash.get()).resolves.toEqual(
+      "0x2241b3b7f1c4b9cf63e670785891de91f7237b1388f6635c1898ae397ad32dd"
+    );
+  });
+
   it("should compute parent tree", async () => {
     const lastLeafIndex = appendsResults[appendsResults.length - 1].leafIndex;
 
@@ -28,12 +40,12 @@ describe("core", () => {
       leavesCount: 6,
       elementsCount: 10,
       leafIndex: 9,
-      rootHash: "0x04a1ae364258121690285af43cd4ee91adfd6a8647211748657d8e66835a20a1",
+      rootHash: "0x03203d652ecaf8ad941cbbccddcc0ce904d81e2c37e6dcff4377cf988dac493c",
     } as AppendResult);
 
     await expect(mmr.getPeaks()).resolves.toEqual([
-      "0x004a1fead9ecdd90793ba10b7da6e8a30d655843296f148f147a89cb3e978528",
-      "0x038b387444a2cf8d09094d58f04d27d8e52e0c8de57c75fb13416b618c3d4ec5",
+      "0x06a27df2b1eaf16c77478b9c001cfdebe956b7ad878b141b0b4b24659fa59fde",
+      "0x01f680f4b3e66b11ac6b827ef46e7d2da4075e0dc83b7e322d590dbb7687f417",
     ]);
     await expect(mmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
     const proof = await mmr.getProof(lastLeafIndex);

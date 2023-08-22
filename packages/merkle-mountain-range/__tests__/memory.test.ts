@@ -1,12 +1,12 @@
-import CoreMMR, { PrecomputationMMR } from "@accumulators/merkle-mountain-range";
+import CoreMMR, { PrecomputationMMR } from "../src";
 import { StarkPedersenHasher } from "@accumulators/hashers";
-import MemoryStore from "../src";
+import MemoryStore from "@accumulators/memory/src";
 
 const store = new MemoryStore();
 const hasher = new StarkPedersenHasher();
 
 describe("precomputation", () => {
-  const rootAt6Leaves = "0x04a1ae364258121690285af43cd4ee91adfd6a8647211748657d8e66835a20a1";
+  const rootAt6Leaves = "0x03203d652ecaf8ad941cbbccddcc0ce904d81e2c37e6dcff4377cf988dac493c";
   let mmr: CoreMMR;
 
   beforeEach(async () => {
