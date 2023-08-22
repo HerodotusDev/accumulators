@@ -19,7 +19,12 @@ export default class CoreMMR extends TreesDatabase {
   // creates new MMR with a single element which is hash of "brave new world" string
   static async createWithGenesis(store: IStore, hasher: IHasher, mmrId?: string) {
     const mmr = new CoreMMR(store, hasher, mmrId);
-    if ((await mmr.elementsCount.get()) == 0) await mmr.append(hasher.getGenesis());
+    if ((await mmr.elementsCount.get()) != 0) {
+      throw new Error(
+        "Cannot call createWithGenesis on a non-empty MMR. Please provide an empty store or change the MMR id."
+      );
+    }
+    await mmr.append(hasher.getGenesis());
     return mmr;
   }
 
