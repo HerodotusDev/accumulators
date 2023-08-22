@@ -1,6 +1,6 @@
-import CoreMMR, { PrecomputationMMR } from "@accumulators/merkle-mountain-range";
+import CoreMMR, { PrecomputationMMR } from "../src";
 import { StarkPedersenHasher } from "@accumulators/hashers";
-import MemoryStore from "../src";
+import MemoryStore from "@accumulators/memory/src";
 
 const store = new MemoryStore();
 const hasher = new StarkPedersenHasher();

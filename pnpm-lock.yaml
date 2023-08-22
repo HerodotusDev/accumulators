@@ -112,13 +112,6 @@ importers:
       '@accumulators/core':
         specifier: ^2.0.0
         version: link:../core
-    devDependencies:
-      '@accumulators/hashers':
-        specifier: ^2.0.2
-        version: link:../hashers
-      '@accumulators/merkle-mountain-range':
-        specifier: ^2.0.2
-        version: link:../merkle-mountain-range
 
   packages/merkle-mountain-range:
     dependencies:

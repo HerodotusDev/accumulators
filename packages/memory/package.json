@@ -27,9 +27,5 @@
   },
   "dependencies": {
     "@accumulators/core": "^2.0.0"
-  },
-  "devDependencies": {
-    "@accumulators/hashers": "^2.0.2",
-    "@accumulators/merkle-mountain-range": "^2.0.2"
   }
 }
