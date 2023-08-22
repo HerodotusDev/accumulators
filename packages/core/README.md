@@ -7,5 +7,5 @@
 ```
 import CoreMMR from '@accumulators/core';
 
-// TODO: demonstration
+// TODO: demonstrations
 ```
