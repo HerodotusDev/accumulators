@@ -1,6 +1,6 @@
 {
   "name": "@accumulators/incremental-merkle-tree",
-  "version": "2.0.3",
+  "version": "2.0.4",
   "description": "A TypeScript implementation of Incremental Merkle Trees with multiproofs",
   "keywords": [
     "incremental merkle tree",
@@ -30,11 +30,11 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@accumulators/core": "^2.0.3",
+    "@accumulators/core": "^2.0.4",
     "ulid": "^2.3.0"
   },
   "devDependencies": {
-    "@accumulators/hashers": "^2.0.3",
-    "@accumulators/memory": "^2.0.3"
+    "@accumulators/hashers": "^2.0.4",
+    "@accumulators/memory": "^2.0.4"
   }
 }
