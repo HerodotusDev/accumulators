@@ -1,6 +1,6 @@
 {
   "name": "@accumulators/sqlite3",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "Sqlite3 IStore implementation for Accumulators",
   "keywords": [],
   "homepage": "https://github.com/HerodotusDev/accumulators",
