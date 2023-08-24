@@ -1,5 +1,8 @@
 import SQLiteStore from "../src";
 
+import CoreMMR, { PrecomputationMMR } from "@accumulators/merkle-mountain-range";
+import { StarkPoseidonHasher } from "@accumulators/hashers";
+
 describe("SQLite3: In memory Database interactions", () => {
   let store: SQLiteStore;
 
@@ -61,5 +64,54 @@ describe("SQLite3: In persistent Database interactions", () => {
     await store.delete("key");
     const value = await store.get("key");
     expect(value).toEqual(undefined);
+  });
+});
+
+describe("SQLite3 stored MMR", () => {
+  const hasher = new StarkPoseidonHasher();
+  const store = new SQLiteStore(":memory:");
+
+  let mmr: CoreMMR;
+
+  beforeEach(async () => {
+    await store.init();
+    mmr = new CoreMMR(store, hasher);
+  });
+
+  it("Should append to the mmr", async () => {
+    await mmr.append("4");
+    await mmr.append("5");
+    await mmr.append("6");
+
+    const root = await mmr.bagThePeaks();
+    expect(root).toBeDefined();
+  });
+});
+
+describe("SQLite3 stored MMR: precomputation", () => {
+  const hasher = new StarkPoseidonHasher();
+  const store = new SQLiteStore(":memory:");
+
+  let mmr: CoreMMR;
+
+  beforeEach(async () => {
+    await store.init();
+    mmr = new CoreMMR(store, hasher);
+    await mmr.append("1");
+    await mmr.append("2");
+    await mmr.append("3");
+  });
+
+  it("Should append to the mmr", async () => {
+    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrId, "precomputed");
+
+    await precomputationMmr.append("4");
+    await precomputationMmr.append("5");
+    await precomputationMmr.append("6");
+
+    const proof = await precomputationMmr.getProof(8);
+    await expect(precomputationMmr.verifyProof(proof, "5")).resolves.toEqual(true);
+
+    await precomputationMmr.close();
   });
 });
