@@ -1,11 +1,11 @@
 # `core`
 
-> TODO: description
+> TODO: write description
 
 ## Usage
 
 ```
 import CoreMMR from '@accumulators/core';
 
-// TODO: demonstrations of usage
+// TODO: demonstrate usage
 ```
