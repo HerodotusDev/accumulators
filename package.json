@@ -23,6 +23,7 @@
     "test:hashes": "pnpm test packages/hashes",
     "test:memory": "pnpm test packages/memory",
     "test:rocksdb": "pnpm test packages/rocksdb",
+    "test:sqlite3": "pnpm test packages/sqlite3",
     "e:memory:start": "pnpm --cwd ./examples/memory start",
     "e:memory:dev": "pnpm --cwd ./examples/memory dev",
     "e:rocksdb:start": "pnpm --cwd ./examples/rocksdb start",
