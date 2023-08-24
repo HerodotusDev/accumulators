@@ -1,6 +1,6 @@
 {
   "name": "accumulators",
-  "private": false,
+  "private": true,
   "version": "1.0.0",
   "description": "A set of packages around cryptographic accumulators",
   "keywords": [],
