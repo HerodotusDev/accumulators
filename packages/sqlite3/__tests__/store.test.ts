@@ -86,6 +86,14 @@ describe("SQLite3 stored MMR", () => {
     const root = await mmr.bagThePeaks();
     expect(root).toBeDefined();
   });
+
+  it("Should append a duplicate the mmr", async () => {
+    await mmr.append("4");
+    await mmr.append("4");
+
+    const root = await mmr.bagThePeaks();
+    expect(root).toBeDefined();
+  });
 });
 
 describe("SQLite3 stored MMR: precomputation", () => {
