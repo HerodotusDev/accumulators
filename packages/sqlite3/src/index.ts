@@ -29,6 +29,7 @@ export default class SQLiteStore implements IStore {
 
   async getMany(keys: string[]): Promise<Map<string, string>> {
     const result = new Map<string, string>();
+    if (keys.length === 0) return result;
     let query = "SELECT * FROM store WHERE key IN (";
 
     for (const key of keys) {
@@ -36,6 +37,8 @@ export default class SQLiteStore implements IStore {
     }
 
     query = query.slice(0, -2) + ");";
+
+    console.log(query);
 
     const all = promisify(this.db.all).bind(this.db);
     const rows = await all(query);
