@@ -1,6 +1,6 @@
 {
   "name": "@accumulators/rocksdb",
-  "version": "3.0.3",
+  "version": "3.0.7",
   "description": "RocksDb IStore implementation for Accumulators",
   "keywords": [],
   "homepage": "https://github.com/HerodotusDev/accumulators",
@@ -31,6 +31,6 @@
   },
   "devDependencies": {
     "@accumulators/hashers": "^3.0.3",
-    "@accumulators/merkle-mountain-range": "^3.0.3"
+    "@accumulators/merkle-mountain-range": "^3.0.7"
   }
 }

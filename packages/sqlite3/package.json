@@ -1,6 +1,6 @@
 {
   "name": "@accumulators/sqlite3",
-  "version": "3.0.6",
+  "version": "3.0.7",
   "description": "Sqlite3 IStore implementation for Accumulators",
   "keywords": [],
   "homepage": "https://github.com/HerodotusDev/accumulators",
@@ -32,6 +32,6 @@
   },
   "devDependencies": {
     "@accumulators/hashers": "^3.0.3",
-    "@accumulators/merkle-mountain-range": "^3.0.3"
+    "@accumulators/merkle-mountain-range": "^3.0.7"
   }
 }
