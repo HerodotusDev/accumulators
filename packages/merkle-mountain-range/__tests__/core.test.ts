@@ -33,6 +33,14 @@ describe("core", () => {
     );
   });
 
+  it("Shoud properly map a leaf index to an element index", () => {
+    const expectedIndices = [1, 2, 4, 5, 8, 9, 11, 12, 16, 17, 19];
+    expectedIndices.forEach((expectedIndex, arrIdx) => {
+      const elementIndex = CoreMMR.mapLeafIndexToElementIndex(arrIdx + 1);
+      expect(elementIndex).toEqual(expectedIndex);
+    });
+  });
+
   it("should compute parent tree", async () => {
     const lastLeafIndex = appendsResults[appendsResults.length - 1].leafIndex;
 
