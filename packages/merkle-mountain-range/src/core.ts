@@ -247,6 +247,20 @@ export default class CoreMMR extends TreesDatabase {
     return root;
   }
 
+  private static countOnes(value: number): number {
+    let n = value;
+    let onesCount = 0;
+    while (n > 0) {
+      n = n & (n - 1);
+      onesCount++;
+    }
+    return onesCount;
+  }
+
+  static mapLeafIndexToElementIndex(leafIndex: number): number {
+    return 2 * leafIndex - 1 - this.countOnes(leafIndex - 1);
+  }
+
   async retrievePeaksHashes(peaksIdxs: number[], formattingOpts?: PeaksFormattingOptions): Promise<string[]> {
     const hashes = await this.hashes.getMany(peaksIdxs);
     if (formattingOpts) {
