@@ -41,7 +41,7 @@ export class DraftMMR extends CoreMMR {
     await this.clear();
   }
 
-  async apply({ clear = true } = { clear: true }) {
+  async apply({ clear = true }: { clear?: boolean } = { clear: true }) {
     const allKeys = await this.getAllKeys();
 
     const toSet = new Map();
@@ -56,7 +56,7 @@ export class DraftMMR extends CoreMMR {
       return toSet.set(newKey.join(":"), value);
     });
 
-    //? Apply the changes to the parent MMR
+    //? Apply
     await this.parentMmr.store.setMany(toSet);
 
     if (!clear) return; //? Optional clearing of the draft MMR on apply
