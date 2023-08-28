@@ -38,7 +38,7 @@ describe("precomputation", () => {
     const proof = await precomputationMmr.getProof(leafIndex);
     await expect(precomputationMmr.verifyProof(proof, "5")).resolves.toEqual(true);
 
-    await precomputationMmr.clear();
+    await precomputationMmr.discard();
     await expect(precomputationMmr.bagThePeaks()).resolves.toEqual("0x0");
 
     //? After closing the precomputation, the parent MMR should still work
@@ -89,7 +89,7 @@ describe("empty mmr", () => {
       "0x05bb9440e27889a364bcb678b1f679ecd1347acdedcbf36e83494f857cc58026"
     );
 
-    await precomputationMmr.clear();
+    await precomputationMmr.discard();
   });
 });
 
