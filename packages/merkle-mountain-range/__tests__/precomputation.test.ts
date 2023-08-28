@@ -1,8 +1,9 @@
-import CoreMMR, { PrecomputationMMR } from "../src";
+import CoreMMR, { DraftMMR } from "../src";
 import { StarkPedersenHasher } from "@accumulators/hashers";
 import MemoryStore from "@accumulators/memory";
 
 const store = new MemoryStore();
+const storeDraft = new MemoryStore();
 const hasher = new StarkPedersenHasher();
 
 describe("precomputation", () => {
@@ -27,7 +28,7 @@ describe("precomputation", () => {
   });
 
   it("should precompute from parent tree", async () => {
-    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrId, "precomputed");
+    const precomputationMmr = await DraftMMR.initialize(storeDraft, hasher, mmr, "precomputed");
 
     await precomputationMmr.append("4");
     const { leafIndex } = await precomputationMmr.append("5");
@@ -37,7 +38,7 @@ describe("precomputation", () => {
     const proof = await precomputationMmr.getProof(leafIndex);
     await expect(precomputationMmr.verifyProof(proof, "5")).resolves.toEqual(true);
 
-    await precomputationMmr.close();
+    await precomputationMmr.discard();
     await expect(precomputationMmr.bagThePeaks()).resolves.toEqual("0x0");
 
     //? After closing the precomputation, the parent MMR should still work
@@ -46,6 +47,25 @@ describe("precomputation", () => {
     await mmr.append("6");
     await expect(mmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
     const parentProof = await mmr.getProof(parentLeafIndex);
+    await expect(mmr.verifyProof(parentProof, "5")).resolves.toEqual(true);
+  });
+
+  it("should apply Draft mmr", async () => {
+    const precomputationMmr = await DraftMMR.initialize(storeDraft, hasher, mmr, "precomputed");
+
+    await precomputationMmr.append("4");
+    const { leafIndex } = await precomputationMmr.append("5");
+    await precomputationMmr.append("6");
+
+    await expect(precomputationMmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
+    const proof = await precomputationMmr.getProof(leafIndex);
+    await expect(precomputationMmr.verifyProof(proof, "5")).resolves.toEqual(true);
+
+    await precomputationMmr.apply();
+    //? After applying the precomputation, the parent MMR should work
+    await expect(precomputationMmr.bagThePeaks()).resolves.toEqual("0x0");
+    await expect(mmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
+    const parentProof = await mmr.getProof(leafIndex);
     await expect(mmr.verifyProof(parentProof, "5")).resolves.toEqual(true);
   });
 });
@@ -58,7 +78,7 @@ describe("empty mmr", () => {
   });
 
   it("should precompute from empty mmr", async () => {
-    const precomputationMmr = await PrecomputationMMR.initialize(store, hasher, mmr.mmrId, "precomputed");
+    const precomputationMmr = await DraftMMR.initialize(storeDraft, hasher, mmr, "precomputed");
 
     await expect(precomputationMmr.bagThePeaks()).resolves.toEqual("0x0");
 
@@ -68,5 +88,11 @@ describe("empty mmr", () => {
     await expect(precomputationMmr.bagThePeaks()).resolves.toEqual(
       "0x05bb9440e27889a364bcb678b1f679ecd1347acdedcbf36e83494f857cc58026"
     );
+
+    await precomputationMmr.discard();
   });
+});
+
+afterAll(async () => {
+  await expect(storeDraft.store.size).toBe(0);
 });

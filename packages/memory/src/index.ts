@@ -1,7 +1,7 @@
 import { IStore } from "@accumulators/core";
 
 export default class MemoryStore implements IStore {
-  private store: Map<string, string>;
+  public store: Map<string, string>;
 
   constructor() {
     this.store = new Map();

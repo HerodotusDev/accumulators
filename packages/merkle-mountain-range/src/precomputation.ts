@@ -1,6 +1,9 @@
 import { IHasher, IStore, InStoreTable } from "@accumulators/core";
 import CoreMMR from ".";
 
+/**
+ * @deprecated Use DraftMMR instead.
+ */
 export class PrecomputationMMR extends CoreMMR {
   private readonly parentEndIdx: number;
   private constructor(

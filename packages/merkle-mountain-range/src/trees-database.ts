@@ -11,7 +11,7 @@ export class TreesDatabase {
   hashes: InStoreTable;
   readonly rootHash: InStoreTable;
 
-  constructor(protected readonly store: IStore, mmrId?: string) {
+  constructor(public readonly store: IStore, mmrId?: string) {
     mmrId ? (this.mmrId = mmrId) : (this.mmrId = ulid());
     this.leavesCount = new InStoreCounter(this.store, `${this.mmrId}:${TREE_METADATA_KEYS.LEAF_COUNT}`);
     this.elementsCount = new InStoreCounter(this.store, `${this.mmrId}:${TREE_METADATA_KEYS.ELEMENT_COUNT}`);

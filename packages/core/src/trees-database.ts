@@ -1,7 +1,7 @@
 import { IStore } from "./types";
 
 export class InStoreTable {
-  constructor(protected readonly store: IStore, public readonly key: string) {}
+  constructor(public readonly store: IStore, public readonly key: string) {}
 
   getFullKey(suffix: string | number): string {
     return this.key + (suffix ?? "").toString() || "";
