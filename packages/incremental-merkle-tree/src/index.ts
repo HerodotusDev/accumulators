@@ -7,8 +7,8 @@ type Node = { hash: string; index: number; depth: number };
 export class IncrementalMerkleTree extends TreeDatabase {
   private constructor(
     public readonly size: number,
-    private readonly nullValue: HexString,
-    private readonly hasher: IHasher,
+    public readonly nullValue: HexString,
+    public readonly hasher: IHasher,
     store: IStore,
     treeId?: string
   ) {
