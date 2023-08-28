@@ -12,7 +12,7 @@ import { TreesDatabase } from "./trees-database";
 import { IHasher, IStore } from "@accumulators/core";
 
 export default class CoreMMR extends TreesDatabase {
-  constructor(store: IStore, protected readonly hasher: IHasher, mmrId?: string) {
+  constructor(store: IStore, public readonly hasher: IHasher, mmrId?: string) {
     super(store, mmrId);
   }
 

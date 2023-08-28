@@ -41,24 +41,27 @@ export class DraftMMR extends CoreMMR {
     await this.clear();
   }
 
-  async apply() {
+  async apply({ clear = true } = { clear: true }) {
     const allKeys = await this.getAllKeys();
-    const toDelete = [this.elementsCount.key, this.rootHash.key, this.leavesCount.key, ...allKeys];
 
     const toSet = new Map();
     toSet.set(this.parentMmr.elementsCount.key, await this.elementsCount.get());
     toSet.set(this.parentMmr.rootHash.key, await this.rootHash.get());
     toSet.set(this.parentMmr.leavesCount.key, await this.leavesCount.get());
+
     const allHashes = await this.getAllHashes(allKeys);
-    const allParentHashes = Object.entries(allHashes).reduce((acc, [key, value]) => {
+    Object.entries(allHashes).forEach(([key, value]) => {
       const newKey = key.split(":");
       newKey[0] = this.parentMmr.mmrId;
-      return acc.set(newKey.join(":"), value);
-    }, new Map<string, string>());
+      return toSet.set(newKey.join(":"), value);
+    });
 
-    await this.store.deleteMany(toDelete);
+    //? Apply the changes to the parent MMR
     await this.parentMmr.store.setMany(toSet);
-    await this.parentMmr.store.setMany(allParentHashes);
+
+    if (!clear) return; //? Optional clearing of the draft MMR on apply
+    const toDelete = [this.elementsCount.key, this.rootHash.key, this.leavesCount.key, ...allKeys];
+    await this.store.deleteMany(toDelete);
   }
 
   async getAllKeys(): Promise<string[]> {
