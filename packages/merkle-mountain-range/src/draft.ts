@@ -37,6 +37,10 @@ export class DraftMMR extends CoreMMR {
     return this.store.deleteMany(toDelete);
   }
 
+  async discard() {
+    await this.clear();
+  }
+
   async apply() {
     const allKeys = await this.getAllKeys();
     const toDelete = [this.elementsCount.key, this.rootHash.key, this.leavesCount.key, ...allKeys];
