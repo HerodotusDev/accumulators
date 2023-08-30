@@ -30,6 +30,7 @@ export default class SQLiteStore implements IStore {
   async getMany(keys: string[]): Promise<Map<string, string>> {
     const result = new Map<string, string>();
     if (keys.length === 0) return result;
+    keys.forEach((key) => result.set(key, ""));
     let query = "SELECT * FROM store WHERE key IN (";
 
     for (const key of keys) {

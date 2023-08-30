@@ -27,6 +27,21 @@ describe("SQLite3: In memory Database interactions", () => {
     expect(values.get("key1")).toEqual("value1");
   });
 
+  it("should get many values in correct order", async () => {
+    const entries = new Map<string, string>();
+    entries.set("a", "value1");
+    entries.set("b", "value2");
+    entries.set("10", "value3");
+    entries.set("5", "value4");
+    await store.setMany(entries);
+
+    const keysToGet = ["5", "10", "b", "a"];
+    const res = await store.getMany(keysToGet);
+    const keysGot = [...res.keys()];
+
+    expect(keysGot).toEqual(keysToGet);
+  });
+
   it("should delete a value", async () => {
     await store.set("key", "value");
     await store.delete("key");
@@ -57,6 +72,21 @@ describe("SQLite3: In persistent Database interactions", () => {
 
     const values = await store.getMany(["key1", "key2"]);
     expect(values.get("key1")).toEqual("value1");
+  });
+
+  it("should get many values in correct order", async () => {
+    const entries = new Map<string, string>();
+    entries.set("a", "value1");
+    entries.set("b", "value2");
+    entries.set("10", "value3");
+    entries.set("5", "value4");
+    await store.setMany(entries);
+
+    const keysToGet = ["5", "10", "b", "a"];
+    const res = await store.getMany(keysToGet);
+    const keysGot = [...res.keys()];
+
+    expect(keysGot).toEqual(keysToGet);
   });
 
   it("should delete a value", async () => {
