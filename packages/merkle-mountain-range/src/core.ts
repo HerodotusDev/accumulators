@@ -7,7 +7,7 @@ import {
   ProofOptions,
   PeaksOptions,
 } from "./types";
-import { findPeaks, getHeight, parentOffset, siblingOffset } from "./helpers";
+import { bitLength, findPeaks, getHeight, parentOffset, siblingOffset } from "./helpers";
 import { TreesDatabase } from "./trees-database";
 import { IHasher, IStore } from "@accumulators/core";
 
@@ -258,12 +258,23 @@ export default class CoreMMR extends TreesDatabase {
   }
 
   static mapLeafIndexToElementIndex(leafIndex: number): number {
-    return 2 * leafIndex - 1 - this.countOnes(leafIndex - 1);
+    return 2 * leafIndex + 1 - this.countOnes(leafIndex);
   }
 
-  // TODO @fmkra please implement
   static mapElementIndexToLeafIndex(elementIndex: number): number {
-    return 0;
+    elementIndex--;
+    let outputIndex = 0;
+    for (let i = bitLength(elementIndex) - 1; i >= 0; i--) {
+      const subTreeSize = (2 << i) - 1; // 2^(i+1) - 1
+      if (subTreeSize <= elementIndex) {
+        elementIndex -= subTreeSize;
+        outputIndex += 1 << i; // 2^i
+      }
+    }
+    if (elementIndex != 0) {
+      throw new Error("Provided index is not a leaf");
+    }
+    return outputIndex;
   }
 
   async retrievePeaksHashes(peaksIdxs: number[], formattingOpts?: PeaksFormattingOptions): Promise<string[]> {

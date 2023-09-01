@@ -33,11 +33,19 @@ describe("core", () => {
     );
   });
 
-  it("Shoud properly map a leaf index to an element index", () => {
+  it("Should properly map a leaf index to an element index", () => {
     const expectedIndices = [1, 2, 4, 5, 8, 9, 11, 12, 16, 17, 19];
     expectedIndices.forEach((expectedIndex, arrIdx) => {
-      const elementIndex = CoreMMR.mapLeafIndexToElementIndex(arrIdx + 1);
+      const elementIndex = CoreMMR.mapLeafIndexToElementIndex(arrIdx);
       expect(elementIndex).toEqual(expectedIndex);
+    });
+  });
+
+  it("Should properly map an element index to a leaf index", () => {
+    const elementIndices = [1, 2, 4, 5, 8, 9, 11, 12, 16, 17, 19];
+    elementIndices.forEach((elementIndex, arrIdx) => {
+      const leafIndex = CoreMMR.mapElementIndexToLeafIndex(elementIndex);
+      expect(leafIndex).toEqual(arrIdx);
     });
   });
 
