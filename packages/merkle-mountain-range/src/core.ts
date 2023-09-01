@@ -28,6 +28,7 @@ export default class CoreMMR extends TreesDatabase {
     return mmr;
   }
 
+  // TODO return elementIndex instead of leafIndex
   async append(value: string): Promise<AppendResult> {
     if (!this.hasher.isElementSizeValid(value)) throw new Error("Element size is too big to hash with this hasher");
 
@@ -35,6 +36,7 @@ export default class CoreMMR extends TreesDatabase {
     const peaks = await this.retrievePeaksHashes(findPeaks(elementsCount));
 
     let lastElementIdx = await this.elementsCount.increment();
+    // TODO rename to leafElementIdx
     const leafIndex = lastElementIdx;
 
     //? Store the hash in the database
@@ -259,6 +261,11 @@ export default class CoreMMR extends TreesDatabase {
 
   static mapLeafIndexToElementIndex(leafIndex: number): number {
     return 2 * leafIndex - 1 - this.countOnes(leafIndex - 1);
+  }
+
+  // TODO @fmkra please implement
+  static mapElementIndexToLeafIndex(elementIndex: number): number {
+    return 0;
   }
 
   async retrievePeaksHashes(peaksIdxs: number[], formattingOpts?: PeaksFormattingOptions): Promise<string[]> {
