@@ -33,21 +33,29 @@ describe("core", () => {
     );
   });
 
-  it("Shoud properly map a leaf index to an element index", () => {
+  it("Should properly map a leaf index to an element index", () => {
     const expectedIndices = [1, 2, 4, 5, 8, 9, 11, 12, 16, 17, 19];
     expectedIndices.forEach((expectedIndex, arrIdx) => {
-      const elementIndex = CoreMMR.mapLeafIndexToElementIndex(arrIdx + 1);
+      const elementIndex = CoreMMR.mapLeafIndexToElementIndex(arrIdx);
       expect(elementIndex).toEqual(expectedIndex);
     });
   });
 
+  it("Should properly map an element index to a leaf index", () => {
+    const elementIndices = [1, 2, 4, 5, 8, 9, 11, 12, 16, 17, 19];
+    elementIndices.forEach((elementIndex, arrIdx) => {
+      const leafIndex = CoreMMR.mapElementIndexToLeafIndex(elementIndex);
+      expect(leafIndex).toEqual(arrIdx);
+    });
+  });
+
   it("should compute parent tree", async () => {
-    const lastLeafIndex = appendsResults[appendsResults.length - 1].leafIndex;
+    const lastLeafElementIndex = appendsResults[appendsResults.length - 1].elementIndex;
 
     await expect(mmr.append("6")).resolves.toEqual({
       leavesCount: 6,
       elementsCount: 10,
-      leafIndex: 9,
+      elementIndex: 9,
       rootHash: "0x03203d652ecaf8ad941cbbccddcc0ce904d81e2c37e6dcff4377cf988dac493c",
     } as AppendResult);
 
@@ -56,13 +64,13 @@ describe("core", () => {
       "0x01f680f4b3e66b11ac6b827ef46e7d2da4075e0dc83b7e322d590dbb7687f417",
     ]);
     await expect(mmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
-    const proof = await mmr.getProof(lastLeafIndex);
+    const proof = await mmr.getProof(lastLeafElementIndex);
     await expect(mmr.verifyProof(proof, leaves[leaves.length - 1])).resolves.toEqual(true);
   });
 
   it("should generate and verify non-expiring proofs", async () => {
     const proofs = await Promise.all(
-      appendsResults.map(({ leafIndex, elementsCount }) => mmr.getProof(leafIndex, { elementsCount }))
+      appendsResults.map(({ elementIndex, elementsCount }) => mmr.getProof(elementIndex, { elementsCount }))
     );
     const verifications = await Promise.all(
       proofs.map((proof, idx) => mmr.verifyProof(proof, leaves[idx], { elementsCount: proof.elementsCount }))
@@ -72,7 +80,7 @@ describe("core", () => {
   });
 
   it("Should generate multiple proofs", async () => {
-    const proofs = await mmr.getProofs(appendsResults.map((r) => r.leafIndex));
+    const proofs = await mmr.getProofs(appendsResults.map((r) => r.elementIndex));
     const verifications = await Promise.all(proofs.map((proof, idx) => mmr.verifyProof(proof, leaves[idx])));
     expect(verifications.every((verification) => verification === true)).toBe(true);
   });

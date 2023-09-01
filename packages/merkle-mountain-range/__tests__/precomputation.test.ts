@@ -19,11 +19,11 @@ describe("precomputation", () => {
 
   it("should compute parent tree", async () => {
     await mmr.append("4");
-    const { leafIndex } = await mmr.append("5");
+    const { elementIndex } = await mmr.append("5");
     await mmr.append("6");
 
     await expect(mmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
-    const proof = await mmr.getProof(leafIndex);
+    const proof = await mmr.getProof(elementIndex);
     await expect(mmr.verifyProof(proof, "5")).resolves.toEqual(true);
   });
 
@@ -31,11 +31,11 @@ describe("precomputation", () => {
     const precomputationMmr = await DraftMMR.initialize(storeDraft, hasher, mmr, "precomputed");
 
     await precomputationMmr.append("4");
-    const { leafIndex } = await precomputationMmr.append("5");
+    const { elementIndex } = await precomputationMmr.append("5");
     await precomputationMmr.append("6");
 
     await expect(precomputationMmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
-    const proof = await precomputationMmr.getProof(leafIndex);
+    const proof = await precomputationMmr.getProof(elementIndex);
     await expect(precomputationMmr.verifyProof(proof, "5")).resolves.toEqual(true);
 
     await precomputationMmr.discard();
@@ -43,10 +43,10 @@ describe("precomputation", () => {
 
     //? After closing the precomputation, the parent MMR should still work
     await mmr.append("4");
-    const { leafIndex: parentLeafIndex } = await mmr.append("5");
+    const { elementIndex: parentLeafElementIndex } = await mmr.append("5");
     await mmr.append("6");
     await expect(mmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
-    const parentProof = await mmr.getProof(parentLeafIndex);
+    const parentProof = await mmr.getProof(parentLeafElementIndex);
     await expect(mmr.verifyProof(parentProof, "5")).resolves.toEqual(true);
   });
 
@@ -54,18 +54,18 @@ describe("precomputation", () => {
     const precomputationMmr = await DraftMMR.initialize(storeDraft, hasher, mmr, "precomputed");
 
     await precomputationMmr.append("4");
-    const { leafIndex } = await precomputationMmr.append("5");
+    const { elementIndex } = await precomputationMmr.append("5");
     await precomputationMmr.append("6");
 
     await expect(precomputationMmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
-    const proof = await precomputationMmr.getProof(leafIndex);
+    const proof = await precomputationMmr.getProof(elementIndex);
     await expect(precomputationMmr.verifyProof(proof, "5")).resolves.toEqual(true);
 
     await precomputationMmr.apply();
     //? After applying the precomputation, the parent MMR should work
     await expect(precomputationMmr.bagThePeaks()).resolves.toEqual("0x0");
     await expect(mmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
-    const parentProof = await mmr.getProof(leafIndex);
+    const parentProof = await mmr.getProof(elementIndex);
     await expect(mmr.verifyProof(parentProof, "5")).resolves.toEqual(true);
   });
 });

@@ -1,6 +1,9 @@
 export type AppendResult = {
   leavesCount: number;
   elementsCount: number;
-  leafIndex: number;
+  /**
+   * The index of the appended element
+   */
+  elementIndex: number;
   rootHash: string;
 };

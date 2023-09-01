@@ -2,19 +2,19 @@ import { PeaksFormattingOptions, ProofFormattingOptions } from "./formatting";
 
 export interface Proof {
   /**
-   * The index of the leaf
+   * The index of the proven element
    *
    * @example 1
    */
-  leafIndex: number;
+  elementIndex: number;
   /**
-   * The hash of the leaf - the hash that is stored in the database
+   * The hash of the element - the hash that is stored in the database
    *
    * @example "0x1234567890abcdef"
    */
-  leafHash: string;
+  elementHash: string;
   /**
-   * The proof of the leaf's inclusion, aka the siblings hashes
+   * The proof of the element's inclusion, aka the siblings hashes
    *
    * @example ["0x1234567890abcdef", "0x1234567890abcdef"]
    */
