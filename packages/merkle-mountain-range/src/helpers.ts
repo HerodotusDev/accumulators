@@ -32,7 +32,7 @@ export const findPeaks = (elementsCount: number): number[] => {
 };
 
 // Returns true if a specified index `num` is also the index of a peak inside `peaks`.
-export const isPeak = (leafIndex: number, peaks: number[]): boolean => peaks.indexOf(leafIndex) !== -1;
+export const isPeak = (elementIndex: number, peaks: number[]): boolean => peaks.indexOf(elementIndex) !== -1;
 
 // Returns the number of bits in num
 export function bitLength(num: number): number {

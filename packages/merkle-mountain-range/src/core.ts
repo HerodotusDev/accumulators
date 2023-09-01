@@ -28,7 +28,6 @@ export default class CoreMMR extends TreesDatabase {
     return mmr;
   }
 
-  // TODO return elementIndex instead of leafIndex
   async append(value: string): Promise<AppendResult> {
     if (!this.hasher.isElementSizeValid(value)) throw new Error("Element size is too big to hash with this hasher");
 
@@ -36,8 +35,7 @@ export default class CoreMMR extends TreesDatabase {
     const peaks = await this.retrievePeaksHashes(findPeaks(elementsCount));
 
     let lastElementIdx = await this.elementsCount.increment();
-    // TODO rename to leafElementIdx
-    const leafIndex = lastElementIdx;
+    const leafElementIndex = lastElementIdx;
 
     //? Store the hash in the database
     await this.hashes.set(value, lastElementIdx);
@@ -71,30 +69,30 @@ export default class CoreMMR extends TreesDatabase {
     return {
       leavesCount: leaves,
       elementsCount: lastElementIdx,
-      leafIndex,
+      elementIndex: leafElementIndex,
       rootHash,
     };
   }
 
   /**
    *
-   * Generates an inclusion proof of a leaf at a certain tree state
+   * Generates an inclusion proof of an element at a certain tree state
    *
-   * @param leafIndex the leaf index of the element to prove the inclusion of
+   * @param elementIndex the index of the element to prove the inclusion of
    * @param [options] Options containing the optional tree size at which the proof should be generated alongside formatting specifiers
    * @returns the generated inclusion proof.
    */
-  async getProof(leafIndex: number, options: ProofOptions = {}): Promise<Proof> {
-    if (leafIndex < 1) throw new Error("Index must be greater than 1");
+  async getProof(elementIndex: number, options: ProofOptions = {}): Promise<Proof> {
+    if (elementIndex < 1) throw new Error("Index must be greater than 1");
 
     const { elementsCount, formattingOpts } = options;
     const treeSize = elementsCount ?? (await this.elementsCount.get());
-    if (leafIndex > treeSize) throw new Error("Index must be less than the tree tree size");
+    if (elementIndex > treeSize) throw new Error("Index must be less than the tree tree size");
 
     const peaks = findPeaks(treeSize);
     const siblings = [];
 
-    let index = leafIndex;
+    let index = elementIndex;
     while (!peaks.includes(index)) {
       // If not peak, must have parent
       const isRight = getHeight(index + 1) == getHeight(index) + 1;
@@ -113,8 +111,8 @@ export default class CoreMMR extends TreesDatabase {
     }
 
     return {
-      leafIndex: leafIndex,
-      leafHash: await this.hashes.get(leafIndex),
+      elementIndex,
+      elementHash: await this.hashes.get(elementIndex),
       siblingsHashes,
       peaksHashes,
       elementsCount: treeSize,
@@ -123,26 +121,26 @@ export default class CoreMMR extends TreesDatabase {
 
   /**
    *
-   * Generates an inclusion proof of a leaf at a certain tree state
+   * Generates an inclusion proof of an element at a certain tree state
    *
-   * @param leavesIds the leaves indexes of the elements to prove the inclusion of
+   * @param elementsIds the indexes of the elements to prove the inclusion of
    * @param [options] Options containing the optional tree size at which the proof should be generated alongside formatting specifiers
    * @returns the generated inclusion proofs.
    */
-  async getProofs(leavesIds: number[], options: ProofOptions = {}): Promise<Proof[]> {
+  async getProofs(elementsIds: number[], options: ProofOptions = {}): Promise<Proof[]> {
     const { elementsCount, formattingOpts } = options;
     const treeSize = elementsCount ?? (await this.elementsCount.get());
 
-    leavesIds.forEach((leafIndex) => {
-      if (leafIndex < 1) throw new Error("Index must be greater than 1");
-      if (leafIndex > treeSize) throw new Error("Index must be less than the tree tree size");
+    elementsIds.forEach((elementIndex) => {
+      if (elementIndex < 1) throw new Error("Index must be greater than 1");
+      if (elementIndex > treeSize) throw new Error("Index must be less than the tree tree size");
     });
     const peaks = findPeaks(treeSize);
-    const siblingsPerLeaf = new Map<number, number[]>();
+    const siblingsPerElement = new Map<number, number[]>();
 
-    for (const leafIndex of leavesIds) {
+    for (const elementIndex of elementsIds) {
       const siblings = [];
-      let index = leafIndex;
+      let index = elementIndex;
       while (!peaks.includes(index)) {
         // If not peak, must have parent
         const isRight = getHeight(index + 1) == getHeight(index) + 1;
@@ -150,16 +148,16 @@ export default class CoreMMR extends TreesDatabase {
         siblings.push(sib);
         index = isRight ? index + 1 : index + parentOffset(getHeight(index));
       }
-      siblingsPerLeaf.set(leafIndex, siblings);
+      siblingsPerElement.set(elementIndex, siblings);
     }
 
     const peaksHashes = await this.retrievePeaksHashes(peaks, formattingOpts?.peaks);
-    const allSiblingsHashes = await this.hashes.getMany(Array.from(siblingsPerLeaf.values()).flat());
-    const leafHashes = await this.hashes.getMany(leavesIds);
+    const allSiblingsHashes = await this.hashes.getMany(Array.from(siblingsPerElement.values()).flat());
+    const elementHashes = await this.hashes.getMany(elementsIds);
 
     const proofs: Proof[] = [];
-    for (const leafIndex of leavesIds) {
-      const siblings = siblingsPerLeaf.get(leafIndex);
+    for (const elementIndex of elementsIds) {
+      const siblings = siblingsPerElement.get(elementIndex);
       let siblingsHashes: string[] = [];
       for (const sibling of siblings) {
         siblingsHashes.push(allSiblingsHashes.get(sibling.toString()));
@@ -171,8 +169,8 @@ export default class CoreMMR extends TreesDatabase {
       }
 
       proofs.push({
-        leafIndex: leafIndex,
-        leafHash: leafHashes.get(leafIndex.toString()),
+        elementIndex,
+        elementHash: elementHashes.get(elementIndex.toString()),
         siblingsHashes,
         peaksHashes,
         elementsCount: treeSize,
@@ -185,11 +183,11 @@ export default class CoreMMR extends TreesDatabase {
    * Verifies a proof
    *
    * @param proof the proof to verify
-   * @param leafValue the actual value appended to the tree, a preimage of the leaf hash
+   * @param elementValue the actual value appended to the tree, a preimage of the element hash
    * @param [options] Options containing the optional tree size at which the proof should be generated alongside formatting specifiers
    * @returns boolean
    */
-  async verifyProof(proof: Proof, leafValue: string, options: ProofOptions = {}): Promise<boolean> {
+  async verifyProof(proof: Proof, elementValue: string, options: ProofOptions = {}): Promise<boolean> {
     const { elementsCount, formattingOpts } = options;
     const treeSize = elementsCount ?? (await this.elementsCount.get());
 
@@ -204,15 +202,15 @@ export default class CoreMMR extends TreesDatabase {
       proof.peaksHashes = proof.peaksHashes.slice(0, proof.peaksHashes.length - peaksNullValuesCount);
     }
 
-    let { leafIndex, siblingsHashes } = proof;
-    if (leafIndex < 1) throw new Error("Index must be greater than 1");
-    if (leafIndex > treeSize) throw new Error("Index must be in the tree");
+    let { elementIndex, siblingsHashes } = proof;
+    if (elementIndex < 1) throw new Error("Index must be greater than 1");
+    if (elementIndex > treeSize) throw new Error("Index must be in the tree");
 
-    let hash = leafValue;
+    let hash = elementValue;
 
     for (const proofHash of siblingsHashes) {
-      const isRight = getHeight(leafIndex + 1) == getHeight(leafIndex) + 1;
-      leafIndex = isRight ? leafIndex + 1 : leafIndex + parentOffset(getHeight(leafIndex));
+      const isRight = getHeight(elementIndex + 1) == getHeight(elementIndex) + 1;
+      elementIndex = isRight ? elementIndex + 1 : elementIndex + parentOffset(getHeight(elementIndex));
       hash = isRight ? this.hasher.hash([proofHash, hash]) : this.hasher.hash([hash, proofHash]);
     }
 
