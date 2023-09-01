@@ -1,6 +1,6 @@
 {
   "name": "@accumulators/merkle-mountain-range",
-  "version": "3.0.10",
+  "version": "3.1.0",
   "description": "A TypeScript implementation of Merkle Mountain Ranges",
   "keywords": [
     "merkle mountain range",
