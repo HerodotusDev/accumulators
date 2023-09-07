@@ -59,8 +59,10 @@ export default class CoreMMR extends TreesDatabase {
     //? Update latest value.
     await this.elementsCount.set(lastElementIdx);
 
+    const bag = await this.bagThePeaks();
+
     //? Compute the new root hash
-    const rootHash = await this.bagThePeaks();
+    const rootHash = await this.calculateRootHash(bag, lastElementIdx);
     await this.rootHash.set(rootHash);
 
     //? Returns the new total number of leaves.
@@ -245,6 +247,10 @@ export default class CoreMMR extends TreesDatabase {
       .reduce((prev, cur) => this.hasher.hash([cur, prev]), root0);
 
     return root;
+  }
+
+  async calculateRootHash(bag: string, leafCount: number) {
+    return this.hasher.hash([leafCount.toString(), bag]);
   }
 
   private static countOnes(value: number): number {
