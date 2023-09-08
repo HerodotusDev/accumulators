@@ -69,7 +69,7 @@ describe("core", () => {
     } as AppendResult);
 
     await expect(mmr.getPeaks()).resolves.toEqual([node7, node10]);
-    await expect(mmr.bagThePeaks()).resolves.toEqual(root);
+    await expect(mmr.bagThePeaks()).resolves.toEqual(bag);
     const proof = await mmr.getProof(lastLeafElementIndex);
     await expect(mmr.verifyProof(proof, leaves[leaves.length - 1])).resolves.toEqual(true);
   });

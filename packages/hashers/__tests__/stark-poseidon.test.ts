@@ -14,7 +14,7 @@ describe("Stark Poseidon Hash", () => {
 
   it("Should correctly get genesis block hash", () => {
     const hasher = new StarkPoseidonHasher();
-    expect(hasher.getGenesis()).toEqual("");
+    expect(hasher.getGenesis()).toEqual("0x2241b3b7f1c4b9cf63e670785891de91f7237b1388f6635c1898ae397ad32dd");
   });
 
   it("Should throw", () => {

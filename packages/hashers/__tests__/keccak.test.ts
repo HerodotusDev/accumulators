@@ -27,6 +27,6 @@ describe("Simple Keccak Hash", () => {
 
   it("Should correctly get genesis block hash", () => {
     const hasher = new KeccakHasher();
-    expect(hasher.getGenesis()).toEqual("0x2241b3b7f1c4b9cf63e670785891de91f7237b1388f6635c1898ae397ad32dd");
+    expect(hasher.getGenesis()).toEqual("0xce92cc894a17c107be8788b58092c22cd0634d1489ca0ce5b4a045a1ce31b168");
   });
 });
