@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -72,7 +76,7 @@ importers:
   packages/hashers:
     dependencies:
       '@accumulators/core':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../core
       '@ethersproject/solidity':
         specifier: ^5.7.0
@@ -90,61 +94,61 @@ importers:
   packages/incremental-merkle-tree:
     dependencies:
       '@accumulators/core':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../core
       ulid:
         specifier: ^2.3.0
         version: 2.3.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../hashers
       '@accumulators/memory':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../memory
 
   packages/memory:
     dependencies:
       '@accumulators/core':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../core
 
   packages/merkle-mountain-range:
     dependencies:
       '@accumulators/core':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../core
       ulid:
         specifier: ^2.3.0
         version: 2.3.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../hashers
       '@accumulators/memory':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../memory
 
   packages/rocksdb:
     dependencies:
       '@accumulators/core':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../core
       level-rocksdb:
         specifier: ^5.0.0
         version: 5.0.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../hashers
       '@accumulators/merkle-mountain-range':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../merkle-mountain-range
 
   packages/sqlite3:
     dependencies:
       '@accumulators/core':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../core
       '@types/sqlite3':
         specifier: ^3.1.8
@@ -154,10 +158,10 @@ importers:
         version: 5.1.6
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../hashers
       '@accumulators/merkle-mountain-range':
-        specifier: ^4.0.0
+        specifier: ^4.0.1
         version: link:../merkle-mountain-range
 
 packages:
@@ -6652,7 +6656,3 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false

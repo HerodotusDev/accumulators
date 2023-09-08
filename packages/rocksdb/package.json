@@ -1,6 +1,6 @@
 {
   "name": "@accumulators/rocksdb",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "RocksDb IStore implementation for Accumulators",
   "keywords": [],
   "homepage": "https://github.com/HerodotusDev/accumulators",
@@ -26,11 +26,11 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@accumulators/core": "^4.0.0",
+    "@accumulators/core": "^4.0.1",
     "level-rocksdb": "^5.0.0"
   },
   "devDependencies": {
-    "@accumulators/hashers": "^4.0.0",
-    "@accumulators/merkle-mountain-range": "^4.0.0"
+    "@accumulators/hashers": "^4.0.1",
+    "@accumulators/merkle-mountain-range": "^4.0.1"
   }
 }
