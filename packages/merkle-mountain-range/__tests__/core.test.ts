@@ -4,9 +4,6 @@ import CoreMMR, { AppendResult } from "../src";
 
 describe("core", () => {
   const leaves = ["1", "2", "3", "4", "5"]; // Elements data for this test suite (do not modify).
-  const rootAt6Leaves = "0x03203d652ecaf8ad941cbbccddcc0ce904d81e2c37e6dcff4377cf988dac493c";
-  const GENESIS_KECCAK_HASH = "0xce92cc894a17c107be8788b58092c22cd0634d1489ca0ce5b4a045a1ce31b168";
-  const GENESIS_POSEIDON_HASH = "0x2241b3b7f1c4b9cf63e670785891de91f7237b1388f6635c1898ae397ad32dd";
 
   let mmr: CoreMMR;
   let appendsResults: AppendResult[];
@@ -26,13 +23,13 @@ describe("core", () => {
   it("should generate mmr with genesis for keccak hasher", async () => {
     const hasher = new KeccakHasher();
     const mmr = await CoreMMR.createWithGenesis(new MemoryStore(), hasher);
-    expect(await mmr.rootHash.get()).toEqual(hasher.hash(["1", GENESIS_KECCAK_HASH]));
+    expect(await mmr.rootHash.get()).toEqual(hasher.hash(["1", hasher.getGenesis()]));
   });
 
   it("should generate mmr with genesis for poseidon hasher", async () => {
     const hasher = new StarkPoseidonHasher();
     const mmr = await CoreMMR.createWithGenesis(new MemoryStore(), hasher);
-    expect(await mmr.rootHash.get()).toEqual(hasher.hash(["1", GENESIS_POSEIDON_HASH]));
+    expect(await mmr.rootHash.get()).toEqual(hasher.hash(["1", hasher.getGenesis()]));
   });
 
   it("Should properly map a leaf index to an element index", () => {
@@ -72,7 +69,7 @@ describe("core", () => {
     } as AppendResult);
 
     await expect(mmr.getPeaks()).resolves.toEqual([node7, node10]);
-    await expect(mmr.bagThePeaks()).resolves.toEqual(rootAt6Leaves);
+    await expect(mmr.bagThePeaks()).resolves.toEqual(root);
     const proof = await mmr.getProof(lastLeafElementIndex);
     await expect(mmr.verifyProof(proof, leaves[leaves.length - 1])).resolves.toEqual(true);
   });
