@@ -22,6 +22,11 @@ export class PoseidonHasher extends IHasher {
           IHasher.byteSize(data[sizeErrorIndex])
         )}`
       );
-    return "0x" + BigInt(this.poseidon.F.toString(this.poseidon(data))).toString(16);
+    return (
+      "0x" +
+      BigInt(this.poseidon.F.toString(this.poseidon(data)))
+        .toString(16)
+        .padStart(64, "0")
+    );
   }
 }
