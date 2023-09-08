@@ -142,7 +142,7 @@ importers:
         specifier: ^4.0.1
         version: link:../hashers
       '@accumulators/merkle-mountain-range':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../merkle-mountain-range
 
   packages/sqlite3:
@@ -161,7 +161,7 @@ importers:
         specifier: ^4.0.1
         version: link:../hashers
       '@accumulators/merkle-mountain-range':
-        specifier: ^4.0.1
+        specifier: ^4.0.2
         version: link:../merkle-mountain-range
 
 packages:
