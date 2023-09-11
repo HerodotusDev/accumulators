@@ -1,5 +1,9 @@
 lockfileVersion: '6.0'
 
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
+
 importers:
 
   .:
@@ -73,7 +77,7 @@ importers:
     dependencies:
       '@accumulators/core':
         specifier: ^4.0.0
-        version: link:../core
+        version: 4.0.1
       '@ethersproject/solidity':
         specifier: ^5.7.0
         version: 5.7.0
@@ -91,61 +95,61 @@ importers:
     dependencies:
       '@accumulators/core':
         specifier: ^4.0.0
-        version: link:../core
+        version: 4.0.1
       ulid:
         specifier: ^2.3.0
         version: 2.3.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^4.0.0
+        specifier: ^4.1.0-alpha.0
         version: link:../hashers
       '@accumulators/memory':
         specifier: ^4.0.0
-        version: link:../memory
+        version: 4.0.1
 
   packages/memory:
     dependencies:
       '@accumulators/core':
         specifier: ^4.0.0
-        version: link:../core
+        version: 4.0.1
 
   packages/merkle-mountain-range:
     dependencies:
       '@accumulators/core':
         specifier: ^4.0.0
-        version: link:../core
+        version: 4.0.1
       ulid:
         specifier: ^2.3.0
         version: 2.3.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^4.0.0
+        specifier: ^4.1.0-alpha.0
         version: link:../hashers
       '@accumulators/memory':
         specifier: ^4.0.0
-        version: link:../memory
+        version: 4.0.1
 
   packages/rocksdb:
     dependencies:
       '@accumulators/core':
         specifier: ^4.0.0
-        version: link:../core
+        version: 4.0.1
       level-rocksdb:
         specifier: ^5.0.0
         version: 5.0.0
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^4.0.0
+        specifier: ^4.1.0-alpha.0
         version: link:../hashers
       '@accumulators/merkle-mountain-range':
-        specifier: ^4.0.0
+        specifier: ^4.1.0-alpha.0
         version: link:../merkle-mountain-range
 
   packages/sqlite3:
     dependencies:
       '@accumulators/core':
         specifier: ^4.0.0
-        version: link:../core
+        version: 4.0.1
       '@types/sqlite3':
         specifier: ^3.1.8
         version: 3.1.8
@@ -154,10 +158,10 @@ importers:
         version: 5.1.6
     devDependencies:
       '@accumulators/hashers':
-        specifier: ^4.0.0
+        specifier: ^4.1.0-alpha.0
         version: link:../hashers
       '@accumulators/merkle-mountain-range':
-        specifier: ^4.0.0
+        specifier: ^4.1.0-alpha.0
         version: link:../merkle-mountain-range
 
 packages:
@@ -165,6 +169,9 @@ packages:
   /@accumulators/core@1.2.1:
     resolution: {integrity: sha512-CFmcdGrYQ16Cjj3ZAZPyQ5bOAIHR4LGVtbsfaNxjFoWYzKA16bcoa3Kf825z2yJj5kzmtC7pfHv/YMTTVj+e7w==}
     dev: false
+
+  /@accumulators/core@4.0.1:
+    resolution: {integrity: sha512-MsYLh7ON9INMG17Zj9+OonSWncx5WHpuePIXwi5/oSqJq9GT2aOC7gms3sKNmUUIPdqjH8cxGgAh6pyCST2Ziw==}
 
   /@accumulators/hashers@1.2.1:
     resolution: {integrity: sha512-4mCDeVR6TB+wNP+k237NYxZU+Qbgp53oTIReW+bEr56JBt2etwll6uqdu5Hr2KGkEEzn5A1fw4irN/NYg7J89A==}
@@ -184,6 +191,12 @@ packages:
     dependencies:
       '@accumulators/core': 1.2.1
     dev: false
+
+  /@accumulators/memory@4.0.1:
+    resolution: {integrity: sha512-UmCwqxsOPvU5uD9OGfcYWhAu6B6TDby4XEh3pffbqX/FJtvz9R4IREI/Vki+38jEb3TQCVvp3beSrWbAn97TOw==}
+    dependencies:
+      '@accumulators/core': 4.0.1
+    dev: true
 
   /@accumulators/rocksdb@1.2.1:
     resolution: {integrity: sha512-lrmpjnTe2gYpKqBp5H2P6uiGU62+loGCs/ZDD6O7bhGenjHM+vDMeiwn3gJCpoqKqYQkGvx7smgcEjhyzZ4pUg==}
@@ -6652,7 +6665,3 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
-
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
