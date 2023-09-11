@@ -2,8 +2,8 @@ import { IHasher } from "@accumulators/core";
 import { poseidonHash, poseidonHashMany, poseidonHashSingle } from "micro-starknet";
 
 export class StarkPoseidonHasher extends IHasher {
-  constructor() {
-    super({ blockSizeBits: 252 });
+  constructor(shouldPad?: boolean) {
+    super({ blockSizeBits: 252, shouldPad });
   }
 
   hash(data: string[]): string {
@@ -16,12 +16,17 @@ export class StarkPoseidonHasher extends IHasher {
       );
     const bigintData = data.map((e) => BigInt(e));
 
+    let hashCore: bigint;
     if (data.length === 1) {
-      return "0x" + poseidonHashSingle(bigintData[0]).toString(16).padStart(63, "0");
+      hashCore = poseidonHashSingle(bigintData[0]);
     } else if (data.length === 2) {
-      return "0x" + poseidonHash(bigintData[0], bigintData[1]).toString(16).padStart(63, "0");
+      hashCore = poseidonHash(bigintData[0], bigintData[1]);
     } else if (data.length > 2) {
-      return "0x" + poseidonHashMany(bigintData).toString(16).padStart(63, "0");
+      hashCore = poseidonHashMany(bigintData);
     } else throw new Error("Stark Poseidon Hasher only accepts arrays of size 1 or greater");
+
+    let hash = "0x" + hashCore.toString(16);
+    if (this.options.shouldPad) hash = hash.padStart(63, "0");
+    return hash;
   }
 }

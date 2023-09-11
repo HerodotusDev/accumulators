@@ -4,8 +4,8 @@ const buildPoseidon = require("circomlibjs").buildPoseidon;
 export class PoseidonHasher extends IHasher {
   poseidon: any;
 
-  private constructor() {
-    super({ blockSizeBits: 254 });
+  private constructor(shouldPad?: boolean) {
+    super({ blockSizeBits: 254, shouldPad });
   }
 
   public static async create(): Promise<PoseidonHasher> {
@@ -22,11 +22,9 @@ export class PoseidonHasher extends IHasher {
           IHasher.byteSize(data[sizeErrorIndex])
         )}`
       );
-    return (
-      "0x" +
-      BigInt(this.poseidon.F.toString(this.poseidon(data)))
-        .toString(16)
-        .padStart(64, "0")
-    );
+    let hash = "0x" + BigInt(this.poseidon.F.toString(this.poseidon(data))).toString(16);
+
+    if (this.options.shouldPad) hash = hash.padStart(64, "0");
+    return hash;
   }
 }
