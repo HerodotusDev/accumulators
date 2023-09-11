@@ -1,6 +1,6 @@
 {
   "name": "@accumulators/memory",
-  "version": "4.2.0-alpha.0",
+  "version": "4.2.0-alpha.1",
   "description": "In Memory IStore implementation for Accumulators",
   "keywords": [],
   "homepage": "https://github.com/HerodotusDev/accumulators",
@@ -26,6 +26,6 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@accumulators/core": "^4.2.0-alpha.0"
+    "@accumulators/core": "^4.2.0-alpha.1"
   }
 }

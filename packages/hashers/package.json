@@ -1,6 +1,6 @@
 {
   "name": "@accumulators/hashers",
-  "version": "4.2.0-alpha.0",
+  "version": "4.2.0-alpha.1",
   "description": "A TypeScript implementation of multiple hashing functions",
   "keywords": [],
   "homepage": "https://github.com/HerodotusDev/accumulators",
@@ -25,7 +25,7 @@
     "build": "tsc && mkdir -p lib/pedersen && cp src/pedersen/pedersen_wasm_bg.wasm lib/pedersen && cp src/pedersen/pedersen_wasm_bg.wasm.d.ts lib/pedersen && cp src/pedersen/pedersen_wasm.js lib/pedersen && cp src/pedersen/pedersen_wasm.d.ts lib/pedersen"
   },
   "dependencies": {
-    "@accumulators/core": "^4.2.0-alpha.0",
+    "@accumulators/core": "^4.2.0-alpha.1",
     "@ethersproject/solidity": "^5.7.0",
     "circomlibjs": "^0.1.7",
     "ethers": "6.6.0",
