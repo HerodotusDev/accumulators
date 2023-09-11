@@ -2,6 +2,7 @@ export type hash = (data: string) => string;
 
 export type HasherOptions = {
   blockSizeBits: number;
+  shouldPad?: boolean;
 };
 
 export const defaultHasherOptions: HasherOptions = {
@@ -25,9 +26,7 @@ export abstract class IHasher {
 
   static byteSize = (str: string) => new Blob([str.startsWith("0x") ? str.slice(2) : str]).size;
 
-  public hashSingle(data: string): string {
-    return this.hash([data]);
-  }
+  public hashSingle = (data: string) => this.hash([data]);
 
   public getGenesis(): HexString {
     const s = GENESIS_STRING;
