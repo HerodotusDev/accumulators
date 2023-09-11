@@ -30,11 +30,11 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@accumulators/core": "^4.0.0",
+    "@accumulators/core": "^4.0.1",
     "ulid": "^2.3.0"
   },
   "devDependencies": {
     "@accumulators/hashers": "^4.1.0-alpha.0",
-    "@accumulators/memory": "^4.0.0"
+    "@accumulators/memory": "^4.0.1"
   }
 }

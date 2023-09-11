@@ -76,8 +76,8 @@ importers:
   packages/hashers:
     dependencies:
       '@accumulators/core':
-        specifier: ^4.0.0
-        version: 4.0.1
+        specifier: ^4.0.1
+        version: link:../core
       '@ethersproject/solidity':
         specifier: ^5.7.0
         version: 5.7.0
@@ -94,8 +94,8 @@ importers:
   packages/incremental-merkle-tree:
     dependencies:
       '@accumulators/core':
-        specifier: ^4.0.0
-        version: 4.0.1
+        specifier: ^4.0.1
+        version: link:../core
       ulid:
         specifier: ^2.3.0
         version: 2.3.0
@@ -104,20 +104,20 @@ importers:
         specifier: ^4.1.0-alpha.0
         version: link:../hashers
       '@accumulators/memory':
-        specifier: ^4.0.0
-        version: 4.0.1
+        specifier: ^4.0.1
+        version: link:../memory
 
   packages/memory:
     dependencies:
       '@accumulators/core':
-        specifier: ^4.0.0
-        version: 4.0.1
+        specifier: ^4.0.1
+        version: link:../core
 
   packages/merkle-mountain-range:
     dependencies:
       '@accumulators/core':
-        specifier: ^4.0.0
-        version: 4.0.1
+        specifier: ^4.0.1
+        version: link:../core
       ulid:
         specifier: ^2.3.0
         version: 2.3.0
@@ -126,14 +126,14 @@ importers:
         specifier: ^4.1.0-alpha.0
         version: link:../hashers
       '@accumulators/memory':
-        specifier: ^4.0.0
-        version: 4.0.1
+        specifier: ^4.0.1
+        version: link:../memory
 
   packages/rocksdb:
     dependencies:
       '@accumulators/core':
-        specifier: ^4.0.0
-        version: 4.0.1
+        specifier: ^4.0.1
+        version: link:../core
       level-rocksdb:
         specifier: ^5.0.0
         version: 5.0.0
@@ -148,8 +148,8 @@ importers:
   packages/sqlite3:
     dependencies:
       '@accumulators/core':
-        specifier: ^4.0.0
-        version: 4.0.1
+        specifier: ^4.0.1
+        version: link:../core
       '@types/sqlite3':
         specifier: ^3.1.8
         version: 3.1.8
@@ -170,9 +170,6 @@ packages:
     resolution: {integrity: sha512-CFmcdGrYQ16Cjj3ZAZPyQ5bOAIHR4LGVtbsfaNxjFoWYzKA16bcoa3Kf825z2yJj5kzmtC7pfHv/YMTTVj+e7w==}
     dev: false
 
-  /@accumulators/core@4.0.1:
-    resolution: {integrity: sha512-MsYLh7ON9INMG17Zj9+OonSWncx5WHpuePIXwi5/oSqJq9GT2aOC7gms3sKNmUUIPdqjH8cxGgAh6pyCST2Ziw==}
-
   /@accumulators/hashers@1.2.1:
     resolution: {integrity: sha512-4mCDeVR6TB+wNP+k237NYxZU+Qbgp53oTIReW+bEr56JBt2etwll6uqdu5Hr2KGkEEzn5A1fw4irN/NYg7J89A==}
     dependencies:
@@ -191,12 +188,6 @@ packages:
     dependencies:
       '@accumulators/core': 1.2.1
     dev: false
-
-  /@accumulators/memory@4.0.1:
-    resolution: {integrity: sha512-UmCwqxsOPvU5uD9OGfcYWhAu6B6TDby4XEh3pffbqX/FJtvz9R4IREI/Vki+38jEb3TQCVvp3beSrWbAn97TOw==}
-    dependencies:
-      '@accumulators/core': 4.0.1
-    dev: true
 
   /@accumulators/rocksdb@1.2.1:
     resolution: {integrity: sha512-lrmpjnTe2gYpKqBp5H2P6uiGU62+loGCs/ZDD6O7bhGenjHM+vDMeiwn3gJCpoqKqYQkGvx7smgcEjhyzZ4pUg==}

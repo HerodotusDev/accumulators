@@ -26,7 +26,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@accumulators/core": "^4.0.0",
+    "@accumulators/core": "^4.0.1",
     "@types/sqlite3": "^3.1.8",
     "sqlite3": "^5.1.6"
   },

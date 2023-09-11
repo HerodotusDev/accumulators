@@ -98,22 +98,24 @@ export class DraftTable extends InStoreTable {
   }
 
   async getMany(idxs: number[]): Promise<Map<string, string>> {
-    const keys = idxs.map((suffix) => this.agnosticGetKey(suffix));
-    const [thisTable, parentTable] = keys.reduce(
-      ([thisTable, parentTable], key) => {
-        if (key.startsWith(this.key)) thisTable.push(key);
-        else parentTable.push(key);
-        return [thisTable, parentTable];
-      },
-      [[], []] as [string[], string[]]
+    //? It is important to guarantee the order of the keys, even if they have to be fetched from two different tables
+    const chunks = idxs.reduce((chunks, suffix) => {
+      const key = this.agnosticGetKey(suffix);
+      if (key.startsWith(this.key)) {
+        if (!chunks.length || chunks[chunks.length - 1].table === "parent") chunks.push({ table: "self", keys: [] });
+        chunks[chunks.length - 1].keys.push(key);
+      } else {
+        if (!chunks.length || chunks[chunks.length - 1].table === "self") chunks.push({ table: "parent", keys: [] });
+        chunks[chunks.length - 1].keys.push(key);
+      }
+      return chunks;
+    }, [] as { table: "parent" | "self"; keys: string[] }[]);
+
+    const keyed = await Promise.all(
+      chunks.map(({ table, keys }) => (table === "self" ? this.store : this.parentTable.store).getMany(keys))
     );
 
-    const keyless = (
-      (await Promise.all([
-        thisTable.length ? this.store.getMany(thisTable) : Promise.resolve(new Map()),
-        parentTable.length ? this.parentTable.store.getMany(parentTable) : Promise.resolve(new Map()),
-      ])) as [Map<string, string>, Map<string, string>]
-    )
+    const keyless = keyed
       .reduce((acc, map) => [...acc, ...map], [] as [string, string][])
       .reduce((acc, [key, value]) => acc.set(key.split(":").slice(2).join(":"), value), new Map<string, string>());
 

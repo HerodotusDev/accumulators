@@ -26,7 +26,7 @@
     "build": "tsc"
   },
   "dependencies": {
-    "@accumulators/core": "^4.0.0",
+    "@accumulators/core": "^4.0.1",
     "level-rocksdb": "^5.0.0"
   },
   "devDependencies": {
