@@ -22,9 +22,9 @@ export class PoseidonHasher extends IHasher {
           IHasher.byteSize(data[sizeErrorIndex])
         )}`
       );
-    let hash = "0x" + BigInt(this.poseidon.F.toString(this.poseidon(data))).toString(16);
+    let hash = BigInt(this.poseidon.F.toString(this.poseidon(data))).toString(16);
 
     if (this.options.shouldPad) hash = hash.padStart(64, "0");
-    return hash;
+    return `0x${hash}`;
   }
 }

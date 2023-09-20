@@ -25,8 +25,8 @@ export class StarkPoseidonHasher extends IHasher {
       hashCore = poseidonHashMany(bigintData);
     } else throw new Error("Stark Poseidon Hasher only accepts arrays of size 1 or greater");
 
-    let hash = "0x" + hashCore.toString(16);
+    let hash = hashCore.toString(16);
     if (this.options.shouldPad) hash = hash.padStart(63, "0");
-    return hash;
+    return `0x${hash}`;
   }
 }
