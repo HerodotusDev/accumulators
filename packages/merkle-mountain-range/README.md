@@ -7,12 +7,12 @@ MMR is a structure that allows appending and proving efficiently. Time complexit
 ```typescript
 import MemoryStore from "@accumulators/memory";
 import { KeccakHasher } from "@accumulators/hashers";
-import CoreMMR from "@accumulators/merkle-mountain-range";
+import Mmr from "@accumulators/merkle-mountain-range";
 
 const store = new MemoryStore();
 const hasher = new KeccakHasher();
 
-const mmr = new CoreMMR(store, hasher);
+const mmr = new Mmr(store, hasher);
 
 await mmr.append("1");
 await mmr.append("2");
@@ -89,6 +89,67 @@ interface ProofOptions {
 
 Verifies if a certain element in the MMR has a given value. Returns `true` if the proof is valid, `false` otherwise.
 
+### `getProofs(elementsIds: number[], options?: ProofOptions)`
+
+Same as `getProof` but for multiple elements. Returns an array of `Proof`. Store is accessed for all proofs at once, so it's more efficient than calling `getProof` multiple times.
+
+### `verifyProofs(proofs: Proof[], elementsValues: string[], options?: ProofOptions)`
+
+Same as `verifyProof` but for multiple elements. Returns an array of booleans. Store is accessed for all proofs at once, so it's more efficient than calling `verifyProof` multiple times.
+
+### `getPeaks(options?: PeaksOptions)`
+
+Returns an array of hashes of all peaks in the MMR. The return type is promise of `string[]`.
+
+```typescript
+interface PeaksOptions {
+  elementsCount?: number; // You can provide elementsCount if you know its value, so it doesn't have to be fetched from the store
+  formattingOpts?: FormattingOptions;
+}
+```
+
+[More about FormattingOptions](#formattingOptions)
+
+### `bagThePeaks(elementsCount?: number)`
+
+Bags all peaks in the MMR and returns the final hash of type promise of `string`.
+
+You can provide `elementsCount` if you know its value, so it doesn't have to be fetched from the store.
+
+### `calculateRootHash(bag: string, leafCount: number)`
+
+Calculates the root hash of the MMR based on the hash returned from `bagThePeaks` function and the size of the MMR. Returns the promise of `string`.
+
+### `retrievePeaksHashes(peaksIdxs: number[], formattingOptions?: FormattingOptions)`
+
+Returns promise of an array of hashes of peaks with given indexes. If `formattingOptions` are provided, the array will be formatted according to them.
+
+### `clear()`
+
+Clears all the MMR data from the store.
+
+## Helper functions
+
+All helper functions are static.
+
+### `mapLeafIndexToElementIndex(leafIndex: number)`
+
+Converts leaf index (0-based) to element index.
+
+Table of first few values:
+
+| leafIndex | elementIndex |
+| :-------: | :----------: |
+|     0     |      1       |
+|     1     |      2       |
+|     2     |      4       |
+|     3     |      5       |
+|     4     |      8       |
+
+### `mapElementIndexToLeafIndex(elementIndex: number)`
+
+Converts element index to leaf index (0-based). If the element is not a leaf, it will throw an error.
+
 ## FormattingOptions
 
 In some cases you may want peaks and siblings arrays to have a constant size between all requests. In that case you can set formatting options and provide `nullValue` that will be added at the end of an array if it's shorter than `outputSize`. If the array is longer than `outputSize`, it will throw an error.
@@ -103,7 +164,7 @@ interface FormattingOptions {
 For example this code
 
 ```typescript
-const mmr = new CoreMMR(store, hasher);
+const mmr = new Mmr(store, hasher);
 
 await mmr.append("0x1");
 await mmr.append("0x2");
