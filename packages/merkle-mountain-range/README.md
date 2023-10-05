@@ -14,13 +14,13 @@ const hasher = new KeccakHasher();
 
 const mmr = new CoreMMR(store, hasher);
 
-await mmr.append("1"); // elementIndex = 1
-await mmr.append("2"); // elementIndex = 2
-await mmr.append("3"); // elementIndex = 4
-await mmr.append("4"); // elementIndex = 5
-await mmr.append("5"); // elementIndex = 8
+await mmr.append("1");
+await mmr.append("2");
+await mmr.append("3");
+const { elementIndex } = await mmr.append("4");
+await mmr.append("5");
 
-const proof = await mmr.getProof(5);
+const proof = await mmr.getProof(elementIndex);
 
 console.log(await mmr.verifyProof(proof, "4"));
 ```
