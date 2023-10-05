@@ -81,6 +81,8 @@ interface ProofOptions {
 }
 ```
 
+`formattingOpts.proof` apply to `siblingHashes` and `formattingOpts.peaks` apply to `peaksHashes`.
+
 [More about FormattingOptions](#formattingOptions)
 
 ### `verifyProof(proof: Proof, elementValue: string, options?: ProofOptions)`
@@ -91,4 +93,48 @@ Verifies if a certain element in the MMR has a given value. Returns `true` if th
 
 In some cases you may want peaks and siblings arrays to have a constant size between all requests. In that case you can set formatting options and provide `nullValue` that will be added at the end of an array if it's shorter than `outputSize`. If the array is longer than `outputSize`, it will throw an error.
 
-TODO: maybe add example
+```typescript
+interface FormattingOptions {
+  outputSize: number; // size of the output array
+  nullValue: string; // value with which the array will be filled
+}
+```
+
+For example this code
+
+```typescript
+const mmr = new CoreMMR(store, hasher);
+
+await mmr.append("0x1");
+await mmr.append("0x2");
+await mmr.append("0x3");
+
+const formattingOptions = {
+  nullValue: `0x0`,
+  outputSize: 4,
+};
+const options = {
+  formattingOpts: {
+    peaks: formattingOptions,
+    proof: formattingOptions,
+  },
+};
+
+const proof = await mmr.getProof(2, options);
+
+console.log(proof.peaksHashes);
+```
+
+without formatting options would return
+
+```json
+["0xe90b7bce...", "0x3"]
+```
+
+but with formatting options it will return
+
+```json
+["0xe90b7bce...", "0x3", "0x0", "0x0"]
+```
+
+(`0xe90b7bce...` is just a `hash("0x1", "0x2")`)
