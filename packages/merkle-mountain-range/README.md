@@ -27,6 +27,18 @@ console.log(await mmr.verifyProof(proof, "4"));
 
 ## Functions
 
+- [contructor](#constructorstore-store-hasher-hasher-mmrid-string)
+- [append](#appendvalue-string)
+- [getProof](#getproofelementindex-number-options-proofoptions)
+- [verifyProof](#verifyproofproof-proof-elementvalue-string-options-proofoptions)
+- [getProofs](#getproofselementsids-number-options-proofoptions)
+- [verifyProofs](#verifyproofsproofs-proof-elementsvalues-string-options-proofoptions)
+- [getPeaks](#getpeaksoptions-peaksoptions)
+- [bagThePeaks](#bagthepeakselementscount-number)
+- [calculateRootHash](#calculateroothashbag-string-leafcount-number)
+- [retrievePeaksHashes](#retrievepeakshashespeaksidxs-number-formattingoptions-formattingoptions)
+- [clear](#clear)
+
 ### `constructor(store: Store, hasher: Hasher, mmrId?: string)`
 
 Creates a new MMR with a given `hasher` instance and stores its value in provided `store`.
@@ -123,6 +135,8 @@ Calculates the root hash of the MMR based on the hash returned from `bagThePeaks
 ### `retrievePeaksHashes(peaksIdxs: number[], formattingOptions?: FormattingOptions)`
 
 Returns promise of an array of hashes of peaks with given indexes. If `formattingOptions` are provided, the array will be formatted according to them.
+
+[More about FormattingOptions](#formattingOptions)
 
 ### `clear()`
 
