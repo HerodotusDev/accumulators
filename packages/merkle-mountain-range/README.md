@@ -39,11 +39,15 @@ console.log(await mmr.verifyProof(proof, "4"));
 - [retrievePeaksHashes](#retrievepeakshashespeaksidxs-number-formattingoptions-formattingoptions)
 - [clear](#clear)
 
+---
+
 ### `constructor(store: Store, hasher: Hasher, mmrId?: string)`
 
 Creates a new MMR with a given `hasher` instance and stores its value in provided `store`.
 
 All the values in `store` have keys prefixes with `mmrId`. If you want to recreate an existing MMR, you need to provide the same `mmrId` as the original MMR. In case you want to create a new MMR, you can omit `mmrId` and it will be generated automatically. `mmrId` can be later accessed using the property (e.g. `myMmr.mmrId`).
+
+---
 
 ### `append(value: string)`
 
@@ -68,6 +72,8 @@ For instance after appending 6th element ot the MMR, the result would be:
     rootHash: "0x..."
 }
 ```
+
+---
 
 ### `getProof(elementIndex: number, options?: ProofOptions)`
 
@@ -97,17 +103,27 @@ interface ProofOptions {
 
 [More about FormattingOptions](#formattingOptions)
 
+---
+
 ### `verifyProof(proof: Proof, elementValue: string, options?: ProofOptions)`
 
 Verifies if a certain element in the MMR has a given value. Returns `true` if the proof is valid, `false` otherwise.
+
+---
 
 ### `getProofs(elementsIds: number[], options?: ProofOptions)`
 
 Same as `getProof` but for multiple elements. Returns an array of `Proof`. Store is accessed for all proofs at once, so it's more efficient than calling `getProof` multiple times.
 
+---
+
 ### `verifyProofs(proofs: Proof[], elementsValues: string[], options?: ProofOptions)`
 
+---
+
 Same as `verifyProof` but for multiple elements. Returns an array of booleans. Store is accessed for all proofs at once, so it's more efficient than calling `verifyProof` multiple times.
+
+---
 
 ### `getPeaks(options?: PeaksOptions)`
 
@@ -122,15 +138,21 @@ interface PeaksOptions {
 
 [More about FormattingOptions](#formattingOptions)
 
+---
+
 ### `bagThePeaks(elementsCount?: number)`
 
 Bags all peaks in the MMR and returns the final hash of type promise of `string`.
 
 You can provide `elementsCount` if you know its value, so it doesn't have to be fetched from the store.
 
+---
+
 ### `calculateRootHash(bag: string, leafCount: number)`
 
 Calculates the root hash of the MMR based on the hash returned from `bagThePeaks` function and the size of the MMR. Returns the promise of `string`.
+
+---
 
 ### `retrievePeaksHashes(peaksIdxs: number[], formattingOptions?: FormattingOptions)`
 
@@ -138,13 +160,19 @@ Returns promise of an array of hashes of peaks with given indexes. If `formattin
 
 [More about FormattingOptions](#formattingOptions)
 
+---
+
 ### `clear()`
 
 Clears all the MMR data from the store.
 
+---
+
 ## Helper functions
 
 All helper functions are static.
+
+---
 
 ### `mapLeafIndexToElementIndex(leafIndex: number)`
 
@@ -159,6 +187,8 @@ Table of first few values:
 |     2     |      4       |
 |     3     |      5       |
 |     4     |      8       |
+
+---
 
 ### `mapElementIndexToLeafIndex(elementIndex: number)`
 
