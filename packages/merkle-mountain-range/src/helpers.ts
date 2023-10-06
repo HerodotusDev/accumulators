@@ -12,9 +12,44 @@ export function elementsCountToLeafCount(elementsCount: number): number {
     mountainLeafCount >>= 1;
   }
   if (elementsCount > 0) {
-    throw new Error(`Invalid elements count: ${elementsCount}`);
+    throw new Error(`Invalid elements count`);
   }
   return leafCount;
+}
+
+export function elementIndexToLeafIndex(elementIndex: number): number {
+  if (elementIndex <= 0) {
+    throw new Error(`Invalid element index`);
+  }
+  try {
+    return elementsCountToLeafCount(elementIndex - 1);
+  } catch (e) {
+    throw new Error(`Invalid element index`);
+  }
+}
+
+// For a given node with `elementIndex`, find its siblings on the path to the peak if tree size is `elementsCount`.
+// If elementIndex is not a leaf, it throws an error.
+export function findSiblings(elementIndex: number, elementsCount: number): number[] {
+  let leafIndex = elementIndexToLeafIndex(elementIndex);
+  let height = 0;
+  const siblings = [];
+  while (elementIndex <= elementsCount) {
+    const siblingsOffset = (2 << height) - 1;
+    if (leafIndex % 2) {
+      // right child
+      siblings.push(elementIndex - siblingsOffset);
+      elementIndex++;
+    } else {
+      // left child
+      siblings.push(elementIndex + siblingsOffset);
+      elementIndex += siblingsOffset + 1;
+    }
+    leafIndex = Math.floor(leafIndex / 2);
+    height++;
+  }
+  siblings.pop();
+  return siblings;
 }
 
 // Find the peaks of a tree of size `elementsCount`.
