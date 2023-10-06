@@ -1,4 +1,4 @@
-# Merkle mountain range
+# Merkle Mountain Range
 
 MMR is a structure that allows appending and proving efficiently. Time complexity of both operations is O(log tree_size).
 
@@ -22,7 +22,7 @@ await mmr.append("5");
 
 const proof = await mmr.getProof(elementIndex);
 
-console.log(await mmr.verifyProof(proof, "4"));
+console.log(await mmr.verifyProof(proof, "4")); // true
 ```
 
 ## Functions
