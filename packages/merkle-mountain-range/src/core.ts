@@ -7,7 +7,15 @@ import {
   ProofOptions,
   PeaksOptions,
 } from "./types";
-import { bitLength, findPeaks, getHeight, leafCountToAppendNoMerges, parentOffset, siblingOffset } from "./helpers";
+import {
+  bitLength,
+  findPeaks,
+  findSiblings,
+  getHeight,
+  leafCountToAppendNoMerges,
+  parentOffset,
+  siblingOffset,
+} from "./helpers";
 import { TreesDatabase } from "./trees-database";
 import { IHasher, IStore } from "@accumulators/core";
 
@@ -83,24 +91,14 @@ export default class CoreMMR extends TreesDatabase {
    * @returns the generated inclusion proof.
    */
   async getProof(elementIndex: number, options: ProofOptions = {}): Promise<Proof> {
-    if (elementIndex < 1) throw new Error("Index must be greater than 1");
+    if (elementIndex <= 0) throw new Error("Index must be greater than 0");
 
     const { elementsCount, formattingOpts } = options;
     const treeSize = elementsCount ?? (await this.elementsCount.get());
-    if (elementIndex > treeSize) throw new Error("Index must be less than the tree tree size");
+    if (elementIndex > treeSize) throw new Error("Index must be less or equal to the tree tree size");
 
     const peaks = findPeaks(treeSize);
-    const siblings = [];
-
-    let index = elementIndex;
-    while (!peaks.includes(index)) {
-      // If not peak, must have parent
-      const isRight = getHeight(index + 1) == getHeight(index) + 1;
-      const sib = isRight ? index - siblingOffset(getHeight(index)) : index + siblingOffset(getHeight(index));
-      siblings.push(sib);
-
-      index = isRight ? index + 1 : index + parentOffset(getHeight(index));
-    }
+    const siblings = findSiblings(elementIndex, treeSize);
 
     const peaksHashes = await this.retrievePeaksHashes(peaks, formattingOpts?.peaks);
     let siblingsHashes = [...(await this.hashes.getMany(siblings)).values()];
