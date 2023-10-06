@@ -7,7 +7,7 @@ import {
   ProofOptions,
   PeaksOptions,
 } from "./types";
-import { bitLength, findPeaks, getHeight, parentOffset, siblingOffset } from "./helpers";
+import { bitLength, findPeaks, getHeight, leafCountToAppendNoMerges, parentOffset, siblingOffset } from "./helpers";
 import { TreesDatabase } from "./trees-database";
 import { IHasher, IStore } from "@accumulators/core";
 
@@ -42,8 +42,8 @@ export default class CoreMMR extends TreesDatabase {
 
     peaks.push(value);
 
-    let height = 0;
-    while (getHeight(lastElementIdx + 1) > height) {
+    const noMerges = leafCountToAppendNoMerges(await this.leavesCount.get());
+    for (let i = 0; i < noMerges; i++) {
       lastElementIdx++;
 
       const rightHash = peaks.pop();
@@ -52,8 +52,6 @@ export default class CoreMMR extends TreesDatabase {
       const parentHash = this.hasher.hash([leftHash, rightHash]);
       await this.hashes.set(parentHash, lastElementIdx);
       peaks.push(parentHash);
-
-      height++;
     }
 
     //? Update latest value.
