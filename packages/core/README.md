@@ -25,8 +25,8 @@ Store can be implemented in many different ways, for example in memory or databa
 
 Currently there are three implementations:
 
-- `@accumulators/memory`
-- `@accumulators/rocksdb`
-- `@accumulators/sqlite3`
+- [`@accumulators/memory`](../memory/README.md)
+- [`@accumulators/rocksdb`](../rocksdb/README.md)
+- [`@accumulators/sqlite3`](../sqlite3/README.md)
 
 You can also implement your own store. Just write a class that implements `IStore` interface and you are good to go.

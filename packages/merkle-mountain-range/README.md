@@ -194,6 +194,8 @@ Table of first few values:
 
 Converts element index to leaf index (0-based). If the element is not a leaf, it will throw an error.
 
+---
+
 ## FormattingOptions
 
 In some cases you may want peaks and siblings arrays to have a constant size between all requests. In that case you can set formatting options and provide `nullValue` that will be added at the end of an array if it's shorter than `outputSize`. If the array is longer than `outputSize`, it will throw an error.
