@@ -33,7 +33,7 @@ console.log(await tree.verifyProof(2, "0x1", proof)); // true
 - [getInclusionMultiProof](#getinclusionmultiproofindexes-number)
 - [verifyMultiProof](#verifymultiproofindexes-number-values-string-proof-string)
 
---
+---
 
 ### `initialize(treeSize: number, nullValue: string, hasher: Hasher, store: Store, treeId?: string)`
 
@@ -41,17 +41,19 @@ Creates a new Incremental Merkle Tree of a given `treeSize` and fills all leaves
 
 All the values in `store` have keys prefixes with `treeId`. If you want to recreate an existing Merkle Tree, you need to provide the same `treeId` as the original one. In case you want to create a new tree, you can omit `treeId` and it will be generated automatically. `treeId` can be later accessed using the property (e.g. `myTree.treeId`).
 
---
+---
 
 ### `getRoot()`
 
 Returns the promise of a `string` of hexadecimal number which is the root hash of the tree.
 
---
+---
 
 ### `getInclusionProof(index: number)`
 
 Returns the promise of `string[]` for a given `index` (0-based). The array contains hashes of all siblings of nodes on the path from the leaf to the root.
+
+---
 
 ### `verifyProof(index: number, value: string, proof: string[])`
 
@@ -59,7 +61,7 @@ Returns the promise of `boolean` which is `true` if the `value` is in the tree a
 
 `proof` is an array of hashes returned by `getInclusionProof`.
 
---
+---
 
 ### `update(index: number, oldValue: string, newValue: string, proof: string[])`
 
@@ -72,6 +74,8 @@ If provided `oldValue` or `proof` is incorrect, the function will throw an error
 ### `getInclusionMultiProof(indexes: number[])`
 
 Returns the promise of `string[]` for a given `indexes` (0-based). The array contains hashes of all siblings of nodes on the path from the leaves to the root.
+
+---
 
 ### `verifyMultiProof(indexes: number[], values: string[], proof: string[])`
 
