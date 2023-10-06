@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.3](https://github.com/HerodotusDev/accumulators/compare/v4.2.2...v4.2.3) (2023-10-06)
+
+**Note:** Version bump only for package @accumulators/merkle-mountain-range
+
+
+
+
+
 ## [4.2.2](https://github.com/HerodotusDev/accumulators/compare/v4.2.1...v4.2.2) (2023-09-20)
 
 **Note:** Version bump only for package @accumulators/merkle-mountain-range

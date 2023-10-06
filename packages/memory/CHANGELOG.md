@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [4.2.3](https://github.com/HerodotusDev/accumulators/compare/v4.2.2...v4.2.3) (2023-10-06)
+
+**Note:** Version bump only for package @accumulators/memory
+
+
+
+
+
 ## [4.2.1](https://github.com/HerodotusDev/accumulators/compare/v4.2.0...v4.2.1) (2023-09-11)
 
 **Note:** Version bump only for package @accumulators/memory

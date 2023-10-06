@@ -1,6 +1,6 @@
 {
   "name": "@accumulators/core",
-  "version": "4.2.1",
+  "version": "4.2.3",
   "description": "A collection of TypeScript accumulators packages, each using the core package",
   "keywords": [],
   "homepage": "https://github.com/HerodotusDev/accumulators",
