@@ -59,7 +59,6 @@ export function findPeaks(elementsCount: number): number[] {
   let mountainIndexShift = 0;
   const peaks: number[] = [];
   while (mountainElementsCount > 0) {
-    // console.log("trying mountain size", mountainElementsCount);
     if (mountainElementsCount <= elementsCount) {
       mountainIndexShift += mountainElementsCount;
       peaks.push(mountainIndexShift);
@@ -76,6 +75,25 @@ export function findPeaks(elementsCount: number): number[] {
 // Returns true if a specified index `num` is also the index of a peak inside `peaks`.
 export function isPeak(elementIndex: number, peaks: number[]): boolean {
   return peaks.indexOf(elementIndex) !== -1;
+}
+
+// peak index, peak height
+export function getPeakInfo(elementsCount: number, elementIndex: number): [number, number] {
+  let mountainHeight = bitLength(elementsCount);
+  let mountainElementsCount = (1 << mountainHeight) - 1;
+  let mountainIndex = 0;
+  while (true) {
+    if (mountainElementsCount <= elementsCount) {
+      if (elementIndex <= mountainElementsCount) {
+        return [mountainIndex, mountainHeight - 1];
+      }
+      elementsCount -= mountainElementsCount;
+      elementIndex -= mountainElementsCount;
+      mountainIndex++;
+    }
+    mountainElementsCount >>= 1;
+    mountainHeight--;
+  }
 }
 
 // For a given number of leaves, calculates how many additional nodes will be created by hashing their children after one append (not including the appended node itself).
