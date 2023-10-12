@@ -8,15 +8,13 @@ import {
   PeaksOptions,
 } from "./types";
 import {
+  arrayDeduplicate,
   bitLength,
   elementIndexToLeafIndex,
   findPeaks,
   findSiblings,
-  getHeight,
   getPeakInfo,
   leafCountToAppendNoMerges,
-  parentOffset,
-  siblingOffset,
 } from "./helpers";
 import { TreesDatabase } from "./trees-database";
 import { IHasher, IStore } from "@accumulators/core";
@@ -139,20 +137,12 @@ export default class CoreMMR extends TreesDatabase {
     const siblingsPerElement = new Map<number, number[]>();
 
     for (const elementIndex of elementsIds) {
-      const siblings = [];
-      let index = elementIndex;
-      while (!peaks.includes(index)) {
-        // If not peak, must have parent
-        const isRight = getHeight(index + 1) == getHeight(index) + 1;
-        const sib = isRight ? index - siblingOffset(getHeight(index)) : index + siblingOffset(getHeight(index));
-        siblings.push(sib);
-        index = isRight ? index + 1 : index + parentOffset(getHeight(index));
-      }
-      siblingsPerElement.set(elementIndex, siblings);
+      siblingsPerElement.set(elementIndex, findSiblings(elementIndex, treeSize));
     }
 
     const peaksHashes = await this.retrievePeaksHashes(peaks, formattingOpts?.peaks);
-    const allSiblingsHashes = await this.hashes.getMany(Array.from(siblingsPerElement.values()).flat());
+    const siblingsHashesToGet = arrayDeduplicate(Array.from(siblingsPerElement.values()).flat());
+    const allSiblingsHashes = await this.hashes.getMany(siblingsHashesToGet);
     const elementHashes = await this.hashes.getMany(elementsIds);
 
     const proofs: Proof[] = [];

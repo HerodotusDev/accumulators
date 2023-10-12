@@ -171,12 +171,8 @@ export const getHeight = (elementIndex: number): number => {
   return bitLength(h) - 1;
 };
 
-// Get the offset to the next sibling from `height`
-export const siblingOffset = (height: number): number => {
-  return parentOffset(height) - 1;
-};
-
-// Get the offset to the next parent from `height`
-export const parentOffset = (height: number): number => {
-  return 2 << height;
-};
+// Removes all duplicates from an array (order is not preserved)
+export function arrayDeduplicate<T>(array: T[]) {
+  const set = new Set(array);
+  return [...set];
+}
