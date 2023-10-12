@@ -12,6 +12,7 @@ import {
   findPeaks,
   findSiblings,
   getHeight,
+  getPeakInfo,
   leafCountToAppendNoMerges,
   parentOffset,
   siblingOffset,
@@ -201,18 +202,22 @@ export default class CoreMMR extends TreesDatabase {
     }
 
     let { elementIndex, siblingsHashes } = proof;
-    if (elementIndex < 1) throw new Error("Index must be greater than 1");
+    if (elementIndex <= 0) throw new Error("Index must be greater than 0");
     if (elementIndex > treeSize) throw new Error("Index must be in the tree");
 
-    let hash = elementValue;
+    const [peakIndex, peakHeight] = getPeakInfo(treeSize, elementIndex);
+    if (proof.siblingsHashes.length !== peakHeight) return false;
 
+    let hash = elementValue;
     for (const proofHash of siblingsHashes) {
       const isRight = getHeight(elementIndex + 1) == getHeight(elementIndex) + 1;
       elementIndex = isRight ? elementIndex + 1 : elementIndex + parentOffset(getHeight(elementIndex));
       hash = isRight ? this.hasher.hash([proofHash, hash]) : this.hasher.hash([hash, proofHash]);
     }
 
-    return (await this.retrievePeaksHashes(findPeaks(treeSize))).includes(hash);
+    const peakHashes = await this.retrievePeaksHashes(findPeaks(treeSize));
+
+    return peakHashes[peakIndex] === hash;
   }
 
   async getPeaks(options: PeaksOptions = {}): Promise<string[]> {

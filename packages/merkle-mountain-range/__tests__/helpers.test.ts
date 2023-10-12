@@ -86,7 +86,6 @@ describe("helpers", () => {
     for (const test in tests) {
       const [mmrSize, elementIndex] = test.split(":").map((x) => parseInt(x));
       const expected = tests[test];
-      console.log(findSiblings(elementIndex, mmrSize));
       expect(findSiblings(elementIndex, mmrSize)).toEqual(expected);
     }
   });
