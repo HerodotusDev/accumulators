@@ -9,6 +9,7 @@ import {
 } from "./types";
 import {
   bitLength,
+  elementIndexToLeafIndex,
   findPeaks,
   findSiblings,
   getHeight,
@@ -209,10 +210,12 @@ export default class CoreMMR extends TreesDatabase {
     if (proof.siblingsHashes.length !== peakHeight) return false;
 
     let hash = elementValue;
+    let leafIndex = elementIndexToLeafIndex(elementIndex);
     for (const proofHash of siblingsHashes) {
-      const isRight = getHeight(elementIndex + 1) == getHeight(elementIndex) + 1;
-      elementIndex = isRight ? elementIndex + 1 : elementIndex + parentOffset(getHeight(elementIndex));
-      hash = isRight ? this.hasher.hash([proofHash, hash]) : this.hasher.hash([hash, proofHash]);
+      const isRight = leafIndex % 2 === 1;
+      leafIndex = Math.floor(leafIndex / 2);
+
+      hash = this.hasher.hash(isRight ? [proofHash, hash] : [hash, proofHash]);
     }
 
     const peakHashes = await this.retrievePeaksHashes(findPeaks(treeSize));
