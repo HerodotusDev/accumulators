@@ -1,3 +1,5 @@
+![](/banner.png)
+
 # ACCUMULATORS
 
 This library contains a collection of packages that accumulate data in [Merkle Mountain Range](packages/merkle-mountain-range/README.md) or [Incremental Merkle Tree](packages/incremental-merkle-tree/README.md) data structures.
