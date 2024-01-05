@@ -26,6 +26,35 @@ describe("core", () => {
     expect(await mmr.rootHash.get()).toEqual(hasher.hash(["1", hasher.getGenesis()]));
   });
 
+  it("should get a stable root hash for given args for keccak", async () => {
+    const hasher = new KeccakHasher();
+    const mmr = await CoreMMR.createWithGenesis(new MemoryStore(), hasher);
+
+    expect(await mmr.leavesCount.get()).toEqual(1);
+
+    await mmr.append("1");
+    await mmr.append("0x1");
+    await mmr.append("2");
+    await mmr.append("0x2");
+    await mmr.append("3");
+    const appendedResult = await mmr.append("0x3");
+
+    expect(appendedResult.leavesCount).toEqual(7);
+
+    const stable_bag = "0x46d676ef5c3e8c6668ec577baee408f7b149d05b3ea31f4f2ad0d2a0ddc2a9b3";
+
+    const bag = await mmr.bagThePeaks();
+
+    const leafCount = await mmr.leavesCount.get();
+
+    expect(bag).toEqual(stable_bag);
+
+    const rootHash = await mmr.calculateRootHash(bag, leafCount);
+
+    const stableRootHash = "0xe336600238639f1ea4e2d78db1c8353a896487fa8fb9f2c3898888817008b77b";
+    expect(rootHash).toEqual(stableRootHash);
+  });
+
   it("should generate mmr with genesis for poseidon hasher", async () => {
     const hasher = new StarkPoseidonHasher();
     const mmr = await CoreMMR.createWithGenesis(new MemoryStore(), hasher);
