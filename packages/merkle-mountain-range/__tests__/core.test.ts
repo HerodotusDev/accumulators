@@ -61,6 +61,36 @@ describe("core", () => {
     expect(await mmr.rootHash.get()).toEqual(hasher.hash(["1", hasher.getGenesis()]));
   });
 
+  it("should get a stable root hash for given args for stark poseidon hasher", async () => {
+    const hasher = new StarkPoseidonHasher();
+    const mmr = await CoreMMR.createWithGenesis(new MemoryStore(), hasher);
+
+    expect(await mmr.leavesCount.get()).toEqual(1);
+
+    await mmr.append("1");
+    await mmr.append("0x1");
+    await mmr.append("2");
+    await mmr.append("0x2");
+    await mmr.append("3");
+    const appendedResult = await mmr.append("0x3");
+
+    expect(appendedResult.leavesCount).toEqual(7);
+
+    const stable_bag = "0x1b6fe636cf8f005b539f3d5c9ca5b5f435e995ecf51894fd3045a5e8389d467";
+
+    const bag = await mmr.bagThePeaks();
+
+    const leafCount = await mmr.leavesCount.get();
+
+    expect(bag).toEqual(stable_bag);
+
+    const rootHash = await mmr.calculateRootHash(bag, leafCount);
+
+    const stableRootHash = "0x113e2abc1e91aa48aa7c12940061c924437fcd27829b8594de54a0cea57d232";
+    expect(rootHash).toEqual(stableRootHash);
+  });
+
+
   it("Should properly map a leaf index to an element index", () => {
     const expectedIndices = [1, 2, 4, 5, 8, 9, 11, 12, 16, 17, 19];
     expectedIndices.forEach((expectedIndex, arrIdx) => {
