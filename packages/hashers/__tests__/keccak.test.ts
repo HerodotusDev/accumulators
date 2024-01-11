@@ -69,7 +69,7 @@ describe("Simple Keccak Hash", () => {
     expect(new_hash).toEqual(etherscan_verified_hash_of_9877095_block);
   });
 
-  it.only("Hashes a combination of hex, number as string", () => {
+  it("Hashes a combination of hex, number as string", () => {
     const hasher = new KeccakHasher();
 
     const hash = hasher.hash(["0x1", "1", "0x2", "2", "0x3", "3", "0x4", "4"]);
