@@ -51,6 +51,134 @@ describe("core", () => {
   });
 
    //================================================================================================
+  // Tests for CoreMMR.createWithGenesis for range of blocks
+  //================================================================================================
+
+  it("should generate mmr with genesis for keccak hasher", async () => {
+    const hasher = new KeccakHasher();
+    const mmr = await CoreMMR.createWithGenesis(new MemoryStore(), hasher);
+
+     // block 9734438
+    await mmr.append("0xcd5631a363d4c9bfc86d3504102595c39d7cd90a940fd165e1bdd911aa504d0a");
+    expect(await mmr.leavesCount.get()).toEqual(2);
+    expect(await mmr.elementsCount.get()).toEqual(3);
+    
+     // block 9734439
+    await mmr.append("0x62154309a502f33764c4ec3267e2cabf561dc9e428b0607f6f458942bbe0e02d");
+    expect(await mmr.leavesCount.get()).toEqual(3);
+    expect(await mmr.elementsCount.get()).toEqual(4);
+      
+    // block 9734440
+    await mmr.append("0x5104aee2cb3cc519cca3580144624c197a0e8b80ef080fe29698221f9963207d");
+    expect(await mmr.leavesCount.get()).toEqual(4);
+    expect(await mmr.elementsCount.get()).toEqual(7);
+
+    // block 9734441
+    await mmr.append("0x09ab9ad1513282a5c1e1b4c15436aee479e9759712ebe6e5dbb02411537633e1");
+    expect(await mmr.leavesCount.get()).toEqual(5);
+    expect(await mmr.elementsCount.get()).toEqual(8);
+
+    // block 9734442
+    await mmr.append("0x5cb8bb916e22e6ab4c0fca4bebc13b05dcaaa7eccacd7636b755d944de4e9217");
+    expect(await mmr.leavesCount.get()).toEqual(6);
+    expect(await mmr.elementsCount.get()).toEqual(10);
+
+    // block 9734443
+    await mmr.append("0x0b756461f355b8fb1a6dfdfe5d943f7c037c62b99e806a579500a8a73821e250");
+    expect(await mmr.leavesCount.get()).toEqual(7);
+    expect(await mmr.elementsCount.get()).toEqual(11);
+
+    // block 9734444
+    await mmr.append("0x3965b0ccf016b56564129ab0f96400c3a84a8e6fa5d25327a6a1762901ee00e9");
+    expect(await mmr.leavesCount.get()).toEqual(8);
+    expect(await mmr.elementsCount.get()).toEqual(15);
+
+    // block 9734445
+    await mmr.append("0xbe9e359d2632091546be983f8b6488012d607d56c05599c9347fdfdbd86c1b3f");
+    expect(await mmr.leavesCount.get()).toEqual(9);
+    expect(await mmr.elementsCount.get()).toEqual(16);
+
+     // block 9734446
+    await mmr.append("0xe9112c401620687b34b0fc6108f35242d32ff37914e302c423e9134851573f65");
+    expect(await mmr.leavesCount.get()).toEqual(10);
+    expect(await mmr.elementsCount.get()).toEqual(18);
+
+     // block 9734447
+    await mmr.append("0xd6b12b6b12b253be08a02293261f71383d6159b6339d6aeab45d91643df19bd0");
+    expect(await mmr.leavesCount.get()).toEqual(11);
+    expect(await mmr.elementsCount.get()).toEqual(19);
+
+    const elementsCount = await mmr.elementsCount.get();
+    const bag = await mmr.bagThePeaks(elementsCount);
+    const rootHash = await mmr.calculateRootHash(bag, elementsCount);
+
+    //TODO: onchain root should be 0xc87c3ba0942e428ad5432078aa7bb0b9d423616a3a1c8c7fc27b546a81465aaf
+    expect(rootHash).toEqual("0x4654b1a9b7311b0b896ada391a9481db2c0756d9c0f32658facff9eec32cd18b");
+  });
+
+  it("should generate mmr with genesis for poseidon hasher", async () => {
+    const hasher = new StarkPoseidonHasher();
+    const mmr = await CoreMMR.createWithGenesis(new MemoryStore(), hasher);
+
+     // block 9734438
+    await mmr.append("0x07b8996d5b585da92efa32a57223dfb28fa12e6c04d36d7edb03690f03bec56");
+    expect(await mmr.leavesCount.get()).toEqual(2);
+    expect(await mmr.elementsCount.get()).toEqual(3);
+    
+     // block 9734439
+    await mmr.append("0x312134454804550b4a38e1d60dc1f0be80ff62dfea8f3c6be0c257efce3b833");
+    expect(await mmr.leavesCount.get()).toEqual(3);
+    expect(await mmr.elementsCount.get()).toEqual(4);
+      
+    // block 9734440
+    await mmr.append("0x6f0b4ef760469262221de032372c2a6b47b304a48b632af80611fc2e2e10b56");
+    expect(await mmr.leavesCount.get()).toEqual(4);
+    expect(await mmr.elementsCount.get()).toEqual(7);
+
+    // block 9734441
+    await mmr.append("0x7f6d47c24e8723a6d6cf4ef089df0bd3ec710d5448b696e47b037109a1d04ce");
+    expect(await mmr.leavesCount.get()).toEqual(5);
+    expect(await mmr.elementsCount.get()).toEqual(8);
+
+    // block 9734442
+    await mmr.append("0x38e557fbc306cbcb5964a503014b375db68a0c6786fd9c6ffc5cdd14b6c9dfc");
+    expect(await mmr.leavesCount.get()).toEqual(6);
+    expect(await mmr.elementsCount.get()).toEqual(10);
+
+    // block 9734443
+    await mmr.append("0x54aa6067e8c4f6bcd7c47cf7900df1d960098177e186f0c15b6a7544491b539");
+    expect(await mmr.leavesCount.get()).toEqual(7);
+    expect(await mmr.elementsCount.get()).toEqual(11);
+
+    // block 9734444
+    await mmr.append("0x2f185aa16419cad043ddb0b75a7ba0c4233d51b7fee31f1ad6680f5c2b53677");
+    expect(await mmr.leavesCount.get()).toEqual(8);
+    expect(await mmr.elementsCount.get()).toEqual(15);
+
+    // block 9734445
+    await mmr.append("0x3ff20a1d65c24d07ebedb2de39c0a27e67808b49d1544e8ef972da1d24da302");
+    expect(await mmr.leavesCount.get()).toEqual(9);
+    expect(await mmr.elementsCount.get()).toEqual(16);
+
+     // block 9734446
+    await mmr.append("0x437048beb7e0b3f95fb670e34ac4bd2f32acf6a8ad3eb5fc08682f285ad805b");
+    expect(await mmr.leavesCount.get()).toEqual(10);
+    expect(await mmr.elementsCount.get()).toEqual(18);
+
+     // block 9734447
+    await mmr.append("0x3cd2cd10c8fedcccab3691f9852b25936ef838e0c826e39ecba3354f23664cd");
+    expect(await mmr.leavesCount.get()).toEqual(11);
+    expect(await mmr.elementsCount.get()).toEqual(19);
+
+    const elementsCount = await mmr.elementsCount.get();
+    const bag = await mmr.bagThePeaks(elementsCount);
+    const rootHash = await mmr.calculateRootHash(bag, elementsCount);
+
+    //TODO: onchain root should be 0x06bdd6350f4f5600876f13fb1ee9be09565e37f4ab97971268bc0eb2df5ed6b9
+    expect(rootHash).toEqual("0x2ca29d4ac90ce8715232f2af120c77a4d647771d76e0720afc1fd330aa64577");
+  });
+
+   //================================================================================================
   // Tests for get root hash from createWithGenesis
   //================================================================================================
 
@@ -126,7 +254,7 @@ describe("core", () => {
 
   //================================================================================================
   // Tests for append
-  //================================================================================================
+  //================================================================================================    
 
   it("should compute parent tree for pedersen hasher", async () => {
     const lastLeafElementIndex = appendsResultsForPedersen[appendsResultsForPedersen.length - 1].elementIndex;
