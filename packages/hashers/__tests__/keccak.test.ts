@@ -18,6 +18,20 @@ describe("Simple Keccak Hash", () => {
     hasher.hash([rawHexRlp]);
   });
 
+  it("Should correctly compute a hash of non hex with hex", () => {
+    const hasher = new KeccakHasher();
+    const a = "0xbd946409a993b84d18be8dc09081a9cdcecedfedf3a1ff984175e5f3667af887";
+    const b = "0x9cfabdfca79eb1ae44266614b731aa30d2aed697fa01d83b933498f1095f0941";
+
+    expect(hasher.isElementSizeValid(a)).toBeTruthy();
+    expect(hasher.isElementSizeValid(b)).toBeTruthy();
+
+    const result = hasher.hash([a, b]);
+    expect(result).toEqual("0xead5d1fa438c36f2c341756e97b2327214f21fee27aaeae4c91238c2c76374f5");
+
+    expect(hasher.hash(["10", result])).toEqual("0x70c01463d822d2205868c5a46eefc55658828015b83e4553c8462d2c6711d0e0");
+  });
+
   it("Should correctly compute a hash of a single element", () => {
     const hasher = new KeccakHasher();
     const a = "0xa4b1d5793b631de611c922ea3ec938b359b3a49e687316d9a79c27be8ce84590";
