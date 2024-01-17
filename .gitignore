@@ -4,3 +4,4 @@ rocksdb_data/
 lerna-debug.log
 dist/
 **/*.sql
+.DS_Store
