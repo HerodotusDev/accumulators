@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [4.3.0](https://github.com/HerodotusDev/accumulators/compare/v4.2.3...v4.3.0) (2026-04-02)
+
+
+### Features
+
+* added test for keccak ([13ffe84](https://github.com/HerodotusDev/accumulators/commit/13ffe8473cbec2eb2af15e43d8ee6054673dba6e))
+* edge cases tested ([5b65379](https://github.com/HerodotusDev/accumulators/commit/5b65379b80b405eec1076dd8836bdfb03f541293))
+* **hashers:** add poseidon2 hasher ([c775f79](https://github.com/HerodotusDev/accumulators/commit/c775f7906a6b9d75d4457740e879fff556228c15))
+
+
+
+
+
 ## [4.2.3](https://github.com/HerodotusDev/accumulators/compare/v4.2.2...v4.2.3) (2023-10-06)
 
 **Note:** Version bump only for package accumulators
