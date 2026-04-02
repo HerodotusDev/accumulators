@@ -1,16 +1,17 @@
 # Hashers
 
-`@accmulators/hashers` library implements the following hashing algorithms:
+`@accumulators/hashers` library implements the following hashing algorithms:
 
 - Keccak
 - Poseidon
+- Poseidon2
 - Stark Poseidon
 - Stark Pedersen
 
 ## Example
 
 ```typescript
-import { KeccakHasher } from "@accmulators/hashers";
+import { KeccakHasher } from "@accumulators/hashers";
 
 const hasher = new KeccakHasher();
 
@@ -25,7 +26,7 @@ Every hasher supports the following functions:
 
 #### `constructor(options: HasherOptions)` - creates a new hasher instance
 
-Imporant: Don't use constructor for `PoseidonHasher`, use `async create()` function instead.
+Important: Don't use constructor for `PoseidonHasher`, use `async create()` function instead.
 
 `HasherOptions` has the following interface:
 
