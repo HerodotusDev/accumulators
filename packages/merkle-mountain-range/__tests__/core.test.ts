@@ -270,6 +270,19 @@ describe("core", () => {
     expect(verifications.every((verification) => verification === true)).toBe(true);
   });
 
+  it("Should fail if the proof has incorrect siblings length", async () => {
+    const mmr = new CoreMMR(new MemoryStore(), new StarkPedersenHasher());
+
+    await mmr.append("1"); // 1
+    await mmr.append("2"); // 2
+    await mmr.append("3"); // 4
+
+    const proof = await mmr.getProof(1);
+
+    proof.siblingsHashes = [];
+    await expect(mmr.verifyProof(proof, "3")).resolves.toEqual(false);
+  });
+
   afterEach(async () => {
     await pedersen_mmr.clear();
     await expect(pedersen_mmr.getPeaks()).resolves.toEqual([]);

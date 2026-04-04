@@ -7,7 +7,15 @@ import {
   ProofOptions,
   PeaksOptions,
 } from "./types";
-import { bitLength, findPeaks, getHeight, parentOffset, siblingOffset } from "./helpers";
+import {
+  arrayDeduplicate,
+  bitLength,
+  elementIndexToLeafIndex,
+  findPeaks,
+  findSiblings,
+  getPeakInfo,
+  leafCountToAppendNoMerges,
+} from "./helpers";
 import { TreesDatabase } from "./trees-database";
 import { IHasher, IStore } from "@accumulators/core";
 
@@ -42,8 +50,8 @@ export default class CoreMMR extends TreesDatabase {
 
     peaks.push(value);
 
-    let height = 0;
-    while (getHeight(lastElementIdx + 1) > height) {
+    const noMerges = leafCountToAppendNoMerges(await this.leavesCount.get());
+    for (let i = 0; i < noMerges; i++) {
       lastElementIdx++;
 
       const rightHash = peaks.pop();
@@ -52,8 +60,6 @@ export default class CoreMMR extends TreesDatabase {
       const parentHash = this.hasher.hash([leftHash, rightHash]);
       await this.hashes.set(parentHash, lastElementIdx);
       peaks.push(parentHash);
-
-      height++;
     }
 
     //? Update latest value.
@@ -85,24 +91,14 @@ export default class CoreMMR extends TreesDatabase {
    * @returns the generated inclusion proof.
    */
   async getProof(elementIndex: number, options: ProofOptions = {}): Promise<Proof> {
-    if (elementIndex < 1) throw new Error("Index must be greater than 1");
+    if (elementIndex <= 0) throw new Error("Index must be greater than 0");
 
     const { elementsCount, formattingOpts } = options;
     const treeSize = elementsCount ?? (await this.elementsCount.get());
-    if (elementIndex > treeSize) throw new Error("Index must be less than the tree tree size");
+    if (elementIndex > treeSize) throw new Error("Index must be less or equal to the tree tree size");
 
     const peaks = findPeaks(treeSize);
-    const siblings = [];
-
-    let index = elementIndex;
-    while (!peaks.includes(index)) {
-      // If not peak, must have parent
-      const isRight = getHeight(index + 1) == getHeight(index) + 1;
-      const sib = isRight ? index - siblingOffset(getHeight(index)) : index + siblingOffset(getHeight(index));
-      siblings.push(sib);
-
-      index = isRight ? index + 1 : index + parentOffset(getHeight(index));
-    }
+    const siblings = findSiblings(elementIndex, treeSize);
 
     const peaksHashes = await this.retrievePeaksHashes(peaks, formattingOpts?.peaks);
     let siblingsHashes = [...(await this.hashes.getMany(siblings)).values()];
@@ -141,20 +137,12 @@ export default class CoreMMR extends TreesDatabase {
     const siblingsPerElement = new Map<number, number[]>();
 
     for (const elementIndex of elementsIds) {
-      const siblings = [];
-      let index = elementIndex;
-      while (!peaks.includes(index)) {
-        // If not peak, must have parent
-        const isRight = getHeight(index + 1) == getHeight(index) + 1;
-        const sib = isRight ? index - siblingOffset(getHeight(index)) : index + siblingOffset(getHeight(index));
-        siblings.push(sib);
-        index = isRight ? index + 1 : index + parentOffset(getHeight(index));
-      }
-      siblingsPerElement.set(elementIndex, siblings);
+      siblingsPerElement.set(elementIndex, findSiblings(elementIndex, treeSize));
     }
 
     const peaksHashes = await this.retrievePeaksHashes(peaks, formattingOpts?.peaks);
-    const allSiblingsHashes = await this.hashes.getMany(Array.from(siblingsPerElement.values()).flat());
+    const siblingsHashesToGet = arrayDeduplicate(Array.from(siblingsPerElement.values()).flat());
+    const allSiblingsHashes = await this.hashes.getMany(siblingsHashesToGet);
     const elementHashes = await this.hashes.getMany(elementsIds);
 
     const proofs: Proof[] = [];
@@ -205,18 +193,24 @@ export default class CoreMMR extends TreesDatabase {
     }
 
     let { elementIndex, siblingsHashes } = proof;
-    if (elementIndex < 1) throw new Error("Index must be greater than 1");
+    if (elementIndex <= 0) throw new Error("Index must be greater than 0");
     if (elementIndex > treeSize) throw new Error("Index must be in the tree");
 
-    let hash = elementValue;
+    const [peakIndex, peakHeight] = getPeakInfo(treeSize, elementIndex);
+    if (proof.siblingsHashes.length !== peakHeight) return false;
 
+    let hash = elementValue;
+    let leafIndex = elementIndexToLeafIndex(elementIndex);
     for (const proofHash of siblingsHashes) {
-      const isRight = getHeight(elementIndex + 1) == getHeight(elementIndex) + 1;
-      elementIndex = isRight ? elementIndex + 1 : elementIndex + parentOffset(getHeight(elementIndex));
-      hash = isRight ? this.hasher.hash([proofHash, hash]) : this.hasher.hash([hash, proofHash]);
+      const isRight = leafIndex % 2 === 1;
+      leafIndex = Math.floor(leafIndex / 2);
+
+      hash = this.hasher.hash(isRight ? [proofHash, hash] : [hash, proofHash]);
     }
 
-    return (await this.retrievePeaksHashes(findPeaks(treeSize))).includes(hash);
+    const peakHashes = await this.retrievePeaksHashes(findPeaks(treeSize));
+
+    return peakHashes[peakIndex] === hash;
   }
 
   async getPeaks(options: PeaksOptions = {}): Promise<string[]> {
